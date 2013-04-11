@@ -8,3 +8,4 @@ pom.xml
 /.lein-*
 /.env
 src/simplex-clj/config.clj
+resources/public/dump/*
