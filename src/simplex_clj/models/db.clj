@@ -28,8 +28,12 @@
                  (where {:id id})
                  (limit 1))))
 
+(defn get-post [id]
+  (do
+    (println (sql-only (select clj (where {:id id}))))
+    (select clj (where {:id id}))))
+
 (defn get-posts [n]
   (do
-    (println (sql-only (select clj)))
-    (select clj)))
-;          (limit n)))
+    (println (sql-only (select clj (limit n))))
+    (select clj (limit n))))

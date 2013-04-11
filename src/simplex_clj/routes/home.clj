@@ -18,15 +18,23 @@
   (layout/render "page_about.html"))
 
 ; pages from DB
-(defn show-single [id]
+(defn- add-fields [coll]
+  (let [info (util/video-info (:url coll))]
+    (assoc coll :code (:code info), :site (:site info), :type (:itemtype coll))))
+
+(defn show-single2 [id]
   (let [record (schema/get-post id)
         info (util/video-info (:url record))]
     (layout/render
       "page_post.html" (assoc record :code (:code info), :site (:site info), :type (:itemtype record)))))
 
+(defn show-single [id]
+  (layout/render
+   "page_posts.html" {:posts (map add-fields (db/get-post id))}))
+
 (defn show-some [n]
   (layout/render
-   "page_posts.html" {:posts (db/get-posts n)}))
+   "page_posts.html" {:posts (map add-fields (db/get-posts n))}))
 
 ; interaction
 (defn store-image [params]
