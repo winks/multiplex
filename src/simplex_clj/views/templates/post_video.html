@@ -1,13 +1,13 @@
-{% extends "simplex_clj/views/templates/base.html" %}
-{% block content %}
+{% block post %}
 <li class="video">
- <span class="small">| {{created}} <a href="/show/{{id}}">#</a></span></li>
+<span class="small">| {{created}} <a href="/show/{{id}}">#</a></span></li>
 {% ifequal site "vimeo" %}
-<iframe src="http://player.vimeo.com/video/{{ code }}" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-{% endifequal %}
-{% ifequal site "youtube" %}
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/{{ code }}?rel=0" frameborder="0" allowfullscreen></iframe>
+ <iframe src="http://player.vimeo.com/video/{{ code }}" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 {% else %}
-Unknown video format.
+ {% ifequal site "youtube" %}
+  <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/{{ code }}?rel=0" frameborder="0" allowfullscreen></iframe>
+ {% else %}
+  Unknown video format.
+ {% endifequal %}
 {% endifequal %}
 {% endblock %}

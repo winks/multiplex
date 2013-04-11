@@ -3,30 +3,30 @@
   (:require [simplex-clj.views.layout :as layout]
             [simplex-clj.util :as util]
             [simplex-clj.config :as config]
-            [simplex-clj.models.schema :as db]))
+            [simplex-clj.models.schema :as schema]
+            [simplex-clj.models.db :as db]))
 
 ; simple pages
 (defn BLANK []
-  (layout/render "blank.html"))
+  (layout/render "page_blank.html"))
 
 (defn home-page []
   (layout/render
-    "home.html" {:content (util/md->html "/md/docs.md")}))
+    "page_home.html" {:content (util/md->html "/md/docs.md")}))
 
 (defn about-page []
-  (layout/render "about.html"))
+  (layout/render "page_about.html"))
 
 ; pages from DB
 (defn show-single [id]
-  (let [record (db/get-post id)
+  (let [record (schema/get-post id)
         info (util/video-info (:url record))]
     (layout/render
-      (str "post_" (:itemtype record) ".html") (assoc record :code (:code info), :site (:site info)))))
+      "page_post.html" (assoc record :code (:code info), :site (:site info), :type (:itemtype record)))))
 
 (defn show-some [n]
-  (let [records (db/get-posts n)]
-    (layout/render
-     "post_image.html")))
+  (layout/render
+   "page_posts.html" (assoc {} :posts (db/get-posts n))))
 
 ; interaction
 (defn store-image [params]
@@ -35,15 +35,15 @@
         x (util/download-file (:url params) (config/abs-file filename))
         sizes (util/image-size (config/abs-file filename))
         params (assoc params :id nil :itemtype (:type params) :meta (apply str (interpose ":" sizes)) :tag "foo" :created nil :updated nil :url (config/rel-file filename))]
-    (db/new-post (dissoc params :type))))
+    (schema/new-post (dissoc params :type))))
 
 (defn store-text [params]
   (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta nil :created nil :updated nil)]
-    (db/new-post (dissoc params :type :url))))
+    (schema/new-post (dissoc params :type :url))))
 
 (defn store-link [params]
   (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta nil :created nil :updated nil)]
-    (db/new-post (dissoc params :type))))
+    (schema/new-post (dissoc params :type))))
 
 
 (defn store [params]
@@ -61,7 +61,7 @@
       (do
         (store params)
         (layout/render
-          "justposted.html" {:content (interpose ":" (vals params))})))
+          "page_justposted.html" {:content (interpose ":" (vals params))})))
     (BLANK)))
 
 ; fake, debug, test
@@ -79,7 +79,7 @@
 
 (defn test-args [r]
   (layout/render
-    "blank.html" {:content (str (:url r) (:txt r) (:type r))}))
+    "page_blank.html" {:content (str (:url r) (:txt r) (:type r))}))
 
 (defn show-single-fake [id]
   (layout/render

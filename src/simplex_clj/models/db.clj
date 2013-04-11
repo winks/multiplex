@@ -1,11 +1,16 @@
 (ns simplex-clj.models.db
   (:use korma.core
-        [korma.db :only (defdb)])
+        [korma.db :only (defdb mysql)])
   (:require [simplex-clj.models.schema :as schema]))
 
-(defdb db schema/db-spec)
+(defdb dbm (mysql
+  {:db "simplex"
+   :user "simplex"
+   :password "simplex"
+   :delimiters "`"}))
 
 (defentity users)
+(defentity clj)
 
 (defn create-user [user]
   (insert users
@@ -22,3 +27,9 @@
   (first (select users
                  (where {:id id})
                  (limit 1))))
+
+(defn get-posts [n]
+  (do
+    (select clj))
+    (println (sql-only (select clj))))
+;          (limit n)))

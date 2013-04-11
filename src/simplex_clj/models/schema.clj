@@ -1,4 +1,5 @@
 (ns simplex-clj.models.schema
+  (:use     [korma.db :only (defdb mysql)])
   (:require [clojure.java.jdbc :as sql]
             [simplex-clj.util :as util]))
 
@@ -16,12 +17,14 @@
   []
   (.exists (new java.io.File (str (io/resource-path) db-store ".h2.db"))))
 )
-(def db-spec
+(def db-spec (mysql
   {:classname "com.mysql.jdbc.Driver"
    :subprotocol "mysql"
    :subname "//localhost/simplex"
    :user "simplex"
-   :password "simplex"})
+   :password "simplex"
+   :delimiters "`"}))
+
 (defn initialized? []
   (throw (new Exception "TODO: init")))
 
@@ -57,7 +60,7 @@
           res ["select * from clj where id = ? and itemtype = ?" id post-type] (first res)))
       (get-post id))))
 
-(defn get-posts
+(defn get-posts2
   [n]
   (sql/with-connection db-spec
     (sql/with-query-results
