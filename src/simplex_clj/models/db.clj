@@ -12,6 +12,7 @@
 (defentity users)
 (defentity clj)
 
+; users
 (defn create-user [user]
   (insert users
           (values user)))
@@ -27,13 +28,23 @@
   (first (select users
                  (where {:id id})
                  (limit 1))))
-
+; posts
 (defn get-post [id]
   (do
     (println (sql-only (select clj (where {:id id}))))
     (select clj (where {:id id}))))
 
-(defn get-posts [n]
-  (do
-    (println (sql-only (select clj (limit n))))
-    (select clj (limit n))))
+(defn get-posts
+  ([n]
+    (get-posts n 0))
+  ([n off]
+    (do
+      (println (sql-only
+        (select clj
+                (order :id :DESC)
+                (limit n)
+                (offset off))))
+      (select clj
+            (order :id :DESC)
+            (limit n)
+            (offset off)))))

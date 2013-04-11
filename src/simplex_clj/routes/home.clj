@@ -22,19 +22,16 @@
   (let [info (util/video-info (:url coll))]
     (assoc coll :code (:code info), :site (:site info), :type (:itemtype coll))))
 
-(defn show-single2 [id]
-  (let [record (schema/get-post id)
-        info (util/video-info (:url record))]
-    (layout/render
-      "page_post.html" (assoc record :code (:code info), :site (:site info), :type (:itemtype record)))))
-
 (defn show-single [id]
   (layout/render
    "page_posts.html" {:posts (map add-fields (db/get-post id))}))
 
-(defn show-some [n]
-  (layout/render
-   "page_posts.html" {:posts (map add-fields (db/get-posts n))}))
+(defn show-some
+  ([n]
+    (show-some n 0))
+  ([n page]
+    (layout/render
+     "page_posts.html" {:posts (map add-fields (db/get-posts n (* n (dec page))))})))
 
 ; interaction
 (defn store-image [params]
@@ -96,6 +93,16 @@
                        :id (str id)
                        :url "http://dump.f5n.org/dump/4461aa9a5867480f4862084748ef29ff1cd366e4.jpeg"}))
 
+(defn int-or-default [s default]
+  (if
+    (empty? s)
+    default
+    (try
+      (let [n (Integer/parseInt s)]
+        (if (pos? n) n default))
+      (catch Exception e
+        default))))
+
 ; ROUTES
 (defroutes home-routes
   (GET "/test-args" [url txt type] (test-args {:url url :txt txt :type type}))
@@ -103,7 +110,6 @@
   (GET "/fake/:id" [id] (show-single-fake id))
 
   (GET "/store/:authkey" [url txt type authkey] (store-post authkey {:url url :txt txt :type type}))
-  (GET "/some" [] (show-some 10))
   (GET "/show/:id" [id] (show-single id))
   (GET "/about" [] (about-page))
-  (GET "/" [] (show-some 10)))
+  (GET "/" [page limit] (show-some (int-or-default limit 10) (int-or-default page 1))))
