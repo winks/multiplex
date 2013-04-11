@@ -1,5 +1,3 @@
-{% block post %}
-<li class="pic small">{{created}} <a href="/show/{{id}}">#</a><br />
-<img src="{{url}}" />
+<li class="pic small">{{post.created}} <a href="/show/{{post.id}}">#</a><br />
+<img src="{{post.url}}" />
 </li>
-{% endblock %}

@@ -30,6 +30,6 @@
 
 (defn get-posts [n]
   (do
-    (select clj))
-    (println (sql-only (select clj))))
+    (println (sql-only (select clj)))
+    (select clj)))
 ;          (limit n)))

@@ -2,14 +2,14 @@
 {% block content %}
 
 {% for post in posts %}
-{{ post }}aa
+
 {% ifequal post.itemtype "video" %}
  {% include "simplex_clj/views/templates/post_video.html" %}
 {% else %}
- {% ifequal type "link" %}
+ {% ifequal post.itemtype "link" %}
   {% include "simplex_clj/views/templates/post_link.html" %}
  {% else %}
-  {% ifequal type "image" %}
+  {% ifequal post.itemtype "image" %}
    {% include "simplex_clj/views/templates/post_image.html" %}
   {% else %}
    {% include "simplex_clj/views/templates/post_text.html" %}
@@ -17,7 +17,6 @@
  {% endifequal %}
 {% endifequal %}
 
-{% block post %}{% endblock %}
 {% endfor %}
 
 {% endblock %}

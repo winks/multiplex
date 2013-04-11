@@ -26,7 +26,7 @@
 
 (defn show-some [n]
   (layout/render
-   "page_posts.html" (assoc {} :posts (db/get-posts n))))
+   "page_posts.html" {:posts (db/get-posts n)}))
 
 ; interaction
 (defn store-image [params]

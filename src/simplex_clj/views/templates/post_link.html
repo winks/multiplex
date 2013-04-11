@@ -1,3 +1,1 @@
-{% block post %}
-<li class="fav"><a href="{{url}}">{{txt}}</a> <span class="small">| {{created}} <a href="/show/{{id}}">#</a></span></li>
-{% endblock %}
+<li class="fav"><a href="{{post.url}}">{{post.txt}}</a> <span class="small">| {{post.created}} <a href="/show/{{post.id}}">#</a></span></li>
