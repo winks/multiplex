@@ -77,4 +77,4 @@
         (some #{host} config/sites-vimeo)
         (let [matcher (re-matcher #"/([0-9]+)" s)]
           {:site "vimeo" :code (second (re-find matcher))})
-        {:site "err"}))))
+        {:site "err" :code ""}))))
