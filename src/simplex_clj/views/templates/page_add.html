@@ -1,0 +1,14 @@
+{% extends "simplex_clj/views/templates/page_minimal.html" %}
+{% block content %}
+
+<form action="/store/{{apikey}}" id="addform" method="post">
+    <p>URL: <input type="text" name="url" value={{url}}></p>
+    <p>Text: <textarea rows="4" cols="50" name="txt">{{txt}}</textarea></p>
+    <p>Tags: <input type="text" name="tags" value={{tags}}></p>
+    <p>Type: <input type="text" name="type" value={{type}}></p>
+    <input type="submit" value="comment">
+</form>
+
+{{ content }}
+
+{% endblock %}

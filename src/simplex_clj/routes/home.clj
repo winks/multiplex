@@ -3,7 +3,6 @@
   (:require [simplex-clj.views.layout :as layout]
             [simplex-clj.util :as util]
             [simplex-clj.config :as config]
-            [simplex-clj.models.schema :as schema]
             [simplex-clj.models.db :as db]))
 
 ; simple pages
@@ -16,6 +15,9 @@
 
 (defn about-page []
   (layout/render "page_about.html"))
+
+(defn add-page [params]
+  (layout/render "page_add.html" params))
 
 ; pages from DB
 (defn- add-fields [coll]
@@ -40,15 +42,15 @@
         x (util/download-file (:url params) (config/abs-file filename))
         sizes (util/image-size (config/abs-file filename))
         params (assoc params :id nil :itemtype (:type params) :meta (apply str (interpose ":" sizes)) :tag "foo" :created nil :updated nil :url (config/rel-file filename))]
-    (schema/new-post (dissoc params :type))))
+    (db/new-post (dissoc params :type))))
 
 (defn store-text [params]
   (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta nil :created nil :updated nil)]
-    (schema/new-post (dissoc params :type :url))))
+    (db/new-post (dissoc params :type :url))))
 
 (defn store-link [params]
   (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta nil :created nil :updated nil)]
-    (schema/new-post (dissoc params :type))))
+    (db/new-post (dissoc params :type))))
 
 
 (defn store [params]
@@ -93,23 +95,15 @@
                        :id (str id)
                        :url "http://dump.f5n.org/dump/4461aa9a5867480f4862084748ef29ff1cd366e4.jpeg"}))
 
-(defn int-or-default [s default]
-  (if
-    (empty? s)
-    default
-    (try
-      (let [n (Integer/parseInt s)]
-        (if (pos? n) n default))
-      (catch Exception e
-        default))))
-
 ; ROUTES
 (defroutes home-routes
   (GET "/test-args" [url txt type] (test-args {:url url :txt txt :type type}))
   (GET "/test-image" [] (test-img))
   (GET "/fake/:id" [id] (show-single-fake id))
 
+  (POST "/store/:authkey" [url txt type authkey] (store-post authkey {:url url :txt txt :type type}))
   (GET "/store/:authkey" [url txt type authkey] (store-post authkey {:url url :txt txt :type type}))
+  (GET "/add/:authkey" [url txt type authkey] (add-page {:authkey authkey :url url :txt txt :type type}))
   (GET "/show/:id" [id] (show-single id))
   (GET "/about" [] (about-page))
-  (GET "/" [page limit] (show-some (int-or-default limit 10) (int-or-default page 1))))
+  (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))

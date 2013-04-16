@@ -26,13 +26,13 @@
   (not (nil? (user-from-authkey authkey))))
 
 (defn download-file [url filename]
-  (jio/copy (jio/input-stream url) (jio/output-stream filename)))
+  (cjio/copy (cjio/input-stream url) (cjio/output-stream filename)))
 
 (defn hash-name [arg]
   (digest/sha1 arg))
 
 (defn valid-post-type? [arg]
-  (let [allowed '("image" "link" "text" "video")]
+  (let [allowed (db/itemtypes)]
     (some #{arg} allowed)))
 
 (defn file-extension [name]
@@ -78,3 +78,13 @@
         (let [matcher (re-matcher #"/([0-9]+)" s)]
           {:site "vimeo" :code (second (re-find matcher))})
         {:site "err" :code ""}))))
+
+(defn int-or-default [s default]
+  (if
+    (empty? s)
+    default
+    (try
+      (let [n (Integer/parseInt s)]
+        (if (pos? n) n default))
+      (catch Exception e
+        default))))

@@ -1,7 +1,9 @@
 (ns simplex-clj.models.db
   (:use korma.core
-        [korma.db :only (defdb mysql)])
-  (:require [simplex-clj.models.schema :as schema]))
+        [korma.db :only (defdb mysql)]))
+;  (:require [simplex-clj.models.schema :as schema]))
+
+(def itemtypes '("image" "link" "text" "video"))
 
 (defdb dbm (mysql
   {:db "simplex"
@@ -48,3 +50,7 @@
             (order :id :DESC)
             (limit n)
             (offset off)))))
+
+(defn new-post [params]
+  (insert clj
+    (values params)))
