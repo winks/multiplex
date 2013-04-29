@@ -25,9 +25,10 @@
 ;;append your application routes to the all-routes vector
 (def all-routes [home-routes app-routes])
 
-(def app (-> all-routes
-             middleware/app-handler
+(def app (middleware/app-handler all-routes))
+;(def app (-> all-routes
+;             middleware/app-handler
              ;;add your middlewares here
-             ))
+;             ))
 
 (def war-handler (middleware/war-handler app))

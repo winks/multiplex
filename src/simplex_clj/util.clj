@@ -1,9 +1,11 @@
 (ns simplex-clj.util
   (:require [noir.io :as io]
             [markdown.core :as md]
-            [clojure.java.io :as jio]
+            [clojure.java.io :as cjio]
             [digest :as digest]
+            [simplex-clj.models.db :as db]
             [simplex-clj.config :as config]))
+
 
 (defn format-time
   "formats the time using SimpleDateFormat, the default format is
@@ -15,9 +17,7 @@
 (defn md->html
   "reads a markdown file from public/md and returns an HTML string"
   [filename]
-  (->>
-    (io/slurp-resource filename)
-    (md/md-to-html-string)))
+    (md/md-to-html-string (io/slurp-resource filename)))
 
 (defn user-from-authkey [authkey]
   (get config/users (keyword authkey)))
@@ -78,6 +78,7 @@
         (let [matcher (re-matcher #"/([0-9]+)" s)]
           {:site "vimeo" :code (second (re-find matcher))})
         {:site "err" :code ""}))))
+
 
 (defn int-or-default [s default]
   (if

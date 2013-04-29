@@ -41,7 +41,7 @@
         filename (str (util/hash-name (:url params)) "." ext)
         x (util/download-file (:url params) (config/abs-file filename))
         sizes (util/image-size (config/abs-file filename))
-        params (assoc params :id nil :itemtype (:type params) :meta (apply str (interpose ":" sizes)) :tag "foo" :created nil :updated nil :url (config/rel-file filename))]
+        params (assoc params :id nil :itemtype (:type params) :meta (clojure.string/join ":" sizes) :tag "foo" :created nil :updated nil :url (config/rel-file filename))]
     (db/new-post (dissoc params :type))))
 
 (defn store-text [params]
@@ -68,7 +68,7 @@
       (do
         (store params)
         (layout/render
-          "page_justposted.html" {:content (interpose ":" (vals params))})))
+          "page_justposted.html" {:content (clojure.string/join ":" (vals params))})))
     (BLANK)))
 
 ; fake, debug, test
@@ -79,10 +79,9 @@
         newname (str (util/hash-name url) "." ext)
         x (util/download-file url (str path newname))
         sizes (util/image-size (str path newname))]
-        (do
-          (println url)
-          (println newname)
-          (println sizes))))
+    (println url)
+    (println newname)
+    (println sizes)))
 
 (defn test-args [r]
   (layout/render
