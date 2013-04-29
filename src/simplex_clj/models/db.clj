@@ -4,11 +4,24 @@
 
 (def itemtypes '("image" "link" "text" "video"))
 
-(defdb dbm (mysql
+(defn convert-db-uri [db-uri]
+  (let [[_ user password host port db x y] (re-matches #"mysql://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)(?:\?(.+)=(.+))" db-uri)]
+    {
+      :user user
+      :password password
+      :host host
+      :port (or port 80)
+      :db db
+      (keyword x) y
+    }))
+
+(defdb dbm2 (mysql
   {:db "simplex"
    :user "simplex"
    :password "simplex"
    :delimiters "`"}))
+
+(defdb dbm (mysql (convert-db-uri (System/getenv "CLEARDB_DATABASE_URL"))))
 
 (defentity users)
 (defentity clj)
