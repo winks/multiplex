@@ -45,11 +45,11 @@
     (db/new-post (dissoc params :type))))
 
 (defn store-text [params]
-  (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta nil :created nil :updated nil)]
+  (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta "" :created nil :updated nil)]
     (db/new-post (dissoc params :type :url))))
 
 (defn store-link [params]
-  (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta nil :created nil :updated nil)]
+  (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta "" :created nil :updated nil)]
     (db/new-post (dissoc params :type))))
 
 
