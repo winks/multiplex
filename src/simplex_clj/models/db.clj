@@ -1,7 +1,6 @@
 (ns simplex-clj.models.db
   (:use korma.core
         [korma.db :only (defdb mysql)]))
-;  (:require [simplex-clj.models.schema :as schema]))
 
 (def itemtypes '("image" "link" "text" "video"))
 
