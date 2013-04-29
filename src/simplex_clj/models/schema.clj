@@ -12,8 +12,8 @@
    :delimiters "`"}))
 
 (defn create-posts-table-x
-  []
-   (sql/with-connection db-spec
+  [db-cred]
+   (sql/with-connection db-cred
     (sql/create-table
       :clj
       [:id :integer "unsigned" "PRIMARY KEY" "AUTO_INCREMENT"]
