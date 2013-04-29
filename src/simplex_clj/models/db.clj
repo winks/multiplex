@@ -6,14 +6,16 @@
 
 (defn convert-db-uri [db-uri]
   (let [[_ user password host port db x y] (re-matches #"mysql://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)(?:\?(.+)=(.+))" db-uri)]
+  (println (str user ":" password "@" host "/" db " " x y))
     {
       :user user
       :password password
       :host host
-      :port (or port 80)
       :db db
+      :delimiters "`"
       (keyword x) y
     }))
+;      :port (or port 80)
 
 (defdb dbm
   (mysql
