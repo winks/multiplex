@@ -15,13 +15,10 @@
       (keyword x) y
     }))
 
-(defdb dbm2 (mysql
-  {:db "simplex"
-   :user "simplex"
-   :password "simplex"
-   :delimiters "`"}))
-
-(defdb dbm (mysql (convert-db-uri (System/getenv "CLEARDB_DATABASE_URL"))))
+(defdb dbm
+  (mysql
+    (convert-db-uri
+      (System/getenv "CLEARDB_DATABASE_URL"))))
 
 (defentity users)
 (defentity clj)
