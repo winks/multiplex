@@ -21,5 +21,5 @@
 
 (defn -main []
   (print "Creating DB structure...") (flush)
-  (load-posts-table (System/getenv "DATABASE_URL"))
+  (load-posts-table (System/getenv "CLEARDB_DATABASE_URL"))
   (println " done"))
