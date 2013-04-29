@@ -3,29 +3,6 @@
   (:require [clojure.java.jdbc :as sql]
             [simplex-clj.util :as util]))
 
-(def db-spec (mysql
-  {:classname "com.mysql.jdbc.Driver"
-   :subprotocol "mysql"
-   :subname "//localhost/simplex"
-   :user "simplex"
-   :password "simplex"
-   :delimiters "`"}))
-
-(defn create-posts-table-x
-  [db-cred]
-   (sql/with-connection db-cred
-    (sql/create-table
-      :clj
-      [:id :integer "unsigned" "PRIMARY KEY" "AUTO_INCREMENT"]
-      [:author "varchar(100) DEFAULT NULL"]
-      [:itemtype "varchar(100) DEFAULT NULL"]
-      [:url "TEXT NOT NULL"]
-      [:txt "TEXT NOT NULL"]
-      [:meta "TEXT NOT NULL"]
-      [:tag "text NOT NULL"]
-      [:created "timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'"]
-      [:updated "timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"])))
-
 (defn create-posts-table
   [db-cred]
   (sql/with-connection db-cred
