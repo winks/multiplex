@@ -1,6 +1,7 @@
 (ns simplex-clj.models.schema
   (:use     [korma.db :only (defdb mysql)])
   (:require [clojure.java.jdbc :as sql]
+            [simplex-clj.config :as config]
             [simplex-clj.util :as util]))
 
 (defn create-posts-table
@@ -21,5 +22,5 @@
 
 (defn -main []
   (print "Creating DB structure...") (flush)
-  (create-posts-table (System/getenv "CLEARDB_DATABASE_URL"))
+  (create-posts-table config/mydb)
   (println " done"))

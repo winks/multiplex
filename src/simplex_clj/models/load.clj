@@ -1,8 +1,8 @@
 (ns simplex-clj.models.load
   (:use     [korma.db :only (defdb mysql)])
   (:require [clojure.java.jdbc :as sql]
+            [simplex-clj.config :as config]
             [simplex-clj.util :as util]))
-
 
 (defn load-posts-table
   [db-cred]
@@ -21,5 +21,5 @@
 
 (defn -main []
   (print "Creating DB structure...") (flush)
-  (load-posts-table (System/getenv "CLEARDB_DATABASE_URL"))
+  (load-posts-table config/mydb)
   (println " done"))

@@ -15,3 +15,4 @@
 (defn abs-file [file] (str abs-path "/" file))
 (defn rel-file [file] (str rel-path "/" file))
 
+(def mydb (or (System/getenv "CLEARDB_DATABASE_URL") "mysql://simplex:simplex@127.0.0.1/simplex"))

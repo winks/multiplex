@@ -1,6 +1,7 @@
 (ns simplex-clj.models.db
   (:use korma.core
-        [korma.db :only (defdb mysql)]))
+        [korma.db :only (defdb mysql)])
+  (:require [simplex-clj.config :as config]))
 
 (def itemtypes '("image" "link" "text" "video"))
 
@@ -17,10 +18,7 @@
     }))
 ;      :port (or port 80)
 
-(defdb dbm
-  (mysql
-    (convert-db-uri
-      (System/getenv "CLEARDB_DATABASE_URL"))))
+(defdb dbm (mysql(convert-db-uri config/mydb)))
 
 (defentity users)
 (defentity clj)
