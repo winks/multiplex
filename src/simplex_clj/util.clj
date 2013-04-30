@@ -89,3 +89,17 @@
         (if (pos? n) n default))
       (catch Exception e
         default))))
+
+(defn md-hash
+  [algorithm arg]
+  (let [md (java.security.MessageDigest/getInstance algorithm)
+        digest (.digest md (.getBytes arg))]
+    (.toString (BigInteger. 1 digest) 16)))
+
+(defn md5
+  [arg]
+  (md-hash "MD5" arg))
+
+(defn sha-512
+  [arg]
+  (md-hash "SHA-512" arg))

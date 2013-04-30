@@ -39,6 +39,11 @@
   (first (select users
                  (where {:id id})
                  (limit 1))))
+
+(defn get-user-by-key [apikey]
+  (first (select users
+                 (where {:apikey apikey})
+                 (limit 1))))
 ; posts
 (defn get-post [id]
   (do

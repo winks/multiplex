@@ -13,8 +13,8 @@
   (layout/render
     "page_home.html" {:content (util/md->html "/md/docs.md")}))
 
-(defn about-page []
-  (layout/render "page_about.html"))
+(defn about-page [params]
+  (layout/render "page_about.html" (db/get-user-by-key (:authkey params))))
 
 (defn add-page [params]
   (layout/render "page_add.html" params))
@@ -104,5 +104,6 @@
   (GET "/store/:authkey" [url txt type authkey] (store-post authkey {:url url :txt txt :type type}))
   (GET "/add/:authkey" [url txt type authkey] (add-page {:authkey authkey :url url :txt txt :type type}))
   (GET "/show/:id" [id] (show-single id))
-  (GET "/about" [] (about-page))
+  (GET "/about" [] (about-page {}))
+  (GET "/about/:authkey" [authkey] (about-page {:authkey authkey}))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))
