@@ -19,10 +19,12 @@
   [filename]
     (md/md-to-html-string (io/slurp-resource filename)))
 
-(defn download-file
+(defn ^:dynamic download-file
   "copies an image from an URL to a local file"
   [url filename]
-    (cjio/copy (cjio/input-stream url) (cjio/output-stream filename)))
+  (with-open [input (cjio/input-stream url)
+              output (cjio/output-stream filename)]
+    (cjio/copy input output)))
 
 (defn valid-post-type?
   "determines if the given type of post is allowed"
@@ -67,6 +69,7 @@
         [(.getWidth image) (.getHeight image)]))
     (catch Exception e
       (do
+        (println (str "Reading size failed: " filename))
         (println (.printStackTrace e))
         [0 0]))))
 

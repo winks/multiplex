@@ -1,6 +1,7 @@
 (ns simplex-clj.routes.home
   (:use compojure.core)
-  (:require [simplex-clj.views.layout :as layout]
+  (:require [clojure.data.json :as json]
+            [simplex-clj.views.layout :as layout]
             [simplex-clj.util :as util]
             [simplex-clj.config :as config]
             [simplex-clj.models.db :as db]))
@@ -46,7 +47,7 @@
         sizes (util/image-size (config/abs-file filename))
         params (assoc params :id nil
                              :itemtype (:type params)
-                             :meta (clojure.string/join ":" sizes)
+                             :meta (json/json-str {:size (clojure.string/join ":" sizes) :url (:url params)})
                              :tag "foo"
                              :created nil
                              :updated nil
@@ -80,15 +81,15 @@
         (store-link params))))
 
 (defn store-post [apikey params]
-  (if
-    (db/valid-apikey? apikey)
+  (if-let [user (db/get-user-by-key apikey)]
     (let [type (if (empty? (:type params)) (util/guess-type (:url params) (:txt params)) (:type params))
-          params (assoc params :type type :author (db/get-user-by-key apikey))]
+          params (assoc params :type type :author (:uid user))]
       (do
         (store params)
         (layout/render
-          "page_justposted.html" {:content (clojure.string/join ":" (vals params))})))
+          "page_justposted.html" {:content (clojure.string/join ":" (vals params))} )))
     (BLANK)))
+
 
 ; fake, debug, test
 (defn test-img []
@@ -120,9 +121,10 @@
   (GET "/fake/:id" [id] (show-single-fake id))
 
   (POST "/store/:apikey" [url txt type apikey] (store-post apikey {:url url :txt txt :type type}))
-  (GET "/store/:apikey" [url txt type apikey] (store-post apikey {:url url :txt txt :type type}))
   (GET "/add/:apikey" [url txt type apikey] (add-page {:apikey apikey :url url :txt txt :type type}))
   (GET "/show/:id" [id] (show-single id))
   (GET "/about" [] (about-page {}))
   (GET "/about/:apikey" [apikey] (about-page {:apikey apikey}))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))
+
+  ;(GET "/store/:apikey" [url txt type apikey] (store-post apikey {:url url :txt txt :type type}))

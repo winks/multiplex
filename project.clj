@@ -14,6 +14,8 @@
    [mysql/mysql-connector-java "5.1.6"]
    [korma "0.3.0-RC5"]
    [digest "1.3.0"]
+   [org.clojure/data.json "0.2.2"]
+   [org.clojure/tools.trace "0.7.5"]
    [log4j
     "1.2.15"
     :exclusions

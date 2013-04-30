@@ -76,5 +76,10 @@
             (offset off)))))
 
 (defn new-post [params]
-  (insert clj
-    (values params)))
+  (do
+    (println params)
+    (println (sql-only
+      (insert clj
+        (values params))))
+    (insert clj
+      (values params))))
