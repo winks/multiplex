@@ -25,28 +25,35 @@
 (defn valid-authkey? [authkey]
   (not (nil? (user-from-authkey authkey))))
 
-(defn download-file [url filename]
-  (cjio/copy (cjio/input-stream url) (cjio/output-stream filename)))
+(defn download-file
+  "copies an image from an URL to a local file"
+  [url filename]
+    (cjio/copy (cjio/input-stream url) (cjio/output-stream filename)))
 
-(defn hash-name [arg]
-  (digest/sha1 arg))
-
-(defn valid-post-type? [arg]
+(defn valid-post-type?
+  "determines if the given type of post is allowed"
+  [arg]
   (let [allowed (db/itemtypes)]
     (some #{arg} allowed)))
 
-(defn file-extension [name]
+(defn file-extension
+  "gets the lower-cased file extension from a string"
+  [name]
   (let [parts (reverse (clojure.string/split name #"\."))
         ext (clojure.string/lower-case (first parts))]
     (if (.equals "jpeg" ext)
       "jpg"
       ext)))
 
-(defn host-name [url]
+(defn host-name
+  "gets the host name part from an url"
+  [url]
   (let [x (clojure.string/replace url #"http(s)?://(www\.)?" "")]
     (first (clojure.string/split x #"/"))))
 
-(defn guess-type [url txt]
+(defn guess-type
+  "if the post type is not given, try guessing from contents"
+  [url txt]
   (if (empty? url)
     "text"
     (let [ext (file-extension url)
@@ -57,7 +64,9 @@
           "image"
           "link")))))
 
-(defn image-size [filename]
+(defn image-size
+  "returns width and height of a local image as a vector"
+  [filename]
   (try
     (with-open [r (java.io.FileInputStream. filename)]
       (let [image (javax.imageio.ImageIO/read r)]
@@ -67,7 +76,9 @@
         (println (.printStackTrace e))
         [0 0]))))
 
-(defn video-info [s]
+(defn video-info
+  "extract the unique part of a video url, e.g. from youtube.com/watch?v=FOO"
+  [s]
   (let [host (host-name s)]
     (if
       (some #{host} config/sites-youtube)
@@ -80,7 +91,9 @@
         {:site "err" :code ""}))))
 
 
-(defn int-or-default [s default]
+(defn int-or-default
+  "try to coerce to integer or return a safe default"
+  [s default]
   (if
     (empty? s)
     default
@@ -89,6 +102,15 @@
         (if (pos? n) n default))
       (catch Exception e
         default))))
+
+(defn hash-filename [arg]
+  (digest/sha1 arg))
+
+(defn hash-api-token [arg]
+  (digest/md5 arg))
+
+(defn hash-password [arg]
+  (digest/sha-512 arg))
 
 (defn md-hash
   [algorithm arg]

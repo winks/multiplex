@@ -20,8 +20,9 @@
 
 (defdb dbm (mysql(convert-db-uri config/mydb)))
 
-(defentity users)
 (defentity clj)
+(defentity tags)
+(defentity users)
 
 ; users
 (defn create-user [user]
@@ -44,6 +45,7 @@
   (first (select users
                  (where {:apikey apikey})
                  (limit 1))))
+
 ; posts
 (defn get-post [id]
   (do

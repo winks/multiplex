@@ -38,7 +38,7 @@
 ; interaction
 (defn store-image [params]
   (let [ext (util/file-extension (:url params))
-        filename (str (util/hash-name (:url params)) "." ext)
+        filename (str (util/hash-filename (:url params)) "." ext)
         x (util/download-file (:url params) (config/abs-file filename))
         sizes (util/image-size (config/abs-file filename))
         params (assoc params :id nil :itemtype (:type params) :meta (clojure.string/join ":" sizes) :tag "foo" :created nil :updated nil :url (config/rel-file filename))]
@@ -76,7 +76,7 @@
   (let [url "http://dump.f5n.org/dump/4461aa9a5867480f4862084748ef29ff1cd366e4.jpeg"
         path "/home/florian/code/clojure/simplex-clj/resources/public/dump/"
         ext (util/file-extension url)
-        newname (str (util/hash-name url) "." ext)
+        newname (str (util/hash-filename url) "." ext)
         x (util/download-file url (str path newname))
         sizes (util/image-size (str path newname))]
     (println url)
