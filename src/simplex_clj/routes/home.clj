@@ -14,13 +14,13 @@
     "page_home.html" {:content (util/md->html "/md/docs.md")}))
 
 (defn about-page [params]
-  (layout/render "page_about.html" (db/get-user-by-key (:authkey params))))
+  (layout/render "page_about.html" (db/get-user-by-key (:apikey params))))
 
 (defn add-page [params]
   (if
-    (db/valid-apikey? (:authkey params))
+    (db/valid-apikey? (:apikey params))
     (layout/render "page_add.html" params)
-    (layout/render "page_add.html" (assoc params :authkey ""))))
+    (layout/render "page_add.html" (assoc params :apikey ""))))
 
 ; pages from DB
 (defn- add-fields [coll]
@@ -63,11 +63,11 @@
         (store-text params)
         (store-link params))))
 
-(defn store-post [authkey params]
+(defn store-post [apikey params]
   (if
-    (db/valid-authkey? authkey)
+    (db/valid-apikey? apikey)
     (let [type (if (empty? (:type params)) (util/guess-type (:url params) (:txt params)) (:type params))
-          params (assoc params :type type :author (db/get-user-by-key authkey))]
+          params (assoc params :type type :author (db/get-user-by-key apikey))]
       (do
         (store params)
         (layout/render
@@ -103,10 +103,10 @@
   (GET "/test-image" [] (test-img))
   (GET "/fake/:id" [id] (show-single-fake id))
 
-  (POST "/store/:authkey" [url txt type authkey] (store-post authkey {:url url :txt txt :type type}))
-  (GET "/store/:authkey" [url txt type authkey] (store-post authkey {:url url :txt txt :type type}))
-  (GET "/add/:authkey" [url txt type authkey] (add-page {:authkey authkey :url url :txt txt :type type}))
+  (POST "/store/:apikey" [url txt type apikey] (store-post apikey {:url url :txt txt :type type}))
+  (GET "/store/:apikey" [url txt type apikey] (store-post apikey {:url url :txt txt :type type}))
+  (GET "/add/:apikey" [url txt type apikey] (add-page {:apikey apikey :url url :txt txt :type type}))
   (GET "/show/:id" [id] (show-single id))
   (GET "/about" [] (about-page {}))
-  (GET "/about/:authkey" [authkey] (about-page {:authkey authkey}))
+  (GET "/about/:apikey" [apikey] (about-page {:apikey apikey}))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))

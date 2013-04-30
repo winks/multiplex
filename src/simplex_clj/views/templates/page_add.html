@@ -1,13 +1,13 @@
 {% extends "simplex_clj/views/templates/page_minimal.html" %}
 {% block content %}
 
-{% ifequal authkey "" %}
+{% ifequal apikey "" %}
 
 Login first.
 
 {% else %}
 
-<form action="/store/{{authkey}}" id="addform" method="post">
+<form action="/store/{{apikey}}" id="addform" method="post">
     <p>URL: <input type="text" name="url" value={{url}}></p>
     <p>Text: <textarea rows="4" cols="50" name="txt">{{txt}}</textarea></p>
     <p>Tags: <input type="text" name="tags" value={{tags}}></p>
