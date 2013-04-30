@@ -19,12 +19,6 @@
   [filename]
     (md/md-to-html-string (io/slurp-resource filename)))
 
-(defn user-from-authkey [authkey]
-  (get config/users (keyword authkey)))
-
-(defn valid-authkey? [authkey]
-  (not (nil? (user-from-authkey authkey))))
-
 (defn download-file
   "copies an image from an URL to a local file"
   [url filename]

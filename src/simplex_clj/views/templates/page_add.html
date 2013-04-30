@@ -1,6 +1,12 @@
 {% extends "simplex_clj/views/templates/page_minimal.html" %}
 {% block content %}
 
+{% ifequal authkey "" %}
+
+Login first.
+
+{% else %}
+
 <form action="/store/{{authkey}}" id="addform" method="post">
     <p>URL: <input type="text" name="url" value={{url}}></p>
     <p>Text: <textarea rows="4" cols="50" name="txt">{{txt}}</textarea></p>
@@ -10,5 +16,7 @@
 </form>
 
 {{ content }}
+
+{% endifequal %}
 
 {% endblock %}

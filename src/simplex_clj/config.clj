@@ -1,8 +1,5 @@
 (ns simplex-clj.config)
 
-(def users
-  {:xfz "wink"})
-
 (def img-types '("jpg" "png" "gif" "svg"))
 (def sites-youtube '("youtube.com" "youtu.be"))
 (def sites-vimeo '("vimeo.com"))

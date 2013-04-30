@@ -36,15 +36,21 @@
                :email email})
   (where {:id id})))
 
-(defn get-user [id]
+(defn get-user
+  [id]
   (first (select users
                  (where {:id id})
                  (limit 1))))
 
-(defn get-user-by-key [apikey]
+(defn get-user-by-key
+  [apikey]
   (first (select users
                  (where {:apikey apikey})
                  (limit 1))))
+
+(defn valid-apikey?
+  [apikey]
+  (not (nil? (get-user-by-key apikey))))
 
 ; posts
 (defn get-post [id]

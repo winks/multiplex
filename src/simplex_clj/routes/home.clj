@@ -17,7 +17,10 @@
   (layout/render "page_about.html" (db/get-user-by-key (:authkey params))))
 
 (defn add-page [params]
-  (layout/render "page_add.html" params))
+  (if
+    (db/valid-apikey? (:authkey params))
+    (layout/render "page_add.html" params)
+    (layout/render "page_add.html" (assoc params :authkey ""))))
 
 ; pages from DB
 (defn- add-fields [coll]
@@ -62,9 +65,9 @@
 
 (defn store-post [authkey params]
   (if
-    (util/valid-authkey? authkey)
+    (db/valid-authkey? authkey)
     (let [type (if (empty? (:type params)) (util/guess-type (:url params) (:txt params)) (:type params))
-          params (assoc params :type type :author (util/user-from-authkey authkey))]
+          params (assoc params :type type :author (db/get-user-by-key authkey))]
       (do
         (store params)
         (layout/render
