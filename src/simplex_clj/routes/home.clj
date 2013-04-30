@@ -29,7 +29,7 @@
 
 (defn show-single [id]
   (layout/render
-   "page_posts.html" {:posts (map add-fields (db/get-post id))}))
+   "page_posts.html" {:posts (map add-fields (db/get-post-by-id id))}))
 
 (defn show-some
   ([n]
@@ -44,15 +44,31 @@
         filename (str (util/hash-filename (:url params)) "." ext)
         x (util/download-file (:url params) (config/abs-file filename))
         sizes (util/image-size (config/abs-file filename))
-        params (assoc params :id nil :itemtype (:type params) :meta (clojure.string/join ":" sizes) :tag "foo" :created nil :updated nil :url (config/rel-file filename))]
+        params (assoc params :id nil
+                             :itemtype (:type params)
+                             :meta (clojure.string/join ":" sizes)
+                             :tag "foo"
+                             :created nil
+                             :updated nil
+                             :url (config/rel-file filename))]
     (db/new-post (dissoc params :type))))
 
 (defn store-text [params]
-  (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta "" :created nil :updated nil)]
+  (let [params (assoc params :itemtype (:type params)
+                             :tag "foo"
+                             :id nil
+                             :meta ""
+                             :created nil
+                             :updated nil)]
     (db/new-post (dissoc params :type :url))))
 
 (defn store-link [params]
-  (let [params (assoc params :itemtype (:type params) :tag "foo" :id nil :meta "" :created nil :updated nil)]
+  (let [params (assoc params :itemtype (:type params)
+                             :tag "foo"
+                             :id nil
+                             :meta ""
+                             :created nil
+                             :updated nil)]
     (db/new-post (dissoc params :type))))
 
 

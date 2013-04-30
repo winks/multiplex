@@ -5,7 +5,9 @@
 
 (def itemtypes '("image" "link" "text" "video"))
 
-(defn convert-db-uri [db-uri]
+(defn convert-db-uri
+  "convert a JDBC/Heroku DB-DSN/URI to parts"
+  [db-uri]
   (let [[_ user password host port db x y] (re-matches #"mysql://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)(?:\?(.+)=(.+))" db-uri)]
   (println (str user ":" password "@" host "/" db " " x y))
     {
@@ -36,7 +38,7 @@
                :email email})
   (where {:id id})))
 
-(defn get-user
+(defn get-user-by-id
   [id]
   (first (select users
                  (where {:id id})
@@ -53,7 +55,7 @@
   (not (nil? (get-user-by-key apikey))))
 
 ; posts
-(defn get-post [id]
+(defn get-post-by-id [id]
   (do
     (println (sql-only (select clj (where {:id id}))))
     (select clj (where {:id id}))))
