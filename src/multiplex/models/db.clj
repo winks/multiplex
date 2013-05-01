@@ -8,7 +8,7 @@
 (defn convert-db-uri
   "convert a JDBC/Heroku DB-DSN/URI to parts"
   [db-uri]
-  (let [[_ user password host port db x y] (re-matches #"mysql://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)(?:\?(.+)=(.+))" db-uri)]
+  (let [[_ user password host port db x y] (re-matches #"mysql://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)(?:\?(.+)=(.+))?" db-uri)]
   (println (str user ":" password "@" host "/" db " " x y))
     {
       :user user
@@ -55,6 +55,9 @@
   (not (nil? (get-user-by-key apikey))))
 
 ; posts
+(defn get-post-count []
+  (:cnt (first (select clj (aggregate (count :id) :cnt)))))
+
 (defn get-post-by-id [id]
   (do
     (println (sql-only (select clj (where {:id id}))))

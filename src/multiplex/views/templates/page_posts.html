@@ -19,4 +19,13 @@
 
 {% endfor %}
 
+{% if page-newer %}
+<a href="/?page={{page-newer}}">&laquo;&laquo;</a>
+{% endif %}
+{% for pg in pages %}
+ <a href="/?page={{pg}}">{{pg}}</a>
+{% endfor %}
+{% if page-older %}
+ <a href="/?page={{page-older}}">&raquo;&raquo;</a>
+{% endif %}
 {% endblock %}

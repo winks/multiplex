@@ -43,8 +43,17 @@
   ([n]
     (show-some n 0))
   ([n page]
-    (layout/render
-     "page_posts.html" {:posts (map add-fields (db/get-posts n (* n (dec page))))})))
+    (let [posts (map add-fields (db/get-posts n (* n (dec page))))
+          current (clojure.core/count posts)
+          page-newer (if (< page 2) nil (dec page))
+          page-older (if (< current n) nil (inc page))
+          page-count (db/get-post-count)
+          pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))]
+      (layout/render
+       "page_posts.html" {:posts posts
+                          :page-newer page-newer
+                          :page-older page-older
+                          :pages pages}))))
 
 ; interaction
 (defn cleanup
