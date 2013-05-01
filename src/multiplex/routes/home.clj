@@ -10,7 +10,7 @@
 (defn form-fill
   [params]
     (if
-      (and (empty? (:txt params)) (not (empty? (:title params))))
+      (and (empty? (:txt params)) (seq (:title params)))
       (assoc params :txt (:title params))
       params))
 
@@ -45,8 +45,8 @@
   ([n page]
     (let [posts (map add-fields (db/get-posts n (* n (dec page))))
           current (clojure.core/count posts)
-          page-newer (if (< page 2) nil (dec page))
-          page-older (if (< current n) nil (inc page))
+          page-newer (when-not (< page 2) (dec page))
+          page-older (when-not (< current n) (inc page))
           page-count (db/get-post-count)
           pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))]
       (layout/render

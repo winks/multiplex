@@ -7,6 +7,5 @@ pom.xml
 *.class
 /.lein-*
 /.env
-src/simplex-clj/config.clj
 resources/public/dump/*
 /tmp
