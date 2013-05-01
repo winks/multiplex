@@ -1,4 +1,4 @@
-# simplex-clj
+# multiplex
 
 This is my little soup.io clone.
 

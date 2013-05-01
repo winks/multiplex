@@ -1,8 +1,8 @@
-(ns simplex-clj.models.load
+(ns multiplex.models.load
   (:use     [korma.db :only (defdb mysql)])
   (:require [clojure.java.jdbc :as sql]
-            [simplex-clj.config :as config]
-            [simplex-clj.util :as util]))
+            [multiplex.config :as config]
+            [multiplex.util :as util]))
 
 (defn load-posts-table
   [db-cred]

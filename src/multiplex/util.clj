@@ -1,10 +1,10 @@
-(ns simplex-clj.util
+(ns multiplex.util
   (:require [noir.io :as io]
             [markdown.core :as md]
             [clojure.java.io :as cjio]
             [digest :as digest]
-            [simplex-clj.models.db :as db]
-            [simplex-clj.config :as config]))
+            [multiplex.models.db :as db]
+            [multiplex.config :as config]))
 
 
 (defn format-time

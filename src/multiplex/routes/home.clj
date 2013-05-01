@@ -1,10 +1,10 @@
-(ns simplex-clj.routes.home
+(ns multiplex.routes.home
   (:use compojure.core)
   (:require [clojure.data.json :as json]
-            [simplex-clj.views.layout :as layout]
-            [simplex-clj.util :as util]
-            [simplex-clj.config :as config]
-            [simplex-clj.models.db :as db]))
+            [multiplex.views.layout :as layout]
+            [multiplex.util :as util]
+            [multiplex.config :as config]
+            [multiplex.models.db :as db]))
 
 ; simple pages
 (defn form-fill
@@ -104,7 +104,7 @@
 ; fake, debug, test
 (defn test-img []
   (let [url "http://dump.f5n.org/dump/4461aa9a5867480f4862084748ef29ff1cd366e4.jpeg"
-        path "/home/florian/code/clojure/simplex-clj/resources/public/dump/"
+        path "/home/florian/code/clojure/multiplex/resources/public/dump/"
         ext (util/file-extension url)
         newname (str (util/hash-filename url) "." ext)
         x (util/download-file url (str path newname))

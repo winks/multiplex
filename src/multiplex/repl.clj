@@ -1,5 +1,5 @@
-(ns simplex-clj.repl
-  (:use simplex-clj.handler
+(ns multiplex.repl
+  (:use multiplex.handler
         ring.server.standalone
         [ring.middleware file-info file]))
 

@@ -1,0 +1,22 @@
+{% extends "multiplex/views/templates/page_base.html" %}
+{% block content %}
+
+{% for post in posts %}
+
+{% ifequal post.itemtype "video" %}
+ {% include "multiplex/views/templates/post_video.html" %}
+{% else %}
+ {% ifequal post.itemtype "link" %}
+  {% include "multiplex/views/templates/post_link.html" %}
+ {% else %}
+  {% ifequal post.itemtype "image" %}
+   {% include "multiplex/views/templates/post_image.html" %}
+  {% else %}
+   {% include "multiplex/views/templates/post_text.html" %}
+  {% endifequal %}
+ {% endifequal %}
+{% endifequal %}
+
+{% endfor %}
+
+{% endblock %}

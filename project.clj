@@ -1,5 +1,5 @@
 (defproject
-  simplex-clj
+  multiplex
   "0.1.0-SNAPSHOT"
   :dependencies
   [[org.clojure/clojure "1.5.1"]
@@ -24,9 +24,9 @@
      com.sun.jdmk/jmxtools
      com.sun.jmx/jmxri]]]
   :ring
-  {:handler simplex-clj.handler/war-handler,
-   :init simplex-clj.handler/init,
-   :destroy simplex-clj.handler/destroy}
+  {:handler multiplex.handler/war-handler,
+   :init multiplex.handler/init,
+   :destroy multiplex.handler/destroy}
   :profiles
   {:production
    {:ring

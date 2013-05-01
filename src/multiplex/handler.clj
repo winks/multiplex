@@ -1,5 +1,5 @@
-(ns simplex-clj.handler
-  (:use simplex-clj.routes.home
+(ns multiplex.handler
+  (:use multiplex.routes.home
         compojure.core)
   (:require [noir.util.middleware :as middleware]
             [compojure.route :as route]))
@@ -14,7 +14,7 @@
    an app server such as Tomcat
    put any initialization code here"
   []
-  (println "simplex-clj started successfully..."))
+  (println "multiplex started successfully..."))
 
 (defn destroy
   "destroy will be called when your application

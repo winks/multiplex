@@ -1,7 +1,7 @@
-(ns simplex-clj.models.db
+(ns multiplex.models.db
   (:use korma.core
         [korma.db :only (defdb mysql)])
-  (:require [simplex-clj.config :as config]))
+  (:require [multiplex.config :as config]))
 
 (def itemtypes '("image" "link" "text" "video"))
 
