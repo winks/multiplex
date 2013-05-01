@@ -29,7 +29,7 @@
 (defn valid-post-type?
   "determines if the given type of post is allowed"
   [arg]
-  (let [allowed (db/itemtypes)]
+  (let [allowed (config/itemtypes)]
     (some #{arg} allowed)))
 
 (defn file-extension
@@ -56,9 +56,11 @@
           host (host-name url)]
       (if (some #{host} config/sites-video)
         "video"
-        (if (some #{ext} config/img-types)
-          "image"
-          "link")))))
+        (if (some #{host} config/sites-audio)
+          "audio"
+          (if (some #{ext} config/img-types)
+            "image"
+            "link"))))))
 
 (defn image-size
   "returns width and height of a local image as a vector"
@@ -85,7 +87,10 @@
         (some #{host} config/sites-vimeo)
         (let [matcher (re-matcher #"/([0-9]+)" s)]
           {:site "vimeo" :code (second (re-find matcher))})
-        {:site "err" :code ""}))))
+        (if
+          (some #{host} config/sites-soundcloud)
+          {:site "soundcloud" :code ""}
+          {:site "err" :code ""})))))
 
 
 (defn int-or-default

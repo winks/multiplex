@@ -1,10 +1,17 @@
 (ns multiplex.config)
 
+(def itemtypes '("image" "link" "text" "video" "audio"))
+
 (def img-types '("jpg" "png" "gif" "svg" "jpeg"))
+
 (def sites-youtube '("youtube.com" "youtu.be"))
 (def sites-vimeo '("vimeo.com"))
 (def sites-myvideo '("myvideo.de"))
 (def sites-video (flatten (conj sites-youtube sites-vimeo sites-myvideo)))
+
+(def sites-soundcloud '("soundcloud.com" "snd.sc"))
+(def sites-xy '("example.example"))
+(def sites-audio (flatten (conj sites-soundcloud sites-xy)))
 
 (def abs-path "/home/florian/code/clojure/multiplex/resources/public/dump")
 (def rel-path "/dump")

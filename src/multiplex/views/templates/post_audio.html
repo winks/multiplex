@@ -1,0 +1,16 @@
+<li class="audio">
+<span class="small">| {{post.created}} <a href="/show/{{post.id}}">#</a></span></li>
+{% ifequal post.site "soundcloud" %}
+<div id="oEmbed-{{post.id}}"></div>
+<script>
+SC.initialize({
+  client_id: 'YOUR_CLIENT_ID'
+});
+
+var track_url = '{{ post.url }}';
+SC.oEmbed(track_url, { auto_play: false, maxwidth: 400 }, document.getElementById("oEmbed-{{post.id}}"));
+</script>
+<p>{{ post.txt }}</p>
+{% else %}
+  Unknown format.
+{% endifequal %}

@@ -57,10 +57,11 @@
 
 ; interaction
 (defn cleanup
+  "add mandatory parameters like created/updated and remove unneeded ones"
   ([params]
     (cleanup params []))
   ([params what]
-    (apply dissoc params (conj what :apikey :title))))
+    (assoc (apply dissoc params (conj what :apikey :title)) :created nil :updated nil)))
 
 (defn store-image [params]
   (let [ext (util/file-extension (:url params))
@@ -70,26 +71,22 @@
         params (assoc params :id nil
                              :meta (json/json-str {:size (clojure.string/join ":" sizes) :url (:url params)})
                              :tag "foo"
-                             :created nil
-                             :updated nil
                              :url (config/rel-file filename))]
+    (println (str "store-image: " (:url params)))
     (db/new-post (cleanup params))))
 
 (defn store-text [params]
   (let [params (assoc params :tag "foo"
                              :id nil
-                             :meta ""
-                             :created nil
-                             :updated nil)]
+                             :meta "")]
+    (println (str "store-text: " (:url params)))
     (db/new-post (cleanup params [:url]))))
 
-(defn store-link [params]
+(defn store-link-etc [params]
   (let [params (assoc params :tag "foo"
                              :id nil
-                             :meta ""
-                             :created nil
-                             :updated nil)]
-    (println (str "store-link:" (:url params)))
+                             :meta "")]
+    (println (str "store-link-etc: " (:url params)))
     (db/new-post (cleanup params))))
 
 
@@ -98,13 +95,14 @@
     (store-image params)
       (if (.equals "text" (:itemtype params))
         (store-text params)
-        (store-link params))))
+        (store-link-etc params))))
 
 (defn store-post [apikey params]
   (if-let [user (db/get-user-by-key apikey)]
     (let [itemtype (if (empty? (:itemtype params)) (util/guess-type (:url params) (:txt params)) (:itemtype params))
           params (assoc params :itemtype itemtype :author (:uid user))]
       (do
+        (println params)
         (store params)
         (layout/render
           "page_justposted.html" {:content (clojure.string/join ":" (vals params))} )))

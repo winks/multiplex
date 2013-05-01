@@ -12,7 +12,11 @@
   {% ifequal post.itemtype "image" %}
    {% include "multiplex/views/templates/post_image.html" %}
   {% else %}
-   {% include "multiplex/views/templates/post_text.html" %}
+   {% ifequal post.itemtype "audio" %}
+    {% include "multiplex/views/templates/post_audio.html" %}
+   {% else %}
+    {% include "multiplex/views/templates/post_text.html" %}
+   {% endifequal %}
   {% endifequal %}
  {% endifequal %}
 {% endifequal %}

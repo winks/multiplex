@@ -3,8 +3,6 @@
         [korma.db :only (defdb mysql)])
   (:require [multiplex.config :as config]))
 
-(def itemtypes '("image" "link" "text" "video"))
-
 (defn convert-db-uri
   "convert a JDBC/Heroku DB-DSN/URI to parts"
   [db-uri]
