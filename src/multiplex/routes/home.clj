@@ -89,13 +89,14 @@
                              :meta ""
                              :created nil
                              :updated nil)]
+    (println (str "store-link:" (:url params)))
     (db/new-post (cleanup params))))
 
 
 (defn store [params]
-  (if (.equals "image" (:imagetype params))
+  (if (.equals "image" (:itemtype params))
     (store-image params)
-      (if (.equals "text" (:imagetype params))
+      (if (.equals "text" (:itemtype params))
         (store-text params)
         (store-link params))))
 

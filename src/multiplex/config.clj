@@ -1,6 +1,6 @@
 (ns multiplex.config)
 
-(def img-types '("jpg" "png" "gif" "svg"))
+(def img-types '("jpg" "png" "gif" "svg" "jpeg"))
 (def sites-youtube '("youtube.com" "youtu.be"))
 (def sites-vimeo '("vimeo.com"))
 (def sites-myvideo '("myvideo.de"))

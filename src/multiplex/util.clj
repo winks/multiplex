@@ -19,7 +19,7 @@
   [filename]
     (md/md-to-html-string (io/slurp-resource filename)))
 
-(defn ^:dynamic download-file
+(defn download-file
   "copies an image from an URL to a local file"
   [url filename]
   (with-open [input (cjio/input-stream url)
