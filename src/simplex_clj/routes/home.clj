@@ -7,6 +7,13 @@
             [simplex-clj.models.db :as db]))
 
 ; simple pages
+(defn form-fill
+  [params]
+    (if
+      (and (empty? (:txt params)) (not (empty? (:title params))))
+      (assoc params :txt (:title params))
+      params))
+
 (defn BLANK []
   (layout/render "page_blank.html"))
 
@@ -20,13 +27,13 @@
 (defn add-page [params]
   (if
     (db/valid-apikey? (:apikey params))
-    (layout/render "page_add.html" params)
+    (layout/render "page_add.html" (form-fill params))
     (layout/render "page_add.html" (assoc params :apikey ""))))
 
 ; pages from DB
 (defn- add-fields [coll]
   (let [info (util/video-info (:url coll))]
-    (assoc coll :code (:code info), :site (:site info), :type (:itemtype coll))))
+    (assoc coll :code (:code info), :site (:site info))))
 
 (defn show-single [id]
   (layout/render
@@ -40,50 +47,53 @@
      "page_posts.html" {:posts (map add-fields (db/get-posts n (* n (dec page))))})))
 
 ; interaction
+(defn cleanup
+  ([params]
+    (cleanup params []))
+  ([params what]
+    (apply dissoc params (conj what :apikey :title))))
+
 (defn store-image [params]
   (let [ext (util/file-extension (:url params))
         filename (str (util/hash-filename (:url params)) "." ext)
         x (util/download-file (:url params) (config/abs-file filename))
         sizes (util/image-size (config/abs-file filename))
         params (assoc params :id nil
-                             :itemtype (:type params)
                              :meta (json/json-str {:size (clojure.string/join ":" sizes) :url (:url params)})
                              :tag "foo"
                              :created nil
                              :updated nil
                              :url (config/rel-file filename))]
-    (db/new-post (dissoc params :type))))
+    (db/new-post (cleanup params))))
 
 (defn store-text [params]
-  (let [params (assoc params :itemtype (:type params)
-                             :tag "foo"
+  (let [params (assoc params :tag "foo"
                              :id nil
                              :meta ""
                              :created nil
                              :updated nil)]
-    (db/new-post (dissoc params :type :url))))
+    (db/new-post (cleanup params [:url]))))
 
 (defn store-link [params]
-  (let [params (assoc params :itemtype (:type params)
-                             :tag "foo"
+  (let [params (assoc params :tag "foo"
                              :id nil
                              :meta ""
                              :created nil
                              :updated nil)]
-    (db/new-post (dissoc params :type))))
+    (db/new-post (cleanup params))))
 
 
 (defn store [params]
-  (if (.equals "image" (:type params))
+  (if (.equals "image" (:imagetype params))
     (store-image params)
-      (if (.equals "text" (:type params))
+      (if (.equals "text" (:imagetype params))
         (store-text params)
         (store-link params))))
 
 (defn store-post [apikey params]
   (if-let [user (db/get-user-by-key apikey)]
-    (let [type (if (empty? (:type params)) (util/guess-type (:url params) (:txt params)) (:type params))
-          params (assoc params :type type :author (:uid user))]
+    (let [itemtype (if (empty? (:itemtype params)) (util/guess-type (:url params) (:txt params)) (:itemtype params))
+          params (assoc params :itemtype itemtype :author (:uid user))]
       (do
         (store params)
         (layout/render
@@ -105,7 +115,7 @@
 
 (defn test-args [r]
   (layout/render
-    "page_blank.html" {:content (str (:url r) (:txt r) (:type r))}))
+    "page_blank.html" {:content (str (:url r) (:txt r) (:itemtype r))}))
 
 (defn show-single-fake [id]
   (layout/render
@@ -114,14 +124,26 @@
                        :id (str id)
                        :url "http://dump.f5n.org/dump/4461aa9a5867480f4862084748ef29ff1cd366e4.jpeg"}))
 
+(defn untaint
+  ([url txt itemtype]
+    (untaint url txt itemtype "" ""))
+  ([url txt itemtype apikey]
+    (untaint url txt itemtype apikey ""))
+  ([url txt itemtype apikey title]
+    {:url url
+     :txt (clojure.string/trim txt)
+     :itemtype itemtype
+     :apikey apikey
+     :title (clojure.string/trim title)}))
+
 ; ROUTES
 (defroutes home-routes
-  (GET "/test-args" [url txt type] (test-args {:url url :txt txt :type type}))
+  (GET "/test-args" [url txt type] (test-args (untaint url txt type)))
   (GET "/test-image" [] (test-img))
   (GET "/fake/:id" [id] (show-single-fake id))
 
-  (POST "/store/:apikey" [url txt type apikey] (store-post apikey {:url url :txt txt :type type}))
-  (GET "/add/:apikey" [url txt type apikey] (add-page {:apikey apikey :url url :txt txt :type type}))
+  (POST "/store/:apikey" [url txt type apikey] (store-post apikey (untaint url txt type)))
+  (GET "/add/:apikey" [url txt type apikey title] (add-page (untaint url txt type apikey title)))
   (GET "/show/:id" [id] (show-single id))
   (GET "/about" [] (about-page {}))
   (GET "/about/:apikey" [apikey] (about-page {:apikey apikey}))
