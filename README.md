@@ -1,8 +1,8 @@
 # multiplex
 
-This is my little soup.io clone.
-
-Thanks for hosting me, but I never really used the social features, I just noticed the downtimes.
+This is my little tumblelog.
+(or soup.io clone, if you like - thanks for hosting me,
+but I never really used the social features, I just noticed the downtimes.)
 
 ## Prerequisites
 
@@ -15,6 +15,8 @@ You will need [Leiningen][1] 2.0 or above installed.
 To start a web server for the application, run:
 
     lein with-profile production trampoline ring server
+
+or use ```run.sh```
 
 ## License
 

@@ -1,6 +1,6 @@
 (defproject
   multiplex
-  "0.1.0-SNAPSHOT"
+  "0.2.3-SNAPSHOT"
   :dependencies
   [[org.clojure/clojure "1.5.1"]
    [lib-noir "0.4.9"]
@@ -34,10 +34,10 @@
    :dev
    {:dependencies [[ring-mock "0.1.3"] [ring/ring-devel "1.1.8"]]}}
   :url
-  "http://example.com/FIXME"
+  "https://github.com/winks/multiplex"
   :plugins
   [[lein-ring "0.8.3"]]
   :description
-  "FIXME: write description"
+  "A little tumblelog"
   :min-lein-version "2.0.0")
 (comment [com.h2database/h2 "1.3.170"])
