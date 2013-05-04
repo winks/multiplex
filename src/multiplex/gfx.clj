@@ -34,7 +34,7 @@
   [image filename width-new height-new]
   (let [new-img (java.awt.image.BufferedImage. width-new height-new java.awt.image.BufferedImage/TYPE_INT_RGB)
         g (.createGraphics new-img)
-        resized (.drawImage g image 0 0 nil)
+        resized (.drawImage g image 0 0 width-new height-new nil)
         ext  (util/file-extension filename)
         new-name (str filename ".thumb." ext)]
     (println new-img)

@@ -69,7 +69,7 @@
         sizes (gfx/image-size img)
         resized (gfx/calc-resized img)
         params (assoc params :id nil
-                             :meta (json/write-str {:size (clojure.string/join ":" sizes) :url (:url params)})
+                             :meta {:size (clojure.string/join ":" sizes) :url (:url params)}
                              :tag "foo"
                              :url (config/rel-file filename))]
     (do
@@ -81,7 +81,8 @@
           (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename))))
         nil)
       (println (str "store-image: " (:url params)))
-      (db/new-post (cleanup params)))))
+      (let [params (assoc params :meta (json/write-str (:meta params)))]
+        (db/new-post (cleanup params))))))
 
 (defn store-text [params]
   (let [params (assoc params :tag "foo"
