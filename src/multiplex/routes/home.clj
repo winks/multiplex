@@ -32,19 +32,15 @@
     (layout/render "page_add.html" (assoc params :apikey ""))))
 
 ; pages from DB
-(defn- add-fields [coll]
-  (let [info (util/video-info (:url coll))]
-    (assoc coll :code (:code info), :site (:site info))))
-
 (defn show-single [id]
   (layout/render
-   "page_posts.html" {:posts (map add-fields (db/get-post-by-id id))}))
+   "page_posts.html" {:posts (map util/add-fields (db/get-post-by-id id))}))
 
 (defn show-some
   ([n]
     (show-some n 0))
   ([n page]
-    (let [posts (map add-fields (db/get-posts n (* n (dec page))))
+    (let [posts (map util/add-fields (db/get-posts n (* n (dec page))))
           current (clojure.core/count posts)
           page-newer (when-not (< page 2) (dec page))
           page-older (when-not (< current n) (inc page))
@@ -73,14 +69,16 @@
         sizes (gfx/image-size img)
         resized (gfx/calc-resized img)
         params (assoc params :id nil
-                             :meta (json/json-str {:size (clojure.string/join ":" sizes) :url (:url params)})
+                             :meta (json/write-str {:size (clojure.string/join ":" sizes) :url (:url params)})
                              :tag "foo"
                              :url (config/rel-file filename))]
     (do
       (println (str "xxx: " sizes resized))
       (if
         (not= sizes resized)
-        (gfx/resize img abs-filename (first resized) (second resized))
+        (do
+          (gfx/resize img abs-filename (first resized) (second resized))
+          (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename))))
         nil)
       (println (str "store-image: " (:url params)))
       (db/new-post (cleanup params)))))
@@ -99,7 +97,6 @@
     (println (str "store-link-etc: " (:url params)))
     (db/new-post (cleanup params))))
 
-
 (defn store [params]
   (if (.equals "image" (:itemtype params))
     (store-image params)
@@ -117,7 +114,6 @@
         (layout/render
           "page_justposted.html" {:content (clojure.string/join ":" (vals params))} )))
     (BLANK)))
-
 
 ; fake, debug, test
 (defn test-img []

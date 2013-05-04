@@ -1,5 +1,6 @@
 (ns multiplex.util
   (:require [noir.io :as io]
+            [clojure.data.json :as json]
             [markdown.core :as md]
             [clojure.java.io :as cjio]
             [digest :as digest]
@@ -78,6 +79,13 @@
           (some #{host} config/sites-soundcloud)
           {:site "soundcloud" :code ""}
           {:site "err" :code ""})))))
+
+(defn add-fields [coll]
+  (let [info (video-info (:url coll))
+        meta-foo (if (= "" (:meta coll)) "{}" (:meta coll))]
+    (assoc coll :code (:code info)
+                :site (:site info)
+                :meta (json/read-str meta-foo :key-fn keyword))))
 
 
 (defn int-or-default

@@ -3,6 +3,7 @@
 (def itemtypes '("image" "link" "text" "video" "audio"))
 
 (def img-types '("jpg" "png" "gif" "svg" "jpeg"))
+(def img-max-size [640 480])
 
 (def sites-youtube '("youtube.com" "youtu.be"))
 (def sites-vimeo '("vimeo.com"))
