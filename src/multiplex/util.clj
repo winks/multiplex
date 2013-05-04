@@ -62,19 +62,6 @@
             "image"
             "link"))))))
 
-(defn image-size
-  "returns width and height of a local image as a vector"
-  [filename]
-  (try
-    (with-open [r (java.io.FileInputStream. filename)]
-      (let [image (javax.imageio.ImageIO/read r)]
-        [(.getWidth image) (.getHeight image)]))
-    (catch Exception e
-      (do
-        (println (str "Reading size failed: " filename))
-        (println (.printStackTrace e))
-        [0 0]))))
-
 (defn video-info
   "extract the unique part of a video url, e.g. from youtube.com/watch?v=FOO"
   [s]

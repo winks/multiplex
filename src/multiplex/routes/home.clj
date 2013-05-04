@@ -1,10 +1,11 @@
 (ns multiplex.routes.home
   (:use compojure.core)
   (:require [clojure.data.json :as json]
-            [multiplex.views.layout :as layout]
-            [multiplex.util :as util]
             [multiplex.config :as config]
-            [multiplex.models.db :as db]))
+            [multiplex.gfx :as gfx]
+            [multiplex.models.db :as db]
+            [multiplex.util :as util]
+            [multiplex.views.layout :as layout]))
 
 ; simple pages
 (defn form-fill
@@ -66,14 +67,23 @@
 (defn store-image [params]
   (let [ext (util/file-extension (:url params))
         filename (str (util/hash-filename (:url params)) "." ext)
-        x (util/download-file (:url params) (config/abs-file filename))
-        sizes (util/image-size (config/abs-file filename))
+        abs-filename (config/abs-file filename)
+        x (util/download-file (:url params) abs-filename)
+        img (gfx/read-image abs-filename)
+        sizes (gfx/image-size img)
+        resized (gfx/calc-resized img)
         params (assoc params :id nil
                              :meta (json/json-str {:size (clojure.string/join ":" sizes) :url (:url params)})
                              :tag "foo"
                              :url (config/rel-file filename))]
-    (println (str "store-image: " (:url params)))
-    (db/new-post (cleanup params))))
+    (do
+      (println (str "xxx: " sizes resized))
+      (if
+        (not= sizes resized)
+        (gfx/resize img abs-filename (first resized) (second resized))
+        nil)
+      (println (str "store-image: " (:url params)))
+      (db/new-post (cleanup params)))))
 
 (defn store-text [params]
   (let [params (assoc params :tag "foo"
@@ -116,7 +126,8 @@
         ext (util/file-extension url)
         newname (str (util/hash-filename url) "." ext)
         x (util/download-file url (str path newname))
-        sizes (util/image-size (str path newname))]
+        img (gfx/read-image)
+        sizes (gfx/image-size img)]
     (println url)
     (println newname)
     (println sizes)))
