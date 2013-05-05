@@ -5,8 +5,6 @@
             [multiplex.models.db :as db]
             [multiplex.util :as util]))
 
-(defentity tags)
-
 ; prepare 
 (defn prepare-map []
   {:uid nil

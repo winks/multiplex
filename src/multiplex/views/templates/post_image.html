@@ -1,4 +1,6 @@
-<li class="pic small">{{post.created}} <a href="/post/{{post.id}}">#</a><br />
+<li class="pic">
+{% include "multiplex/views/templates/snippet_avatar.html" %}
+<span class="perma">| {{post.created}} <a href="/post/{{post.id}}">#</a></span><br />
 {% if post.meta.thumb %}
 <img src="{{post.url}}.thumb.{{post.meta.thumb}}" />
 {% else %}

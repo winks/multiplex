@@ -18,3 +18,7 @@
     }))
 
 (defdb dbm (mysql(convert-db-uri config/mydb)))
+
+(defentity clj)
+(defentity tags)
+(defentity users)

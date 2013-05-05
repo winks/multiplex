@@ -31,3 +31,6 @@
   "when setting up multiplex, think about some creative per-user salt, preferably using something random here"
   [username password userid]
   (str username ".wtf.is.this.shit." (System/currentTimeMillis)))
+
+; this should obviously be a vector of n different image urls, with index == users.uid
+(def user-icons (vec (take 10 (repeat "default-avatar.png"))))

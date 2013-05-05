@@ -7,6 +7,7 @@
 - user signup - DONE 0.2.5
 - stop ignoring tags while saving - DONE 0.2.5
 - externalize CSS - DONE 0.2.6
+- user avatars (not self-selected) - DONE 0.2.6
 - prettify meta data
 - user streams
 - implement tags fully

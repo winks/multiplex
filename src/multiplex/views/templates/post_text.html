@@ -1,1 +1,5 @@
-<li class="txt"><blockquote>{{post.txt}}</blockquote> <span class="small">| {{post.created}} <a href="/post/{{post.id}}">#</a></span></li>
+<li class="txt">
+{% include "multiplex/views/templates/snippet_avatar.html" %}
+<span class="perma">| {{post.created}} <a href="/post/{{post.id}}">#</a></span><br />
+<blockquote>{{post.txt}}</blockquote>
+</li>

@@ -79,14 +79,6 @@
           {:site "soundcloud" :code ""}
           {:site "err" :code ""})))))
 
-(defn add-fields [coll]
-  (let [info (video-info (:url coll))
-        meta-foo (if (= "" (:meta coll)) "{}" (:meta coll))]
-    (assoc coll :code (:code info)
-                :site (:site info)
-                :meta (json/read-str meta-foo :key-fn keyword))))
-
-
 (defn string-or-default
   ([s]
     (string-or-default s ""))
@@ -107,6 +99,15 @@
         (if (pos? n) n default))
       (catch Exception e
         default))))
+
+(defn add-fields [coll]
+  (let [info (video-info (:url coll))
+        meta-foo (if (= "" (:meta coll)) "{}" (:meta coll))
+        avatar (nth config/user-icons (int-or-default (:author coll) 0))]
+    (assoc coll :code (:code info)
+                :site (:site info)
+                :avatar (str "/img/" avatar)
+                :meta (json/read-str meta-foo :key-fn keyword))))
 
 (defn hash-filename [arg]
   (digest/sha1 arg))

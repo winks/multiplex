@@ -57,10 +57,11 @@ a:hover {
 
 .bd         {font-weight:bold;}
 .u          {text-decoration: none}
-.small      {font-size:small}
+.perma      {font-size:small; margin-top: -13px; vertical-align: top;}
 img         {border:0;}
 .hidden     {visibility: hidden;}
 .user-header {background-color: #D6F674;}
+.avatar     {margin-top: 2px;}
 
 hr {
   margin: 20px 0;

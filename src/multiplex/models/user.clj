@@ -5,8 +5,6 @@
             [multiplex.models.db :as db]
             [multiplex.util :as util]))
 
-(defentity users)
-
 ; prepare 
 (defn prepare-map []
   {:uid nil
@@ -21,32 +19,32 @@
 ; SQLish
 
 (defn new-user [user]
-  (insert users
+  (insert db/users
           (values user)))
 
 (defn update-user-credentials
   "Update password and apikey for a user."
   [uid password apikey]
-  (update users
+  (update db/users
     (set-fields {:password password
                  :apikey apikey})
     (where {:uid uid})))
 
 (defn get-user-by-id
   [id]
-  (first (select users
+  (first (select db/users
           (where {:id id})
           (limit 1))))
 
 (defn get-user-by-key
   [apikey]
-  (first (select users
+  (first (select db/users
            (where {:apikey apikey})
            (limit 1))))
 
 (defn get-user-by-name
   [username]
-  (first (select users
+  (first (select db/users
            (where {:username username})
            (limit 1))))
 
