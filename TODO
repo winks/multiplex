@@ -2,10 +2,11 @@
 - refactoring models - DONE 0.2.4
 - show original image url - DONE 0.2.4
 - user profile pages - DONE 0.2.4
-- change permalinks from /show/ to /post/, incl. 301 redirect - DONE 0.2.4
+- change permalinks from /show to /post - DONE 0.2.4
 - 301 redirects for old permalinks - DONE 0.2.5
 - user signup - DONE 0.2.5
 - stop ignoring tags while saving - DONE 0.2.5
+- externalize CSS - DONE 0.2.6
 - prettify meta data
 - user streams
 - implement tags fully

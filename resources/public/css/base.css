@@ -1,0 +1,124 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+body {
+  background: url(/img/back-dark.png) white no-repeat fixed;
+  color: #666600;
+  font-size: 12px;
+  font-family: "Lucida Grande", "Verdana", "sans-serif";
+  line-height: 21px;
+}
+#header {
+  background-color: #D6F674;
+  width: 100%;
+  height: 25px;
+  border-bottom: 1px solid #99cc00;
+  text-align: center;
+}
+#body {
+  width: 100%;
+  align: center;
+}
+#content {
+  width: 70%;
+  margin: 0 auto;
+}
+#footer {
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+}
+.footer {
+  border-top: 1px solid #99cc00;
+}
+
+h1, h2, h3  {
+  text-decoration:  none;
+  font-family:      'Trebuchet MS', 'Lucida Grande', verdana, arial, sans-serif;
+  font-size:        1.5em;
+  font-weight:      bold;
+  margin-top:       20px;
+  margin-bottom:    10px;
+}
+
+a {
+  color: #669900;
+  text-decoration: none;
+}
+a:link {
+  text-decoration:underline;
+  color:#669900;
+}
+a:hover {
+  color: #99cc00;
+  text-decoration: underline;
+}
+
+.bd         {font-weight:bold;}
+.u          {text-decoration: none}
+.small      {font-size:small}
+img         {border:0;}
+.hidden     {visibility: hidden;}
+.user-header {background-color: #D6F674;}
+
+hr {
+  margin: 20px 0;
+}
+
+ul.main {
+  list-style-type: none;
+  margin-left: 10px;
+  width: 70%
+  align: center;
+}
+
+.main li {
+    background-image: url(/img/ico/chat.png);
+    background-repeat: no-repeat;
+    background-position: 0 .4em;
+    padding: 3px 0 3px 34px;
+    margin: .4em 0;
+    line-height: 35px;
+}
+
+.main li a {
+   text-decoration: none;
+}
+
+li.fav {
+    background-image: url(/img/map1/star-3.png);
+}
+li.video {
+    background-image: url(/img/map1/video.png);
+}
+li.audio {
+    background-image: url(/img/map1/audio.png);
+}
+li.txt {
+    background-image: url(/img/map1/text.png);
+}
+li.pic {
+    background-image: url(/img/map1/photo.png);
+}
+li.fav p a {
+    font-size: 200%;
+    line-height: 250%;
+}
+li.alert {
+    background-image: url(/img/ico/alert.png);
+}
+
+form {
+  margin-top: 50px;
+  margin-left: -80px;
+}
+form input[type="text"] {
+  width: 90%;
+}
+form input[type="text"].smaller {
+  width:55%
+}
+form input[type="submit"] {
+  width: 100px;
+}
