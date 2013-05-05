@@ -6,6 +6,7 @@
             [multiplex.gfx :as gfx]
             [multiplex.models.user :as muser]
             [multiplex.models.post :as mpost]
+            [multiplex.models.tag :as mtag]
             [multiplex.util :as util]
             [multiplex.views.layout :as layout]))
 
@@ -88,7 +89,6 @@
         resized (gfx/calc-resized img)
         params (assoc params :id nil
                              :meta {:size (clojure.string/join ":" sizes) :url (:url params)}
-                             :tag "foo"
                              :url (config/rel-file filename))]
     (do
       (println (str "xxx: " sizes resized))
@@ -103,15 +103,13 @@
         (mpost/new-post (cleanup params))))))
 
 (defn store-text [params]
-  (let [params (assoc params :tag "foo"
-                             :id nil
+  (let [params (assoc params :id nil
                              :meta "")]
     (println (str "store-text: " (:url params)))
     (mpost/new-post (cleanup params [:url]))))
 
 (defn store-link-etc [params]
-  (let [params (assoc params :tag "foo"
-                             :id nil
+  (let [params (assoc params :id nil
                              :meta "")]
     (println (str "store-link-etc: " (:url params)))
     (mpost/new-post (cleanup params))))
@@ -136,15 +134,16 @@
 ; dispatch
 (defn untaint
   "TODO: this needs some real checks"
-  ([url txt itemtype]
-    (untaint url txt itemtype "" ""))
-  ([url txt itemtype apikey]
-    (untaint url txt itemtype apikey ""))
-  ([url txt itemtype apikey title]
+  ([url txt itemtype tags]
+    (untaint url txt itemtype tags "" ""))
+  ([url txt itemtype tags apikey]
+    (untaint url txt itemtype tags apikey ""))
+  ([url txt itemtype tags apikey title]
     {:url url
      :txt (clojure.string/trim txt)
      :itemtype itemtype
      :apikey apikey
+     :tag (mtag/sanitize-tags tags)
      :title (clojure.string/trim title)}))
 
 (defn untaint-signup
@@ -156,10 +155,10 @@
    :signupcode (util/string-or-default code)})
 
 (defroutes home-routes
-  (POST "/store/:apikey" [url txt type apikey] (render-page-store apikey (untaint url txt type)))
+  (POST "/store/:apikey" [url txt type apikey tags] (render-page-store apikey (untaint url txt type tags)))
   (POST "/signup" [username email password code] (render-page-signup (untaint-signup username email password code)))
   (GET "/signup" [code] (render-page-signup {:code (util/string-or-default code "")}))
-  (GET "/add/:apikey" [url txt type apikey title] (render-page-add (untaint url txt type apikey title)))
+  (GET "/add/:apikey" [url txt type tags apikey title] (render-page-add (untaint url txt type (util/string-or-default tags) apikey title)))
   (GET "/post/:id" [id] (show-single id))
   (GET "/show/:id" [id] (redirect (str "/post/" id) :permanent))
   (GET "/about" [] (render-page-about))

@@ -65,5 +65,5 @@
           new-pass   (util/hash-password (config/salt-password (:username params) (:password params) uid))]
       (do
         (update-user-credentials uid new-pass new-apikey)
-        {:username (:username params) :apikey new-apikey} :content true))
+        {:username (:username params) :apikey new-apikey :content true}))
     false))

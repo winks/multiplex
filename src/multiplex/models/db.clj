@@ -18,5 +18,3 @@
     }))
 
 (defdb dbm (mysql(convert-db-uri config/mydb)))
-
-(defentity tags)
