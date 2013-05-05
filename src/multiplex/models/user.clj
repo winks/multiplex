@@ -30,6 +30,12 @@
                  (where {:apikey apikey})
                  (limit 1))))
 
+(defn get-user-by-name
+  [username]
+  (first (select users
+                 (where {:username username})
+                 (limit 1))))
+
 (defn valid-apikey?
   [apikey]
   (not (nil? (get-user-by-key apikey))))

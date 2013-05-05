@@ -3,20 +3,6 @@
 
 <div class="center">
 
-{% if apikey %}
-<p>
-Hello, <a href="mailto:{{ email }}">{{ username }}</a><br />
-Your API key is <code>{{ apikey }}</code><br />
-</p>
-
-<p>Use this bookmark: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://dump.f5n.org/add/{{ apikey }}?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'multiplex','toolbar=no,width=700,height=350'));">Bookmark me</a><br />
-</p>
-{% else %}
-<p>Use this bookmark: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://dump.f5n.org/add/YOURAPIKEY?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'multiplex','toolbar=no,width=700,height=350'));">Bookmark me</a><br />
-</p>
-{% endif %}
-
-<hr>
 <p>
 this is multiplex, the evolution of simplex.<br /><br />
 Built with <a href="http://www.luminusweb.net">luminus</a>,
@@ -26,6 +12,11 @@ Built with <a href="http://www.luminusweb.net">luminus</a>,
  <a href="http://zeptojs.com/">zepto.js</a> and not much more.
 </p>
 <p>Icons by <a href="http://mapicons.nicolasmollet.com/">Map Icons Collection</a> (CC-BY-SA 3.0)</p>
+
+<hr>
+
+<p>Use this bookmark (and add your API key): <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://dump.f5n.org/add/YOURAPIKEY?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'multiplex','toolbar=no,width=700,height=350'));">Bookmark me</a><br />
+</p>
 
 </div>
 

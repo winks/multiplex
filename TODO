@@ -1,8 +1,9 @@
 - thumbnails for big pictures - DONE 0.2.3
 - refactoring models - DONE 0.2.4
 - show original image url - DONE 0.2.4
+- user profile pages - DONE 0.2.4
+- change permalinks from /show/ to /post/ - DONE 0.2.4
 - prettify meta data
-- user profile pages
 - user streams
 - tags
 - import whole soup account

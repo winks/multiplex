@@ -1,5 +1,4 @@
-<li class="video">
-<span class="small">| {{post.created}} <a href="/show/{{post.id}}">#</a></span></li>
+<li class="video"><span class="small">| {{post.created}} <a href="/post/{{post.id}}">#</a><br /></span>
 {% ifequal post.site "vimeo" %}
  <iframe src="http://player.vimeo.com/video/{{ post.code }}" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 <p>{{ post.txt }}</p>
@@ -11,3 +10,4 @@
   Unknown video format.
  {% endifequal %}
 {% endifequal %}
+</li>

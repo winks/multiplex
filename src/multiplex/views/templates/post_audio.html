@@ -1,5 +1,5 @@
 <li class="audio">
-<span class="small">| {{post.created}} <a href="/show/{{post.id}}">#</a></span></li>
+<span class="small">| {{post.created}} <a href="/post/{{post.id}}">#</a></span>
 {% ifequal post.site "soundcloud" %}
 <div id="oEmbed-{{post.id}}"></div>
 <script>
@@ -14,3 +14,4 @@ SC.oEmbed(track_url, { auto_play: false, maxwidth: 400 }, document.getElementByI
 {% else %}
   Unknown format.
 {% endifequal %}
+</li>

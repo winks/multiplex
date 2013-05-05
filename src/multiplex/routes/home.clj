@@ -37,8 +37,13 @@
 (defn home-page []
   (layout/render "page_home.html" {:content (util/md->html "/md/docs.md")}))
 
-(defn render-page-about [params]
-  (layout/render "page_about.html" (muser/get-user-by-key (:apikey params))))
+(defn render-page-about []
+  (layout/render "page_about.html"))
+
+(defn render-page-user [params]
+  (if-let [usr (muser/get-user-by-key (:apikey params))]
+   (layout/render "page_user.html" usr)
+   (layout/render "page_user.html" (cleanup (muser/get-user-by-name (:username params))))))
 
 (defn render-page-add
   [params]
@@ -139,6 +144,8 @@
   (POST "/store/:apikey" [url txt type apikey] (render-page-store apikey (untaint url txt type)))
   (GET "/add/:apikey" [url txt type apikey title] (render-page-add (untaint url txt type apikey title)))
   (GET "/show/:id" [id] (show-single id))
-  (GET "/about" [] (render-page-about {}))
-  (GET "/about/:apikey" [apikey] (render-page-about {:apikey apikey}))
+  (GET "/post/:id" [id] (show-single id))
+  (GET "/about" [] (render-page-about))
+  (GET "/user/:username/:apikey" [username apikey] (render-page-user {:username username :apikey apikey}))
+  (GET "/user/:username" [username] (render-page-user {:username username}))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))
