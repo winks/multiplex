@@ -4,4 +4,21 @@
 {% else %}
 <img src="{{post.url}}" />
 {% endif %}
+
+{% if post.meta %}
+  <span><a id="meta-link-{{post.id}}">META +</a></span>
+  <script>$("#meta-link-{{post.id}}").on("click", function(e) {$("#meta-{{post.id}}").toggleClass("hidden");});</script>
+    <div id="meta-{{post.id}}" class="hidden">
+    {% if post.meta.url %}
+      <div id="meta-url-{{post.id}}">
+      {{post.meta.url}}
+      </div>
+    {% endif %}
+    {% if post.meta.size %}
+      <div id="meta-size-{{post.id}}">
+      {{post.meta.size}}
+      </div>
+    {% endif %}
+    </div>
+{% endif %}
 </li>

@@ -1,6 +1,7 @@
 - thumbnails for big pictures - DONE 0.2.3
 - refactoring models - DONE 0.2.4
-- show original image url
+- show original image url - DONE 0.2.4
+- prettify meta data
 - user profile pages
 - user streams
 - tags
