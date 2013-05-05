@@ -3,11 +3,12 @@
   (:require [clojure.data.json :as json]
             [multiplex.config :as config]
             [multiplex.gfx :as gfx]
-            [multiplex.models.db :as db]
+            [multiplex.models.user :as muser]
+            [multiplex.models.post :as mpost]
             [multiplex.util :as util]
             [multiplex.views.layout :as layout]))
 
-; simple pages
+; parameter mangling
 (defn form-fill
   [params]
     (if
@@ -15,36 +16,47 @@
       (assoc params :txt (:title params))
       params))
 
+(defn prepare-page-add
+  [params]
+  (if
+    (muser/valid-apikey? (:apikey params))
+    (form-fill params)
+    (assoc params :apikey "")))
+
+(defn cleanup
+  "add mandatory parameters like created/updated and remove unneeded ones"
+  ([params]
+    (cleanup params []))
+  ([params what]
+    (assoc (apply dissoc params (conj what :apikey :title)) :created nil :updated nil)))
+
+; simple pages
 (defn BLANK []
   (layout/render "page_blank.html"))
 
 (defn home-page []
-  (layout/render
-    "page_home.html" {:content (util/md->html "/md/docs.md")}))
+  (layout/render "page_home.html" {:content (util/md->html "/md/docs.md")}))
 
-(defn about-page [params]
-  (layout/render "page_about.html" (db/get-user-by-key (:apikey params))))
+(defn render-page-about [params]
+  (layout/render "page_about.html" (muser/get-user-by-key (:apikey params))))
 
-(defn add-page [params]
-  (if
-    (db/valid-apikey? (:apikey params))
-    (layout/render "page_add.html" (form-fill params))
-    (layout/render "page_add.html" (assoc params :apikey ""))))
+(defn render-page-add
+  [params]
+  (layout/render "page_add.html" (prepare-page-add params)))
 
 ; pages from DB
 (defn show-single [id]
-  (layout/render
-   "page_posts.html" {:posts (map util/add-fields (db/get-post-by-id id))}))
+  (layout/render "page_posts.html" {:posts (map util/add-fields (mpost/get-post-by-id id))}))
 
 (defn show-some
   ([n]
     (show-some n 0))
   ([n page]
-    (let [posts (map util/add-fields (db/get-posts n (* n (dec page))))
+    (let [posts (map util/add-fields (mpost/get-posts n (* n (dec page))))
           current (clojure.core/count posts)
           page-newer (when-not (< page 2) (dec page))
           page-older (when-not (< current n) (inc page))
-          page-count (db/get-post-count)
+          page-count (mpost/get-post-count)
           pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))]
       (layout/render
        "page_posts.html" {:posts posts
@@ -53,12 +65,6 @@
                           :pages pages}))))
 
 ; interaction
-(defn cleanup
-  "add mandatory parameters like created/updated and remove unneeded ones"
-  ([params]
-    (cleanup params []))
-  ([params what]
-    (assoc (apply dissoc params (conj what :apikey :title)) :created nil :updated nil)))
 
 (defn store-image [params]
   (let [ext (util/file-extension (:url params))
@@ -82,65 +88,42 @@
         nil)
       (println (str "store-image: " (:url params)))
       (let [params (assoc params :meta (json/write-str (:meta params)))]
-        (db/new-post (cleanup params))))))
+        (mpost/new-post (cleanup params))))))
 
 (defn store-text [params]
   (let [params (assoc params :tag "foo"
                              :id nil
                              :meta "")]
     (println (str "store-text: " (:url params)))
-    (db/new-post (cleanup params [:url]))))
+    (mpost/new-post (cleanup params [:url]))))
 
 (defn store-link-etc [params]
   (let [params (assoc params :tag "foo"
                              :id nil
                              :meta "")]
     (println (str "store-link-etc: " (:url params)))
-    (db/new-post (cleanup params))))
+    (mpost/new-post (cleanup params))))
 
-(defn store [params]
+(defn store-dispatch [params]
   (if (.equals "image" (:itemtype params))
     (store-image params)
       (if (.equals "text" (:itemtype params))
         (store-text params)
         (store-link-etc params))))
 
-(defn store-post [apikey params]
-  (if-let [user (db/get-user-by-key apikey)]
+(defn render-page-store [apikey params]
+  (if-let [user (muser/get-user-by-key apikey)]
     (let [itemtype (if (empty? (:itemtype params)) (util/guess-type (:url params) (:txt params)) (:itemtype params))
           params (assoc params :itemtype itemtype :author (:uid user))]
       (do
         (println params)
-        (store params)
-        (layout/render
-          "page_justposted.html" {:content (clojure.string/join ":" (vals params))} )))
+        (store-dispatch params)
+        (layout/render "page_justposted.html" {:content (clojure.string/join ":" (vals params))} )))
     (BLANK)))
 
-; fake, debug, test
-(defn test-img []
-  (let [url "http://dump.f5n.org/dump/4461aa9a5867480f4862084748ef29ff1cd366e4.jpeg"
-        path "/home/florian/code/clojure/multiplex/resources/public/dump/"
-        ext (util/file-extension url)
-        newname (str (util/hash-filename url) "." ext)
-        x (util/download-file url (str path newname))
-        img (gfx/read-image)
-        sizes (gfx/image-size img)]
-    (println url)
-    (println newname)
-    (println sizes)))
-
-(defn test-args [r]
-  (layout/render
-    "page_blank.html" {:content (str (:url r) (:txt r) (:itemtype r))}))
-
-(defn show-single-fake [id]
-  (layout/render
-    "post_image.html" {:content (str "Foo: " id)
-                       :created "08.06.2011 09:32"
-                       :id (str id)
-                       :url "http://dump.f5n.org/dump/4461aa9a5867480f4862084748ef29ff1cd366e4.jpeg"}))
-
+; dispatch
 (defn untaint
+  "TODO: this needs some real checks"
   ([url txt itemtype]
     (untaint url txt itemtype "" ""))
   ([url txt itemtype apikey]
@@ -152,17 +135,10 @@
      :apikey apikey
      :title (clojure.string/trim title)}))
 
-; ROUTES
 (defroutes home-routes
-  (GET "/test-args" [url txt type] (test-args (untaint url txt type)))
-  (GET "/test-image" [] (test-img))
-  (GET "/fake/:id" [id] (show-single-fake id))
-
-  (POST "/store/:apikey" [url txt type apikey] (store-post apikey (untaint url txt type)))
-  (GET "/add/:apikey" [url txt type apikey title] (add-page (untaint url txt type apikey title)))
+  (POST "/store/:apikey" [url txt type apikey] (render-page-store apikey (untaint url txt type)))
+  (GET "/add/:apikey" [url txt type apikey title] (render-page-add (untaint url txt type apikey title)))
   (GET "/show/:id" [id] (show-single id))
-  (GET "/about" [] (about-page {}))
-  (GET "/about/:apikey" [apikey] (about-page {:apikey apikey}))
+  (GET "/about" [] (render-page-about {}))
+  (GET "/about/:apikey" [apikey] (render-page-about {:apikey apikey}))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))
-
-  ;(GET "/store/:apikey" [url txt type apikey] (store-post apikey {:url url :txt txt :type type}))

@@ -4,7 +4,6 @@
             [markdown.core :as md]
             [clojure.java.io :as cjio]
             [digest :as digest]
-            [multiplex.models.db :as db]
             [multiplex.config :as config]))
 
 
