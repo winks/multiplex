@@ -4,16 +4,18 @@
 <div class="center">
 
 <div class="user-header">
-{{username}}'s multiplex
+{% include "multiplex/views/templates/snippet_avatar.html" %}
+<span class="user-header-text">{{post.username}}'s multiplex</a>
+</span>
 </div>
 
-{% if apikey %}
+{% if post.apikey %}
 <p>
-Hello, <a href="mailto:{{ email }}">{{ username }}</a><br />
-Your API key is <code>{{ apikey }}</code><br />
+Hello, <a href="mailto:{{ post.email }}">{{ post.username }}</a><br />
+Your API key is <code>{{ post.apikey }}</code><br />
 </p>
 
-<p>Use this bookmark: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://dump.f5n.org/add/{{ apikey }}?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'multiplex','toolbar=no,width=700,height=350'));">Bookmark me</a><br />
+<p>Use this bookmark: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://dump.f5n.org/add/{{ post.apikey }}?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'multiplex','toolbar=no,width=700,height=350'));">Bookmark me</a><br />
 </p>
 {% endif %}
 

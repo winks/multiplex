@@ -106,7 +106,7 @@
         avatar (nth config/user-icons (int-or-default (:author coll) 0))]
     (assoc coll :code (:code info)
                 :site (:site info)
-                :avatar (str "/img/" avatar)
+                :avatar avatar
                 :meta (json/read-str meta-foo :key-fn keyword))))
 
 (defn hash-filename [arg]

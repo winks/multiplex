@@ -44,8 +44,10 @@
 
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]
-   (layout/render "page_user.html" usr)
-   (layout/render "page_user.html" (cleanup (muser/get-user-by-name (:username params))))))
+   (layout/render "page_user.html" {:post (assoc usr :avatar (nth config/user-icons (:uid usr)))})
+   (let [usr (cleanup (muser/get-user-by-name (:username params)))
+         ava (nth config/user-icons (:uid usr))]
+     (layout/render "page_user.html" {:post (assoc usr :avatar ava)}))))
 
 (defn render-page-add
   [params]

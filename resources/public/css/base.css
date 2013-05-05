@@ -61,6 +61,11 @@ a:hover {
 img         {border:0;}
 .hidden     {visibility: hidden;}
 .user-header {background-color: #D6F674;}
+.user-header-text {
+ margin-top: -3px;
+ vertical-align: top;
+font-size: x-large;
+}
 .avatar     {margin-top: 2px;}
 
 hr {
