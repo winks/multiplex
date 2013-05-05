@@ -1,5 +1,6 @@
 (ns multiplex.routes.home
-  (:use compojure.core)
+  (:use compojure.core
+        [noir.response :only (redirect)])
   (:require [clojure.data.json :as json]
             [multiplex.config :as config]
             [multiplex.gfx :as gfx]
@@ -157,11 +158,11 @@
 (defroutes home-routes
   (POST "/store/:apikey" [url txt type apikey] (render-page-store apikey (untaint url txt type)))
   (POST "/signup" [username email password code] (render-page-signup (untaint-signup username email password code)))
-  (GET "/add/:apikey" [url txt type apikey title] (render-page-add (untaint url txt type apikey title)))
-  (GET "/show/:id" [id] (show-single id))
-  (GET "/post/:id" [id] (show-single id))
-  (GET "/about" [] (render-page-about))
   (GET "/signup" [code] (render-page-signup {:code (util/string-or-default code "")}))
+  (GET "/add/:apikey" [url txt type apikey title] (render-page-add (untaint url txt type apikey title)))
+  (GET "/post/:id" [id] (show-single id))
+  (GET "/show/:id" [id] (redirect (str "/post/" id) :permanent))
+  (GET "/about" [] (render-page-about))
   (GET "/user/:username/:apikey" [username apikey] (render-page-user {:username username :apikey apikey}))
   (GET "/user/:username" [username] (render-page-user {:username username}))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))
