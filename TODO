@@ -1,5 +1,8 @@
+- thumbnails for big pictures - DONE 0.2.3
 - show original image url
-- thumbnails for big pictures
+- refactoring models
 - user profile pages
 - user streams
 - tags
+- import whole soup account
+- show soup account/friendstream and allow to repost to multiplex
