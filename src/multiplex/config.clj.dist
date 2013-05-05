@@ -21,3 +21,13 @@
 (defn rel-file [file] (str rel-path "/" file))
 
 (def mydb (or (System/getenv "CLEARDB_DATABASE_URL") "mysql://USER:PASS@127.0.0.1/DBNAME"))
+
+(defn salt-password
+  "when setting up multiplex, think about some creative per-user salt, preferably without something random to allow people to login later"
+  [username password userid]
+  (str username "_salted_" password))
+
+(defn salt-apikey
+  "when setting up multiplex, think about some creative per-user salt, preferably using something random here"
+  [username password userid]
+  (str username ".wtf.is.this.shit." (System/currentTimeMillis)))

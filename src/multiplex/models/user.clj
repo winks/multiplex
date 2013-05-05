@@ -2,40 +2,68 @@
   (:use korma.core
         [korma.db :only (defdb mysql)])
   (:require [multiplex.config :as config]
-            [multiplex.models.db :as db]))
+            [multiplex.models.db :as db]
+            [multiplex.util :as util]))
 
 (defentity users)
 
-; users
-(defn create-user [user]
+; prepare 
+(defn prepare-map []
+  {:uid nil
+   :username nil
+   :email nil
+   :password nil
+   :apikey nil
+   :signupcode nil
+   :created nil
+   :updated nil})
+
+; SQLish
+
+(defn new-user [user]
   (insert users
           (values user)))
 
-(defn update-user [id first-name last-name email]
+(defn update-user-credentials
+  "Update password and apikey for a user."
+  [uid password apikey]
   (update users
-  (set-fields {:first_name first-name
-               :last_name last-name
-               :email email})
-  (where {:id id})))
+    (set-fields {:password password
+                 :apikey apikey})
+    (where {:uid uid})))
 
 (defn get-user-by-id
   [id]
   (first (select users
-                 (where {:id id})
-                 (limit 1))))
+          (where {:id id})
+          (limit 1))))
 
 (defn get-user-by-key
   [apikey]
   (first (select users
-                 (where {:apikey apikey})
-                 (limit 1))))
+           (where {:apikey apikey})
+           (limit 1))))
 
 (defn get-user-by-name
   [username]
   (first (select users
-                 (where {:username username})
-                 (limit 1))))
+           (where {:username username})
+           (limit 1))))
+
+; abstraction
 
 (defn valid-apikey?
+  "Whether a given apikey is valid."
   [apikey]
   (not (nil? (get-user-by-key apikey))))
+
+(defn create-user [params]
+  (if (seq (:username params))
+    (let [db-params  (merge (prepare-map) (assoc params :apikey "FIXME" :password "FIXME"))
+          uid        (:GENERATED_KEY (new-user db-params))
+          new-apikey (util/hash-apikey (config/salt-apikey (:username params) (:password params) uid))
+          new-pass   (util/hash-password (config/salt-password (:username params) (:password params) uid))]
+      (do
+        (update-user-credentials uid new-pass new-apikey)
+        {:username (:username params) :apikey new-apikey} :content true))
+    false))

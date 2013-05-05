@@ -1,0 +1,24 @@
+{% extends "multiplex/views/templates/page_base.html" %}
+{% block content %}
+
+{% if content %}
+
+<p>
+Welcome, <em>{{username}}</em>!<br />
+
+Have a look at your <a href="/user/{{username}}/{{apikey}}">user page</a>.
+</p>
+
+{% else %}
+
+<form action="/signup" id="signupform" method="post">
+    <input type="hidden" name="code" value="{{code}}" />
+    <p><label>Username:<br /> <input type="text" name="username" /></label></p>
+    <p><label>Password:<br /> <input type="password" name="password" /></label></p>
+    <p><label>E-Mail:<br /> <input type="text" name="email" /></label></p>
+    <input type="submit" value="post" />
+</form>
+
+{% endif %}
+
+{% endblock %}

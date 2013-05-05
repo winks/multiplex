@@ -6,7 +6,7 @@
 
 (defentity clj)
 
-; posts
+; SQLish
 (defn get-post-count []
   (:cnt (first (select clj (aggregate (count :id) :cnt)))))
 
@@ -33,8 +33,5 @@
 (defn new-post [params]
   (do
     (println params)
-    (println (sql-only
-      (insert clj
-        (values params))))
-    (insert clj
-      (values params))))
+    (println (sql-only (insert clj (values params))))
+    (insert clj (values params))))

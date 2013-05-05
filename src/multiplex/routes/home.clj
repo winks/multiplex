@@ -49,6 +49,12 @@
   [params]
   (layout/render "page_add.html" (prepare-page-add params)))
 
+(defn render-page-signup
+  [params]
+  (if-let [success (muser/create-user params)]
+    (layout/render "page_signup.html" success)
+    (layout/render "page_signup.html" params)))
+
 ; pages from DB
 (defn show-single [id]
   (layout/render "page_posts.html" {:posts (map util/add-fields (mpost/get-post-by-id id))}))
@@ -140,12 +146,22 @@
      :apikey apikey
      :title (clojure.string/trim title)}))
 
+(defn untaint-signup
+  "TODO: this needs some real checks"
+  [username email password code]
+  {:username (util/string-or-default username)
+   :email (util/string-or-default email)
+   :password  (util/string-or-default password)
+   :signupcode (util/string-or-default code)})
+
 (defroutes home-routes
   (POST "/store/:apikey" [url txt type apikey] (render-page-store apikey (untaint url txt type)))
+  (POST "/signup" [username email password code] (render-page-signup (untaint-signup username email password code)))
   (GET "/add/:apikey" [url txt type apikey title] (render-page-add (untaint url txt type apikey title)))
   (GET "/show/:id" [id] (show-single id))
   (GET "/post/:id" [id] (show-single id))
   (GET "/about" [] (render-page-about))
+  (GET "/signup" [code] (render-page-signup {:code (util/string-or-default code "")}))
   (GET "/user/:username/:apikey" [username apikey] (render-page-user {:username username :apikey apikey}))
   (GET "/user/:username" [username] (render-page-user {:username username}))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))

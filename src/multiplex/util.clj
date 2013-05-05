@@ -87,6 +87,15 @@
                 :meta (json/read-str meta-foo :key-fn keyword))))
 
 
+(defn string-or-default
+  ([s]
+    (string-or-default s ""))
+  ([s default]
+    (if
+      (empty? s)
+      default
+      (clojure.string/trim s))))
+
 (defn int-or-default
   "try to coerce to integer or return a safe default"
   [s default]
@@ -102,7 +111,7 @@
 (defn hash-filename [arg]
   (digest/sha1 arg))
 
-(defn hash-api-token [arg]
+(defn hash-apikey [arg]
   (digest/md5 arg))
 
 (defn hash-password [arg]
