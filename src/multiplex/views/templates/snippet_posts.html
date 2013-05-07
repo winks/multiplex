@@ -1,0 +1,31 @@
+{% for post in posts %}
+
+{% ifequal post.itemtype "video" %}
+ {% include "multiplex/views/templates/post_video.html" %}
+{% else %}
+ {% ifequal post.itemtype "link" %}
+  {% include "multiplex/views/templates/post_link.html" %}
+ {% else %}
+  {% ifequal post.itemtype "image" %}
+   {% include "multiplex/views/templates/post_image.html" %}
+  {% else %}
+   {% ifequal post.itemtype "audio" %}
+    {% include "multiplex/views/templates/post_audio.html" %}
+   {% else %}
+    {% include "multiplex/views/templates/post_text.html" %}
+   {% endifequal %}
+  {% endifequal %}
+ {% endifequal %}
+{% endifequal %}
+
+{% endfor %}
+
+{% if page-newer %}
+<a href="/?page={{page-newer}}">&laquo;&laquo;</a>
+{% endif %}
+{% for pg in pages %}
+ <a href="/?page={{pg}}">{{pg}}</a>
+{% endfor %}
+{% if page-older %}
+ <a href="/?page={{page-older}}">&raquo;&raquo;</a>
+{% endif %}

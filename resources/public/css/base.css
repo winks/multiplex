@@ -128,6 +128,9 @@ li.fav p a {
 li.alert {
     background-image: url(/img/ico/alert.png);
 }
+li.video p {
+    margin-left: 32px;
+}
 
 form {
   margin-top: 50px;

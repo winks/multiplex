@@ -32,9 +32,40 @@
   ([params what]
     (assoc (apply dissoc params (conj what :apikey :title)) :created nil :updated nil)))
 
+; pages from DB
+(defn show-single [id]
+  (layout/render "page_posts.html" {:posts (map util/add-fields (mpost/get-post-by-id id))}))
+
+(defn get-some
+  [n page where-clause]
+  (let [posts (map util/add-fields (mpost/get-posts n (* n (dec page)) where-clause))
+        current (clojure.core/count posts)
+        page-newer (when-not (< page 2) (dec page))
+        page-older (when-not (< current n) (inc page))
+        page-count (mpost/get-post-count where-clause)
+        pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))]
+    {:posts posts
+     :page-newer page-newer
+     :page-older page-older
+     :pages pages
+     :page-count page-count}))
+
+
+(defn show-some
+  ([n]
+    (show-some n 0 {}))
+  ([n page]
+    (show-some n page {}))
+  ([n page where-clause]
+    (layout/render
+      "page_posts.html" (get-some n page where-clause))))
+
 ; simple pages
 (defn BLANK []
   (layout/render "page_blank.html"))
+
+(defn render-page-content [content]
+  (layout/render "page_content.html" {:content (or content "empty")}))
 
 (defn home-page []
   (layout/render "page_home.html" {:content (util/md->html "/md/docs.md")}))
@@ -44,10 +75,13 @@
 
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]
-   (layout/render "page_user.html" {:post (assoc usr :avatar (nth config/user-icons (:uid usr)))})
-   (let [usr (cleanup (muser/get-user-by-name (:username params)))
-         ava (nth config/user-icons (:uid usr))]
-     (layout/render "page_user.html" {:post (assoc usr :avatar ava)}))))
+    (let [posts-map (get-some 10 1 {:author (:uid usr)})]
+      (layout/render "page_user.html" (assoc posts-map :post (assoc usr :avatar (nth config/user-icons (:uid usr))))))
+    (if-let [usr (muser/get-user-by-name (:username params))]
+      (let [ava (nth config/user-icons (:uid usr))
+            posts-map (get-some 10 1 {:author (:uid usr)})]
+        (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar ava))))
+      (render-page-content "User does not exist."))))
 
 (defn render-page-add
   [params]
@@ -58,26 +92,6 @@
   (if-let [success (muser/create-user params)]
     (layout/render "page_signup.html" success)
     (layout/render "page_signup.html" params)))
-
-; pages from DB
-(defn show-single [id]
-  (layout/render "page_posts.html" {:posts (map util/add-fields (mpost/get-post-by-id id))}))
-
-(defn show-some
-  ([n]
-    (show-some n 0))
-  ([n page]
-    (let [posts (map util/add-fields (mpost/get-posts n (* n (dec page))))
-          current (clojure.core/count posts)
-          page-newer (when-not (< page 2) (dec page))
-          page-older (when-not (< current n) (inc page))
-          page-count (mpost/get-post-count)
-          pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))]
-      (layout/render
-       "page_posts.html" {:posts posts
-                          :page-newer page-newer
-                          :page-older page-older
-                          :pages pages}))))
 
 ; interaction
 
@@ -166,4 +180,5 @@
   (GET "/about" [] (render-page-about))
   (GET "/user/:username/:apikey" [username apikey] (render-page-user {:username username :apikey apikey}))
   (GET "/user/:username" [username] (render-page-user {:username username}))
+  (GET "/user/:username/" [username] (redirect (str "/user/" username)))
   (GET "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))

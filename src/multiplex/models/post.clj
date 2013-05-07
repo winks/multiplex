@@ -5,8 +5,12 @@
             [multiplex.models.db :as db]))
 
 ; SQLish
-(defn get-post-count []
-  (:cnt (first (select db/clj (aggregate (count :id) :cnt)))))
+(defn get-post-count [where-clause]
+  (let [query (-> (select* db/clj)
+                  (aggregate (count :id) :cnt))]
+    (if (= {} where-clause)
+      (:cnt (first (-> query (select))))
+      (:cnt (first (-> query (where where-clause) (select)))))))
 
 (defn get-post-by-id [id]
   (do
@@ -22,22 +26,23 @@
 
 (defn get-posts
   ([n]
-    (get-posts n 0))
+    (get-posts n 0 {}))
   ([n off]
-    (do
-      (println (sql-only
-        (select db/clj
-          (join db/users (= :users.uid :author))
-          (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username])
-          (order :id :DESC)
-          (limit n)
-          (offset off))))
-      (select db/clj
-        (join db/users (= :users.uid :author))
-        (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username])
-        (order :id :DESC)
-        (limit n)
-        (offset off)))))
+    (get-posts n off {}))
+  ([n off where-clause]
+    (let [q (-> (select* db/clj)
+                (join db/users (= :users.uid :author))
+                (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username])
+                (order :id :DESC)
+                (limit n)
+                (offset off))]
+      (if (= {} where-clause)
+        (do
+          (println (-> q (as-sql)))
+          (-> q (select)))
+        (do
+          (println (-> q (where where-clause) (as-sql)))
+          (-> q (where where-clause) (select)))))))
 
 (defn new-post [params]
   (do

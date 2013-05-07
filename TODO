@@ -8,8 +8,9 @@
 - stop ignoring tags while saving - DONE 0.2.5
 - externalize CSS - DONE 0.2.6
 - user avatars (not self-selected) - DONE 0.2.6
+- user streams - DONE 0.2.7
+- Fix NPE on nonexisting user - DONE 0.2.7
 - prettify meta data
-- user streams
 - implement tags fully
 - import whole soup account
 - show soup account/friendstream and allow to repost to multiplex
