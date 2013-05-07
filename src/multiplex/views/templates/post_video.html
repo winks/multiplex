@@ -1,6 +1,6 @@
 <li class="video">
 {% include "multiplex/views/templates/snippet_avatar.html" %}
-<span class="perma">| {{post.created}} <a href="/post/{{post.id}}">#</a></span><br />
+{% include "multiplex/views/templates/snippet_perma.html" %}
 {% ifequal post.site "vimeo" %}
  <iframe src="http://player.vimeo.com/video/{{ post.code }}" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 <p>{{ post.txt }}</p>

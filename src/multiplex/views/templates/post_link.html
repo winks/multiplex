@@ -1,5 +1,5 @@
 <li class="fav">
 {% include "multiplex/views/templates/snippet_avatar.html" %}
-<span class="perma">| {{post.created}} <a href="/post/{{post.id}}">#</a></span><br />
+{% include "multiplex/views/templates/snippet_perma.html" %}
 <p><a href="{{post.url}}">{{post.txt}}</a></p>
 </li>

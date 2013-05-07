@@ -1,6 +1,6 @@
 <li class="audio">
 {% include "multiplex/views/templates/snippet_avatar.html" %}
-<span class="perma">| {{post.created}} <a href="/post/{{post.id}}">#</a></span>
+{% include "multiplex/views/templates/snippet_perma.html" %}
 {% ifequal post.site "soundcloud" %}
 <div id="oEmbed-{{post.id}}"></div>
 <script>
