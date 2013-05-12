@@ -15,9 +15,14 @@
     (.format (new java.text.SimpleDateFormat fmt) time)))
 
 (defn md->html
+  "creates HTML from string"
+  [s]
+    (md/md-to-html-string s))
+
+(defn mdfile->html
   "reads a markdown file from public/md and returns an HTML string"
   [filename]
-    (md/md-to-html-string (io/slurp-resource filename)))
+    (md->html (io/slurp-resource filename)))
 
 (defn download-file
   "copies an image from an URL to a local file"

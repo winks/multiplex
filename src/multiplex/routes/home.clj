@@ -68,7 +68,10 @@
   (layout/render "page_content.html" {:content (or content "empty")}))
 
 (defn home-page []
-  (layout/render "page_home.html" {:content (util/md->html "/md/docs.md")}))
+  (layout/render "page_home.html" {:content (util/mdfile->html "/md/docs.md")}))
+
+(defn render-page-changes []
+  (layout/render "page_content.html" {:content (util/mdfile->html "/md/changes.md")}))
 
 (defn render-page-about []
   (layout/render "page_about.html"))
@@ -178,6 +181,7 @@
   (GET "/post/:id" [id] (show-single id))
   (GET "/show/:id" [id] (redirect (str "/post/" id) :permanent))
   (GET "/about" [] (render-page-about))
+  (GET "/about/changes" [] (render-page-changes))
   (GET "/user/:username/:apikey" [username apikey] (render-page-user {:username username :apikey apikey}))
   (GET "/user/:username" [username] (render-page-user {:username username}))
   (GET "/user/:username/" [username] (redirect (str "/user/" username)))
