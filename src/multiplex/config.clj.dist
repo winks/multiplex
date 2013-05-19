@@ -14,6 +14,10 @@
 (def sites-xy '("example.example"))
 (def sites-audio (flatten (conj sites-soundcloud sites-xy)))
 
+(def multiplex {:page-title "multiplex"
+                :page-url "example.org"
+                :page-scheme "http"
+                :bookmark-text "Bookmark me"})
 (def abs-path "/srv/www/multiplex/resources/public/dump")
 (def rel-path "/dump")
 

@@ -1,6 +1,6 @@
 (defproject
   multiplex
-  "0.2.6-SNAPSHOT"
+  "0.2.7-SNAPSHOT"
   :dependencies
   [[org.clojure/clojure "1.5.1"]
    [lib-noir "0.4.9"]

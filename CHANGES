@@ -12,6 +12,7 @@
 * DONE 0.2.6 - user avatars (not self-selected)
 * DONE 0.2.7 - user streams
 * DONE 0.2.7 - Fix NPE on nonexisting user
+* DONE 0.2.7 - Fix resize bug
 
 # TODO
 

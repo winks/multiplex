@@ -97,6 +97,11 @@
     (layout/render "page_signup.html" params)))
 
 ; interaction
+(defn prep-new
+  [params]
+  (let [params (assoc params :meta (json/write-str (:meta params)))]
+    (mpost/new-post (cleanup params))))
+
 
 (defn store-image [params]
   (let [ext (util/file-extension (:url params))
@@ -111,15 +116,13 @@
                              :url (config/rel-file filename))]
     (do
       (println (str "xxx: " sizes resized))
-      (if
-        (not= sizes resized)
-        (do
-          (gfx/resize img abs-filename (first resized) (second resized))
-          (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename))))
-        nil)
       (println (str "store-image: " (:url params)))
-      (let [params (assoc params :meta (json/write-str (:meta params)))]
-        (mpost/new-post (cleanup params))))))
+        (if-let [need (gfx/needs-resize? sizes resized)]
+          (let [r (gfx/resize img abs-filename (first resized) (second resized))
+                params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
+                                                                 :thumbsize (clojure.string/join ":" resized)))]
+            (prep-new params))
+            (prep-new params)))))
 
 (defn store-text [params]
   (let [params (assoc params :id nil

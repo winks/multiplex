@@ -18,6 +18,10 @@
       (println (str "ERR: Reading size failed: " (str image)))
       [0 0]))))
 
+(defn needs-resize?
+  [orig-sizes new-sizes]
+  (not= orig-sizes new-sizes))
+
 (defn calc-resized
   [image]
   (let [sizes (image-size image)
@@ -27,7 +31,7 @@
     (println (str sizes " " cfg "|" ratio-w))
     (if
       (>= ratio-w 1)
-      [(/ (first sizes) ratio-w) (/ (second sizes) ratio-w)]
+      [(int (/ (first sizes) ratio-w)) (int (/ (second sizes) ratio-w))]
       sizes)))
 
 (defn resize
@@ -44,4 +48,5 @@
     (println resized)
     (println "\n")
     (println new-name)
-    (javax.imageio.ImageIO/write new-img ext (java.io.File. new-name))))
+    (javax.imageio.ImageIO/write new-img ext (java.io.File. new-name))
+    filename))
