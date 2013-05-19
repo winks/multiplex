@@ -2,14 +2,20 @@
 {% include "multiplex/views/templates/snippet_avatar.html" %}
 {% include "multiplex/views/templates/snippet_perma.html" %}
 {% if post.meta.thumb %}
-<img src="{{post.url}}.thumb.{{post.meta.thumb}}" />
+<a href="{{post.url}}"><img src="{{post.url}}.thumb.{{post.meta.thumb}}" /></a>
 {% else %}
 <img src="{{post.url}}" />
 {% endif %}
 
 {% if post.meta %}
-  <span><a id="meta-link-{{post.id}}">META +</a></span>
-  <script>$("#meta-link-{{post.id}}").on("click", function(e) {$("#meta-{{post.id}}").toggleClass("hidden");});</script>
+  <div id="meta-bag-{{post.id}}" class="meta-bag">
+    <a id="meta-link-{{post.id}}">META +</a>
+
+  <script>
+$("#meta-link-{{post.id}}").on("click", function(e) {
+  $("#meta-{{post.id}}").toggleClass("hidden");
+/*  $("#meta-link-{{post.id}}").text('META -');*/
+});</script>
     <div id="meta-{{post.id}}" class="hidden">
     {% if post.meta.url %}
       <div id="meta-url-{{post.id}}">
@@ -22,5 +28,6 @@
       </div>
     {% endif %}
     </div>
+  </div>
 {% endif %}
 </li>

@@ -11,3 +11,4 @@ resources/public/dump/*
 resources/public/js/zepto.min.js
 /tmp
 src/multiplex/config.clj
+resources/public/md/changes.md

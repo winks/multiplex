@@ -4,15 +4,16 @@
             [markdown.core :as md]
             [clojure.java.io :as cjio]
             [digest :as digest]
+            [clj-time.format :as tformat]
             [multiplex.config :as config]))
 
+(defn read-time
+  [time]
+  (tformat/parse (tformat/formatter "yyyy-MM-dd HH:mm:ss.S") time))
 
-(defn format-time
-  "formats the time using SimpleDateFormat, the default format is
-   \"dd MMM, yyyy\" and a custom one can be passed in as the second argument"
-  ([time] (format-time time "dd MMM, yyyy"))
-  ([time fmt]
-    (.format (new java.text.SimpleDateFormat fmt) time)))
+(defn put-time
+  [time]
+  (tformat/unparse (tformat/formatter "yyyy-MM-dd HH:mm") time))
 
 (defn md->html
   "creates HTML from string"
@@ -108,10 +109,12 @@
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
         meta-foo (if (= "" (:meta coll)) "{}" (:meta coll))
-        avatar (nth config/user-icons (int-or-default (:author coll) 0))]
+        avatar (nth config/user-icons (int-or-default (:author coll) 0))
+        updated (put-time (read-time (str (:updated coll))))]
     (assoc coll :code (:code info)
                 :site (:site info)
                 :avatar avatar
+                :updated (or updated (:updated coll))
                 :meta (json/read-str meta-foo :key-fn keyword))))
 
 (defn hash-filename [arg]

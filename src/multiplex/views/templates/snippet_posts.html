@@ -1,3 +1,4 @@
+<ul class="main">
 {% for post in posts %}
 
 {% ifequal post.itemtype "video" %}
@@ -29,3 +30,4 @@
 {% if page-older %}
  <a href="/?page={{page-older}}">&raquo;&raquo;</a>
 {% endif %}
+</ul>

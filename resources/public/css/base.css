@@ -93,7 +93,7 @@ ul.main {
   align: center;
 }
 
-.main li {
+.main>li {
     background-image: url(/img/ico/chat.png);
     background-repeat: no-repeat;
     background-position: 0 .4em;

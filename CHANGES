@@ -13,6 +13,7 @@
 * DONE 0.2.7 - user streams
 * DONE 0.2.7 - Fix NPE on nonexisting user
 * DONE 0.2.7 - Fix resize bug
+* DONE 0.2.7 - Fix timestamp formatting bug
 
 # TODO
 
@@ -21,3 +22,4 @@
 * import whole soup account
 * show soup account/friendstream and allow to repost to multiplex
 * allow reposting
+* add filters by post type
