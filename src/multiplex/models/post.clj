@@ -4,6 +4,10 @@
   (:require [multiplex.config :as config]
             [multiplex.models.db :as db]))
 
+(def itemtypes ["image" "video" "audio" "link" "text"])
+
+(defn valid-itemtype? [what] (some #{what} itemtypes))
+
 ; SQLish
 (defn get-post-count [where-clause]
   (let [query (-> (select* db/clj)

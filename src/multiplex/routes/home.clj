@@ -43,12 +43,14 @@
         page-newer (when-not (< page 2) (dec page))
         page-older (when-not (< current n) (inc page))
         page-count (mpost/get-post-count where-clause)
-        pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))]
+        pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))
+        itemtype (:itemtype where-clause)]
     {:posts posts
      :page-newer page-newer
      :page-older page-older
      :pages pages
-     :page-count page-count}))
+     :page-count page-count
+     :itemtype itemtype}))
 
 
 (defn show-some
@@ -78,13 +80,18 @@
 
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]
-    (let [posts-map (get-some 10 1 {:author (:uid usr)})]
+    (let [posts-map (get-some (:limit params) (:page params) {:author (:uid usr)})]
       (layout/render "page_user.html" (assoc posts-map :post (assoc usr :avatar (nth config/user-icons (:uid usr))))))
     (if-let [usr (muser/get-user-by-name (:username params))]
       (let [ava (nth config/user-icons (:uid usr))
-            posts-map (get-some 10 1 {:author (:uid usr)})]
+            where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
+            posts-map (get-some (:limit params) (:page params) where-clause)]
         (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar ava))))
       (render-page-content "User does not exist."))))
+
+(defn render-page-stream [params]
+  (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:itemtype (:itemtype params)} {})]
+  (show-some (:limit params) (:page params) where-clause)))
 
 (defn render-page-add
   [params]
@@ -186,6 +193,6 @@
   (GET  "/about" [] (render-page-about))
   (GET  "/about/changes" [] (render-page-changes))
   (GET  "/user/:username/:apikey" [username apikey] (render-page-user {:username username :apikey apikey}))
-  (GET  "/user/:username" [username] (render-page-user {:username username}))
-  (GET  "/user/:username/" [username] (redirect (str "/user/" username)))
-  (GET  "/" [page limit] (show-some (util/int-or-default limit 10) (util/int-or-default page 1))))
+  (GET  "/user/:username" [username page limit type] (render-page-user {:username username :limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)}))
+  (GET  "/user/:username/" [username] (redirect (str "/user/" username) :permanent))
+  (GET  "/" [page limit type] (render-page-stream {:limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)})))

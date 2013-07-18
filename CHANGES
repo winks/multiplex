@@ -14,6 +14,8 @@
 * DONE 0.2.7 - Fix NPE on nonexisting user
 * DONE 0.2.7 - Fix resize bug
 * DONE 0.2.7 - Fix timestamp formatting bug
+* DONE 0.2.8 - Fix missing user url part to pagination
+* DONE 0.2.8 - allow "type" GET parameter: audio/video/link/text/image
 
 # TODO
 
