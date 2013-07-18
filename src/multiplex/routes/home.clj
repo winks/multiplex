@@ -80,7 +80,8 @@
 
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]
-    (let [posts-map (get-some (:limit params) (:page params) {:author (:uid usr)})]
+    (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
+          posts-map (get-some (:limit params) (:page params) where-clause)]
       (layout/render "page_user.html" (assoc posts-map :post (assoc usr :avatar (nth config/user-icons (:uid usr))))))
     (if-let [usr (muser/get-user-by-name (:username params))]
       (let [ava (nth config/user-icons (:uid usr))
@@ -192,7 +193,11 @@
   (GET  "/show/:id" [id] (redirect (str "/post/" id) :permanent))
   (GET  "/about" [] (render-page-about))
   (GET  "/about/changes" [] (render-page-changes))
-  (GET  "/user/:username/:apikey" [username apikey] (render-page-user {:username username :apikey apikey}))
-  (GET  "/user/:username" [username page limit type] (render-page-user {:username username :limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)}))
-  (GET  "/user/:username/" [username] (redirect (str "/user/" username) :permanent))
-  (GET  "/" [page limit type] (render-page-stream {:limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)})))
+  (GET  "/user/:username/:apikey" [username apikey page limit type]
+    (render-page-user {:username username :limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type) :apikey apikey}))
+  (GET  "/user/:username" [username page limit type]
+    (render-page-user {:username username :limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)}))
+  (GET  "/user/:username/" [username]
+    (redirect (str "/user/" username) :permanent))
+  (GET  "/" [page limit type]
+    (render-page-stream {:limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)})))
