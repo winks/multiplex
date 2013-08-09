@@ -20,6 +20,24 @@
         "PRIMARY KEY(`id`)) "
         "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;"))))
 
+(defn create-users-table
+  [db-cred]
+  (sql/with-connection db-cred
+    (sql/do-commands
+      (str "CREATE TABLE `users` (`uid` int(10) unsigned NOT NULL AUTO_INCREMENT, "
+        "`username` varchar(42) COLLATE utf8_unicode_ci NOT NULL, "
+        "`email` varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
+        "`password` varchar(128) COLLATE utf8_unicode_ci NOT NULL, "
+        "`apikey` varchar(64) COLLATE utf8_unicode_ci NOT NULL, "
+        "`signupcode` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL, "
+        "`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', "
+        "`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, "
+        "PRIMARY KEY (`uid`), "
+        "UNIQUE KEY `username` (`username`), "
+        "UNIQUE KEY `email` (`email`), "
+        "UNIQUE KEY `apikey` (`apikey`)) "
+        "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;"))))
+
 (defn -main []
   (print "Creating DB structure...") (flush)
   (create-posts-table config/mydb)
