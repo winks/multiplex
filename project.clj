@@ -13,6 +13,7 @@
    [markdown-clj "0.9.19"]
    [org.clojure/java.jdbc "0.2.3"]
    [mysql/mysql-connector-java "5.1.6"]
+   [postgresql "9.1-901.jdbc4"]
    [korma "0.3.0-RC5"]
    [digest "1.3.0"]
    [org.clojure/data.json "0.2.2"]

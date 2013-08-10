@@ -1,5 +1,5 @@
 (ns multiplex.models.load
-  (:use     [korma.db :only (defdb mysql)])
+  (:use     [korma.db :only (defdb mysql postgres)])
   (:require [clojure.java.jdbc :as sql]
             [multiplex.config :as config]
             [multiplex.util :as util]))

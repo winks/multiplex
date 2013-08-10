@@ -1,6 +1,6 @@
 (ns multiplex.models.tag
   (:use korma.core
-        [korma.db :only (defdb mysql)])
+        [korma.db :only (defdb mysql postgres)])
   (:require [multiplex.config :as config]
             [multiplex.models.db :as db]
             [multiplex.util :as util]))

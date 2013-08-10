@@ -26,8 +26,9 @@ Especially edit the line starting with `(def mydb` or inject via shell variables
 Now load the DB schema by starting `lein repl` and executing this:
 
     (use 'multiplex.models.schema)
-    (create-posts-table multiplex.config/mydb)
-    (create-users-table multiplex.config/mydb)
+    (create-tables)
+
+Then exit with Ctrl-D. You're done!
 
 ## Running
 
