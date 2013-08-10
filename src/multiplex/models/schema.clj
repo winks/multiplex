@@ -2,6 +2,7 @@
   (:use     [korma.db :only (defdb mysql postgres)])
   (:require [clojure.java.jdbc :as sql]
             [multiplex.config :as config]
+            [multiplex.models.load :as load]
             [multiplex.util :as util]))
 
 (defn create-posts-table
@@ -103,7 +104,9 @@
   (do
     (create-posts-table config/mydb)
     (create-users-table config/mydb)
-    (create-functions-etc config/mydb)))
+    (create-functions-etc config/mydb)
+    (load/load-posts-table config/mydb)
+    (load/load-users-table config/mydb)))
     
 (defn -main []
   (print "Creating DB structure...") (flush)
