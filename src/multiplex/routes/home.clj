@@ -79,6 +79,9 @@
 (defn render-page-about []
   (layout/render "page_about.html"))
 
+(defn render-page-index []
+  (layout/render "page_index.html"))
+
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]
     (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
@@ -194,6 +197,10 @@
   (GET  "/show/:id" [id] (redirect (str "/post/" id) :permanent))
   (GET  "/about" [] (render-page-about))
   (GET  "/about/changes" [] (render-page-changes))
+  (GET  "/everyone" [page limit type]
+    (render-page-stream {:limit (util/int-or-default limit 10)
+                         :page (util/int-or-default page 1)
+                         :itemtype (util/string-or-default type)}))
   (GET  "/user/:username/:apikey" [username apikey page limit type]
     (render-page-user {:username username
                        :limit (util/int-or-default limit 10)
@@ -211,9 +218,7 @@
     (let [hostname (:server-name *request*)
           username (first (clojure.string/split hostname #"\."))]
       (if (= (:page-url config/multiplex) hostname)
-        (render-page-stream {:limit (util/int-or-default limit 10)
-                             :page (util/int-or-default page 1)
-                             :itemtype (util/string-or-default type)})
+        (render-page-index)
         (render-page-user {:username username
                            :limit (util/int-or-default limit 10)
                            :page (util/int-or-default page 1)
