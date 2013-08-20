@@ -1,6 +1,6 @@
 (ns multiplex.models.post
   (:use korma.core
-        [korma.db :only (defdb mysql)])
+        [korma.db :only (defdb mysql postgres)])
   (:require [multiplex.config :as config]
             [multiplex.models.db :as db]))
 
@@ -18,6 +18,7 @@
 
 (defn get-post-by-id [id]
   (do
+    (println (str id ":" (class id)))
     (println (sql-only
       (select db/clj
         (where {:id id})

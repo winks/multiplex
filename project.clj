@@ -1,6 +1,6 @@
 (defproject
   multiplex
-  "0.2.7"
+  "0.2.8"
   :dependencies
   [[org.clojure/clojure "1.5.1"]
    [lib-noir "0.4.9"]
@@ -34,7 +34,8 @@
    {:ring
     {:open-browser? false, :stacktraces? false, :auto-reload? false}},
    :dev
-   {:dependencies [[ring-mock "0.1.3"] [ring/ring-devel "1.1.8"]]}}
+   {:dependencies [[ring-mock "0.1.3"] [ring/ring-devel "1.1.8"]]
+    :ring {:open-browser? false}}}
   :url
   "https://github.com/winks/multiplex"
   :plugins

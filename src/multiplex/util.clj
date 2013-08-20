@@ -98,7 +98,7 @@
   "try to coerce to integer or return a safe default"
   [s default]
   (if
-    (empty? s)
+    (nil? s)
     default
     (try
       (let [n (Integer/parseInt s)]

@@ -1,5 +1,6 @@
 (ns multiplex.routes.home
   (:use compojure.core
+        noir.request
         [noir.response :only (redirect)])
   (:require [clojure.data.json :as json]
             [multiplex.config :as config]
@@ -189,15 +190,31 @@
   (POST "/signup" [username email password code] (render-page-signup (untaint-signup username email password code)))
   (GET  "/signup" [code] (render-page-signup {:code (util/string-or-default code "")}))
   (GET  "/add/:apikey" [url txt type tags apikey title] (render-page-add (untaint url txt type (util/string-or-default tags) apikey title)))
-  (GET  "/post/:id" [id] (show-single id))
+  (GET  "/post/:id" [id] (show-single (util/int-or-default id 0)))
   (GET  "/show/:id" [id] (redirect (str "/post/" id) :permanent))
   (GET  "/about" [] (render-page-about))
   (GET  "/about/changes" [] (render-page-changes))
   (GET  "/user/:username/:apikey" [username apikey page limit type]
-    (render-page-user {:username username :limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type) :apikey apikey}))
+    (render-page-user {:username username
+                       :limit (util/int-or-default limit 10)
+                       :page (util/int-or-default page 1)
+                       :itemtype (util/string-or-default type)
+                       :apikey apikey}))
   (GET  "/user/:username" [username page limit type]
-    (render-page-user {:username username :limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)}))
+    (render-page-user {:username username
+                       :limit (util/int-or-default limit 10)
+                       :page (util/int-or-default page 1)
+                       :itemtype (util/string-or-default type)}))
   (GET  "/user/:username/" [username]
     (redirect (str "/user/" username) :permanent))
-  (GET  "/" [page limit type]
-    (render-page-stream {:limit (util/int-or-default limit 10) :page (util/int-or-default page 1) :itemtype (util/string-or-default type)})))
+  (GET  "/" [page limit type] (println (:server-name *request*))
+    (let [hostname (:server-name *request*)
+          username (first (clojure.string/split hostname #"\."))]
+      (if (= (:page-url config/multiplex) hostname)
+        (render-page-stream {:limit (util/int-or-default limit 10)
+                             :page (util/int-or-default page 1)
+                             :itemtype (util/string-or-default type)})
+        (render-page-user {:username username
+                           :limit (util/int-or-default limit 10)
+                           :page (util/int-or-default page 1)
+                           :itemtype (util/string-or-default type)})))))

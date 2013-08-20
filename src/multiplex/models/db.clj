@@ -21,7 +21,7 @@
 (defdb dbm
   (let [x (convert-db-uri config/mydb)]
     (if (= "postgres" (:type x))
-      (postgres x)
+      (postgres (assoc x :delimiters ""))
       (mysql x))))
 
 (defentity clj)

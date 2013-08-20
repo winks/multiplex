@@ -12,7 +12,7 @@
       (if (= "postgres" (subs db-cred 0 8))
         (sql/do-commands
           (str "CREATE TABLE clj (id integer NOT NULL, "
-            "author character varying(100) DEFAULT NULL::character varying, "
+            "author integer NOT NULL, "
             "itemtype character varying(100) DEFAULT NULL::character varying, "
             "url text NOT NULL, "
             "txt text NOT NULL, "
@@ -23,7 +23,7 @@
             ")"))
         (sql/do-commands
           (str "CREATE TABLE clj (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
-            "`author` varchar(100) DEFAULT NULL, "
+            "`author` int(11) unsigned NOT NULL, "
             "`itemtype` varchar(100) DEFAULT NULL, "
             "`url` text NOT NULL, "
             "`txt` text NOT NULL, "

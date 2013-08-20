@@ -16,9 +16,12 @@
 * DONE 0.2.7 - Fix timestamp formatting bug
 * DONE 0.2.8 - Fix missing user url part to pagination
 * DONE 0.2.8 - allow "type" GET parameter: audio/video/link/text/image
+* DONE 0.2.8 - add config options/schemas for postgres
+* DONE 0.2.8 - first implementation of user subdomains
 
 # TODO
 
+* switch to selmer
 * prettify meta data
 * implement tags fully
 * import whole soup account
