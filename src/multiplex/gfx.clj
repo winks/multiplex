@@ -18,6 +18,13 @@
       (println (str "ERR: Reading size failed: " (str image)))
       [0 0]))))
 
+(defn image-mime
+  "returns the mime type of an image via the filename"
+  [filename]
+  (let [uri (java.net.URI. (str "file://" filename))
+        src (java.nio.file.Paths/get uri)]
+    (java.nio.file.Files/probeContentType src)))
+
 (defn needs-resize?
   [orig-sizes new-sizes]
   (not= orig-sizes new-sizes))
