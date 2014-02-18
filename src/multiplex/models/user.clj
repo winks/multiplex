@@ -19,32 +19,32 @@
 ; SQLish
 
 (defn new-user [user]
-  (insert db/users
+  (insert db/mpx_users
           (values user)))
 
 (defn update-user-credentials
   "Update password and apikey for a user."
   [uid password apikey]
-  (update db/users
+  (update db/mpx_users
     (set-fields {:password password
                  :apikey apikey})
     (where {:uid uid})))
 
 (defn get-user-by-id
   [id]
-  (first (select db/users
+  (first (select db/mpx_users
           (where {:id id})
           (limit 1))))
 
 (defn get-user-by-key
   [apikey]
-  (first (select db/users
+  (first (select db/mpx_users
            (where {:apikey apikey})
            (limit 1))))
 
 (defn get-user-by-name
   [username]
-  (first (select db/users
+  (first (select db/mpx_users
            (where {:username username})
            (limit 1))))
 

@@ -24,6 +24,6 @@
       (postgres (assoc x :delimiters ""))
       (mysql x))))
 
-(defentity clj)
-(defentity tags)
-(defentity users)
+(defentity mpx_posts)
+(defentity mpx_tags)
+(defentity mpx_users)

@@ -4,20 +4,23 @@
             [multiplex.config :as config]
             [multiplex.util :as util]))
 
+(def- posts-table "mpx_posts")
+(def- users-table "mpx_users")
+
 (defn load-posts-table
   [db-cred]
   (try
     (sql/with-connection db-cred
       (if (= "postgres" (subs db-cred 0 8))
         (sql/do-commands
-         (str "INSERT INTO clj VALUES "
+         (str "INSERT INTO " posts-table " VALUES "
            "(1, 1, 'link', 'http://torret.org', 'torret', '', 'tumblelog', '2013-08-10 16:23:42', '2013-08-10 16:23:42')")
-         (str "INSERT INTO clj VALUES "
+         (str "INSERT INTO " posts-table " VALUES "
            "(2, 2, 'link', 'http://torret.org', 'torret', '', 'tumblelog', '2013-08-10 16:23:42', '2013-08-10 16:23:42')"))
         (sql/do-commands
-          (str "INSERT INTO `clj` (`id`, `author`, `itemtype`, `url`, `txt`, `meta`, `tag`, `created`, `updated`) VALUES "
+          (str "INSERT INTO `" posts-table "` (`id`, `author`, `itemtype`, `url`, `txt`, `meta`, `tag`, `created`, `updated`) VALUES "
             "(1, 1, 'link', 'http://torret.org', 'torret', '', 'tumblelog', '2013-08-10 16:23:42', '2013-08-10 16:23:42')")
-          (str "INSERT INTO `clj` (`id`, `author`, `itemtype`, `url`, `txt`, `meta`, `tag`, `created`, `updated`) VALUES "
+          (str "INSERT INTO `" posts-table "` (`id`, `author`, `itemtype`, `url`, `txt`, `meta`, `tag`, `created`, `updated`) VALUES "
             "(2, 2, 'link', 'http://torret.org', 'torret', '', 'tumblelog', '2013-08-10 16:23:42', '2013-08-10 16:23:42')"))))
      (catch Exception e (.getNextException e))))
 
@@ -27,14 +30,14 @@
     (sql/with-connection db-cred
       (if (= "postgres" (subs db-cred 0 8))
         (sql/do-commands
-          (str "INSERT INTO users VALUES "
+          (str "INSERT INTO " users-table " VALUES "
             "(1, 'test', 'example@example.org', 'efa0977fe7e2e055083b1bd7136c9a64403dee8714e9969483f3aaba07914313c74ff38d1fe44fc639df0caaba0f60affd07d7824f228c4a56198d1d4fc71ac8', '2484f93a0768a4dd883ac07d0edebb47', '', '2013-08-10 16:23:42', '2013-08-10 16:23:42');")
-          (str "INSERT INTO users VALUES "
+          (str "INSERT INTO " users-table " VALUES "
             "(2, 'example', 'example@example.org', 'efa0977fe7e2e055083b1bd7136c9a64403dee8714e9969483f3aaba07914313c74ff38d1fe44fc639df0caaba0f60affd07d7824f228c4a56198d1d4fc71ac8', '2484f93a0768a4dd883ac07d0edebb47', '', '2013-08-10 16:23:42', '2013-08-10 16:23:42');"))
         (sql/do-commands
-          (str "INSERT INTO `users` VALUES "
+          (str "INSERT INTO `" users-table "` VALUES "
             "(1, 'test', 'example@example.org', 'efa0977fe7e2e055083b1bd7136c9a64403dee8714e9969483f3aaba07914313c74ff38d1fe44fc639df0caaba0f60affd07d7824f228c4a56198d1d4fc71ac8', '2484f93a0768a4dd883ac07d0edebb47', '', '2013-08-10 16:23:42', '2013-08-10 16:23:42');")
-          (str "INSERT INTO `users` VALUES "
+          (str "INSERT INTO `" users-table "` VALUES "
             "(2, 'example', 'example@example.org', 'efa0977fe7e2e055083b1bd7136c9a64403dee8714e9969483f3aaba07914313c74ff38d1fe44fc639df0caaba0f60affd07d7824f228c4a56198d1d4fc71ac8', '2484f93a0768a4dd883ac07d0edebb47', '', '2013-08-10 16:23:42', '2013-08-10 16:23:42');"))))
      (catch Exception e (.getNextException e))))
 

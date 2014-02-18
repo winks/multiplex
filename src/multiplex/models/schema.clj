@@ -5,24 +5,34 @@
             [multiplex.models.load :as load]
             [multiplex.util :as util]))
 
+(def- posts-table "mpx_posts")
+(def- users-table "mpx_users")
+
 (defn create-posts-table
   [db-cred]
   (try
     (sql/with-connection db-cred
       (if (= "postgres" (subs db-cred 0 8))
         (sql/do-commands
-          (str "CREATE TABLE clj (id integer NOT NULL, "
+          (str "CREATE SEQUENCE " posts-table "_id_seq"
+               "    START WITH 1"
+               "    INCREMENT BY 1"
+               "    NO MINVALUE"
+               "    NO MAXVALUE"
+               "    CACHE 1;")
+          (str "CREATE TABLE " posts-table " ("
+            "id integer NOT NULL PRIMARY KEY DEFAULT nextval('" posts-table "_id_seq'), "
             "author integer NOT NULL, "
             "itemtype character varying(100) DEFAULT NULL::character varying, "
             "url text NOT NULL, "
             "txt text NOT NULL, "
             "meta text NOT NULL, "
             "tag text NOT NULL, "
-            "created timestamp(0) without time zone DEFAULT now()  NOT NULL, "
+            "created timestamp(0) without time zone DEFAULT now() NOT NULL, "
             "updated timestamp(0) without time zone NOT NULL"
             ")"))
         (sql/do-commands
-          (str "CREATE TABLE clj (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
+          (str "CREATE TABLE " posts-table " (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
             "`author` int(11) unsigned NOT NULL, "
             "`itemtype` varchar(100) DEFAULT NULL, "
             "`url` text NOT NULL, "
@@ -41,7 +51,14 @@
     (sql/with-connection db-cred
       (if (= "postgres" (subs db-cred 0 8))
         (sql/do-commands
-          (str "CREATE TABLE users (uid integer NOT NULL, "
+          (str "CREATE SEQUENCE " users-table "_id_seq"
+               "    START WITH 1"
+               "    INCREMENT BY 1"
+               "    NO MINVALUE"
+               "    NO MAXVALUE"
+               "    CACHE 1;")
+          (str "CREATE TABLE " users-table " ("
+            "uid integer NOT NULL PRIMARY KEY DEFAULT nextval('" users-table "_id_seq'), "
             "username character varying(42) NOT NULL, "
             "email character varying(100) NOT NULL, "
             "password character varying(128) NOT NULL, "
@@ -50,7 +67,7 @@
             "created timestamp(0) without time zone DEFAULT now(), "
             "updated timestamp(0) without time zone NOT NULL)"))
         (sql/do-commands
-          (str "CREATE TABLE `users` (`uid` int(10) unsigned NOT NULL AUTO_INCREMENT, "
+          (str "CREATE TABLE `" users-table "` (`uid` int(10) unsigned NOT NULL AUTO_INCREMENT, "
             "`username` varchar(42) COLLATE utf8_unicode_ci NOT NULL, "
             "`email` varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
             "`password` varchar(128) COLLATE utf8_unicode_ci NOT NULL, "
@@ -79,23 +96,11 @@
                "   RETURN NEW; "
                "END; "
                "$$;")
-          (str "CREATE SEQUENCE clj_id_seq"
-               "    START WITH 1"
-               "    INCREMENT BY 1"
-               "    NO MINVALUE"
-               "    NO MAXVALUE"
-               "    CACHE 1;")
-          (str "CREATE SEQUENCE users_id_seq"
-               "    START WITH 1"
-               "    INCREMENT BY 1"
-               "    NO MINVALUE"
-               "    NO MAXVALUE"
-               "    CACHE 1;")
-          (str "CREATE TRIGGER update_clj_updated BEFORE "
-               "UPDATE ON clj FOR EACH ROW "
+          (str "CREATE TRIGGER update_" posts-table "_updated BEFORE "
+               "UPDATE ON " posts-table " FOR EACH ROW "
                "EXECUTE PROCEDURE update_updated_column();")
-          (str "CREATE TRIGGER update_users_updated BEFORE "
-               "UPDATE ON users FOR EACH ROW "
+          (str "CREATE TRIGGER update_" users-table "_updated BEFORE "
+               "UPDATE ON " users-table " FOR EACH ROW "
                "EXECUTE PROCEDURE update_updated_column();"))
  	 nil))
    (catch Exception e (.getNextException e))))

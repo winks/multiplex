@@ -15,7 +15,7 @@ $q1 = $db1->query($sql);
 $errors = array();
 
 while ($row = $q1->fetch()) {
-    $sql = "INSERT INTO clj (id, author, itemtype, url, txt, meta, tag, created, updated)".
+    $sql = "INSERT INTO mpx_posts (id, author, itemtype, url, txt, meta, tag, created, updated)".
            " VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s');";
     $sql = sprintf(
         $sql,
@@ -43,7 +43,7 @@ $q1 = $db1->query($sql);
 $errors = array();
 
 while ($row = $q1->fetch()) {
-    $sql = "INSERT INTO users(uid,username,email,password,apikey,signupcode,created,updated)".
+    $sql = "INSERT INTO mpx_users(uid,username,email,password,apikey,signupcode,created,updated)".
            " VALUES('%s','%s','%s','%s','%s','%s','%s','%s')";
     $sql = sprintf(
         $sql,

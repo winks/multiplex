@@ -18,6 +18,7 @@
 * DONE 0.2.8 - allow "type" GET parameter: audio/video/link/text/image
 * DONE 0.2.8 - add config options/schemas for postgres
 * DONE 0.2.8 - first implementation of user subdomains
+* DONE 0.2.9 - finalize postgres migration
 
 # TODO
 

@@ -10,7 +10,7 @@
 
 ; SQLish
 (defn get-post-count [where-clause]
-  (let [query (-> (select* db/clj)
+  (let [query (-> (select* db/mpx_posts)
                   (aggregate (count :id) :cnt))]
     (if (= {} where-clause)
       (:cnt (first (-> query (select))))
@@ -20,13 +20,13 @@
   (do
     (println (str id ":" (class id)))
     (println (sql-only
-      (select db/clj
+      (select db/mpx_posts
         (where {:id id})
-        (join db/users (= :users.uid :author))
+        (join db/mpx_users (= :users.uid :author))
         (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username]))))
-    (select db/clj
+    (select db/mpx_posts
       (where {:id id})
-      (join db/users (= :users.uid :author))
+      (join db/mpx_users (= :users.uid :author))
       (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username]))))
 
 (defn get-posts
@@ -35,8 +35,8 @@
   ([n off]
     (get-posts n off {}))
   ([n off where-clause]
-    (let [q (-> (select* db/clj)
-                (join db/users (= :users.uid :author))
+    (let [q (-> (select* db/mpx_posts)
+                (join db/mpx_users (= :users.uid :author))
                 (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username])
                 (order :id :DESC)
                 (limit n)
@@ -52,5 +52,5 @@
 (defn new-post [params]
   (do
     (println params)
-    (println (sql-only (insert db/clj (values params))))
-    (insert db/clj (values params))))
+    (println (sql-only (insert db/mpx_posts (values params))))
+    (insert db/mpx_posts (values params))))
