@@ -2,6 +2,6 @@
 {% if post.avatar %}
 <a href="/user/{{post.username}}"><img src="{{post.avatar}}" /></a>
 {% else %}
-<img src="/img/default-avatar.png" />
+<img src="{{post.static-url}}/img/default-avatar.png" />
 {% endif %}
 </div>

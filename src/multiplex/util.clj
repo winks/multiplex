@@ -97,23 +97,37 @@
 (defn int-or-default
   "try to coerce to integer or return a safe default"
   [s default]
-  (if
-    (nil? s)
-    default
-    (try
-      (let [n (Integer/parseInt s)]
-        (if (pos? n) n default))
-      (catch Exception e
-        default))))
+  (try
+    (let [n (if (instance? java.lang.Integer s)
+                (long s)
+                (if (instance? java.lang.Long s)
+                    s
+                    (if (instance? java.lang.String s)
+                        (Long/valueOf s)
+                        (if (instance? java.lang.Double s)
+                            (long s)
+                            default))))]
+      (if (pos? n) n default))
+    (catch Exception e
+      default)))
+
+(defn get-avatar [n]
+  (let [prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))]
+    (str prefix (nth config/user-icons (int-or-default n 0)))))
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
         meta-foo (if (= "" (:meta coll)) "{}" (:meta coll))
-        avatar (nth config/user-icons (int-or-default (:author coll) 0))
-        updated (put-time (read-time (str (:updated coll))))]
+        updated (put-time (read-time (str (:updated coll))))
+        prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))
+        url (if (= config/rel-path (subs (:url coll) 0 (count config/rel-path)))
+                (str prefix (:url coll))
+                (:url coll))]
     (assoc coll :code (:code info)
                 :site (:site info)
-                :avatar avatar
+                :avatar (get-avatar (:author coll))
+                :url url
+                :static-url prefix
                 :updated (or updated (:updated coll))
                 :meta (json/read-str meta-foo :key-fn keyword))))
 

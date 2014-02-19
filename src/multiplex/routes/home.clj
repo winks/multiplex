@@ -86,12 +86,11 @@
   (if-let [usr (muser/get-user-by-key (:apikey params))]
     (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
           posts-map (get-some (:limit params) (:page params) where-clause)]
-      (layout/render "page_user.html" (assoc posts-map :post (assoc usr :avatar (nth config/user-icons (:uid usr))))))
+      (layout/render "page_user.html" (assoc posts-map :post (assoc usr :avatar (util/get-avatar (:uid usr))))))
     (if-let [usr (muser/get-user-by-name (:username params))]
-      (let [ava (nth config/user-icons (:uid usr))
-            where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
+      (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
             posts-map (get-some (:limit params) (:page params) where-clause)]
-        (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar ava))))
+        (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar (util/get-avatar (:uid usr))))))
       (render-page-content "User does not exist."))))
 
 (defn render-page-stream [params]

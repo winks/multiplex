@@ -17,6 +17,7 @@
 (def multiplex {:page-title "multiplex"
                 :page-url "example.org"
                 :page-scheme "http"
+                :static-url "static.example.org"
                 :bookmark-text "Bookmark me"})
 (def abs-path "/srv/www/multiplex/resources/public/dump")
 (def rel-path "/dump")
