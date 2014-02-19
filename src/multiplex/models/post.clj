@@ -22,12 +22,12 @@
     (println (sql-only
       (select db/mpx_posts
         (where {:id id})
-        (join db/mpx_users (= :users.uid :author))
-        (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username]))))
+        (join db/mpx_users (= :mpx_users.uid :author))
+        (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username]))))
     (select db/mpx_posts
       (where {:id id})
-      (join db/mpx_users (= :users.uid :author))
-      (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username]))))
+      (join db/mpx_users (= :mpx_users.uid :author))
+      (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username]))))
 
 (defn get-posts
   ([n]
@@ -36,8 +36,8 @@
     (get-posts n off {}))
   ([n off where-clause]
     (let [q (-> (select* db/mpx_posts)
-                (join db/mpx_users (= :users.uid :author))
-                (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:users.username :username])
+                (join db/mpx_users (= :mpx_users.uid :author))
+                (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username])
                 (order :id :DESC)
                 (limit n)
                 (offset off))]

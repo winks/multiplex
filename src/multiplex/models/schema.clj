@@ -59,7 +59,7 @@
                "    CACHE 1;")
           (str "CREATE TABLE " users-table " ("
             "uid integer NOT NULL PRIMARY KEY DEFAULT nextval('" users-table "_id_seq'), "
-            "username character varying(42) NOT NULL, "
+            "username character varying(100) NOT NULL, "
             "email character varying(100) NOT NULL, "
             "password character varying(128) NOT NULL, "
             "apikey character varying(64) NOT NULL, "
@@ -68,7 +68,7 @@
             "updated timestamp(0) without time zone NOT NULL)"))
         (sql/do-commands
           (str "CREATE TABLE `" users-table "` (`uid` int(10) unsigned NOT NULL AUTO_INCREMENT, "
-            "`username` varchar(42) COLLATE utf8_unicode_ci NOT NULL, "
+            "`username` varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
             "`email` varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
             "`password` varchar(128) COLLATE utf8_unicode_ci NOT NULL, "
             "`apikey` varchar(64) COLLATE utf8_unicode_ci NOT NULL, "
