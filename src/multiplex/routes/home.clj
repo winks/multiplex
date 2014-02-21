@@ -1,7 +1,7 @@
 (ns multiplex.routes.home
   (:use compojure.core
         noir.request
-        [noir.response :only (redirect)])
+        [noir.response :only (redirect status)])
   (:require [clojure.data.json :as json]
             [multiplex.config :as config]
             [multiplex.gfx :as gfx]
@@ -11,12 +11,18 @@
             [multiplex.util :as util]
             [multiplex.views.layout :as layout]))
 
+(defn sanitize-title [s]
+  (-> s
+      (clojure.string/replace #" - YouTube$" "")
+      (clojure.string/replace #" - MyVideo$" "")
+      (clojure.string/replace #" on Vimeo$" "")))
+
 ; parameter mangling
 (defn form-fill
   [params]
     (if
       (and (empty? (:txt params)) (seq (:title params)))
-      (assoc params :txt (:title params))
+      (assoc params :txt (sanitize-title (:title params)))
       params))
 
 (defn prepare-page-add
@@ -187,38 +193,55 @@
    :password  (util/string-or-default password)
    :signupcode (util/string-or-default code)})
 
+(defn is-subdomain []
+  (let [hostname (:server-name *request*)
+        username (first (clojure.string/split hostname #"\."))]
+      (if (= (:page-url config/multiplex) hostname)
+          false
+          username)))
+  
+
 (defroutes home-routes
-  (POST "/store/:apikey" [url txt type apikey tags] (render-page-store apikey (untaint url txt type tags)))
-  (POST "/signup" [username email password code] (render-page-signup (untaint-signup username email password code)))
-  (GET  "/signup" [code] (render-page-signup {:code (util/string-or-default code "")}))
-  (GET  "/add/:apikey" [url txt type tags apikey title] (render-page-add (untaint url txt type (util/string-or-default tags) apikey title)))
-  (GET  "/post/:id" [id] (show-single (util/int-or-default id 0)))
-  (GET  "/show/:id" [id] (redirect (str "/post/" id) :permanent))
-  (GET  "/about" [] (render-page-about))
-  (GET  "/about/changes" [] (render-page-changes))
+  (POST "/store/:apikey" [url txt type apikey tags]
+      (render-page-store apikey (untaint url txt type tags)))
+  (POST "/signup" [username email password code]
+    (if-let [username (is-subdomain)]
+      (status 404 "your page could not be found")
+      (render-page-signup (untaint-signup username email password code))))
+  (GET  "/signup" [code]
+    (if-let [username (is-subdomain)]
+      (status 404 "your page could not be found")
+      (render-page-signup {:code (util/string-or-default code "")})))
+  (GET  "/add/:apikey" [url txt type tags apikey title]
+    (render-page-add (untaint url txt type (util/string-or-default tags) apikey title)))
+  (GET  "/post/:id" [id]
+    (if-let [username (is-subdomain)]
+      (show-single (util/int-or-default id 0))
+      (status 404 "your page could not be found")))
+  (GET  "/about" [] 
+    (if-let [username (is-subdomain)]
+      (status 404 "your page could not be found")
+      (render-page-about)))
+  (GET  "/about/changes" []
+    (if-let [username (is-subdomain)]
+      (status 404 "your page could not be found")
+      (render-page-changes)))
   (GET  "/everyone" [page limit type]
-    (render-page-stream {:limit (util/int-or-default limit 10)
-                         :page (util/int-or-default page 1)
-                         :itemtype (util/string-or-default type)}))
-  (GET  "/user/:username/:apikey" [username apikey page limit type]
-    (render-page-user {:username username
+    (if-let [username (is-subdomain)]
+      (status 404 "your page could not be found")
+      (render-page-stream {:limit (util/int-or-default limit 10)
+                           :page (util/int-or-default page 1)
+                           :itemtype (util/string-or-default type)})))
+  (GET  "/meta/:apikey" [apikey page limit type]
+    (render-page-user {:username (muser/get-user-by-key apikey)
                        :limit (util/int-or-default limit 10)
                        :page (util/int-or-default page 1)
                        :itemtype (util/string-or-default type)
                        :apikey apikey}))
-  (GET  "/user/:username" [username page limit type]
-    (render-page-user {:username username
-                       :limit (util/int-or-default limit 10)
-                       :page (util/int-or-default page 1)
-                       :itemtype (util/string-or-default type)}))
-  (GET  "/user/:username/" [username]
-    (redirect (str "/user/" username) :permanent))
-  (GET  "/" [page limit type] (println (:server-name *request*))
-    (let [hostname (:server-name *request*)
-          username (first (clojure.string/split hostname #"\."))]
-      (if (= (:page-url config/multiplex) hostname)
-        (render-page-index)
-        (render-page-user {:username username
-                           :limit (util/int-or-default limit 10)
-                           :page (util/int-or-default page 1)
-                           :itemtype (util/string-or-default type)})))))
+  (GET  "/" [page limit type]
+    (if-let [username (is-subdomain)]
+      (render-page-user {:username username
+                         :limit (util/int-or-default limit 10)
+                         :page (util/int-or-default page 1)
+                         :itemtype (util/string-or-default type)})
+      (render-page-index))))

@@ -54,7 +54,7 @@
             "username character varying(100) NOT NULL UNIQUE, "
             "email character varying(100) NOT NULL UNIQUE, "
             "password character varying(128) NOT NULL, "
-            "apikey character varying(64) NOT NULL, "
+            "apikey character varying(64) NOT NULL UNIQUE, "
             "signupcode character varying(64) DEFAULT NULL::character varying, "
             "created timestamp(0) without time zone DEFAULT now(), "
             "updated timestamp(0) without time zone NOT NULL)"))

@@ -120,9 +120,11 @@
         meta-foo (if (= "" (:meta coll)) "{}" (:meta coll))
         updated (put-time (read-time (str (:updated coll))))
         prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))
-        url (if (= config/rel-path (subs (:url coll) 0 (count config/rel-path)))
-                (str prefix (:url coll))
-                (:url coll))]
+        url (if (< (count (:url coll)) (count config/rel-path))
+                ""
+                (if (= config/rel-path (subs (:url coll) 0 (count config/rel-path)))
+                    (str prefix (:url coll))
+                    (:url coll)))]
     (assoc coll :code (:code info)
                 :site (:site info)
                 :avatar (get-avatar (:author coll))
