@@ -18,7 +18,6 @@
 
 (defn get-post-by-id [id]
   (do
-    (println (str id ":" (class id)))
     (println (sql-only
       (select db/mpx_posts
         (where {:id id})
@@ -50,7 +49,8 @@
           (-> q (where where-clause) (select)))))))
 
 (defn new-post [params]
-  (do
-    (println params)
-    (println (sql-only (insert db/mpx_posts (values params))))
-    (insert db/mpx_posts (values params))))
+  (let [query (str "INSERT INTO mpx_posts"
+                   " (id, updated, created, author, itemtype, url, txt, meta, tag)"
+                   " VALUES (nextval('mpx_posts_id_seq'), NOW(), NOW(), ? ,?, ?, ?, ?, ?);")]
+    (exec-raw [query [(:author params) (:itemtype params) (:url params) (:txt params) (:meta params) (:tag params)]])))
+
