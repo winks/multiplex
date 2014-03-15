@@ -21,6 +21,7 @@
 * DONE 0.2.9 - finalize postgres migration
 * DONE 0.2.9 - Fix some util stuff
 * DONE 0.2.9 - Got rid of user-icons, added user-data
+* DONE 0.2.9 - Basic theme support
 
 # TODO
 

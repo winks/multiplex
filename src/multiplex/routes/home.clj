@@ -39,6 +39,13 @@
   ([params what]
     (assoc (apply dissoc params (conj what :apikey :title)) :created nil :updated nil)))
 
+(defn is-subdomain []
+  (let [hostname (:server-name *request*)
+        username (first (clojure.string/split hostname #"\."))]
+      (if (= (:page-url config/multiplex) hostname)
+          false
+          username)))
+
 ; pages from DB
 (defn show-single [id]
   (layout/render "page_posts.html" {:posts (map util/add-fields (mpost/get-post-by-id id))}))
@@ -58,7 +65,6 @@
      :pages pages
      :page-count page-count
      :itemtype itemtype}))
-
 
 (defn show-some
   ([n]
@@ -197,14 +203,6 @@
    :email (util/string-or-default email)
    :password  (util/string-or-default password)
    :signupcode (util/string-or-default code)})
-
-(defn is-subdomain []
-  (let [hostname (:server-name *request*)
-        username (first (clojure.string/split hostname #"\."))]
-      (if (= (:page-url config/multiplex) hostname)
-          false
-          username)))
-
 
 (defroutes home-routes
   (POST "/store/:apikey" [url txt type apikey tags]
