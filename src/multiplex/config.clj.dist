@@ -38,4 +38,7 @@
   (str username ".wtf.is.this.shit." (System/currentTimeMillis)))
 
 ; this should obviously be a vector of n different image urls, with index == users.uid
-(def user-icons (vec (take 10 (repeat "/img/default-avatar.png"))))
+(def user-data
+  (vec (take 10 (repeat
+    {:avatar "/img/default-avatar.png"
+     :theme "default"}))))

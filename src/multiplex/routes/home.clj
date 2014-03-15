@@ -89,8 +89,10 @@
   (layout/render "page_index.html"))
 
 (defn render-page-user [params]
-  (if-let [usr (muser/get-user-by-key (:apikey params))]
-    (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
+  (if-let [usr (muser/get-user-by-key (:apikey params))
+           author (:uid usr)
+           avatar (:avatar (nth config/user-data author))]
+    (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author author :itemtype (:itemtype params)} {:author author})
           posts-map (get-some (:limit params) (:page params) where-clause)]
       (layout/render "page_user.html" (assoc posts-map :post (assoc usr :avatar (util/get-avatar (:uid usr))))))
     (if-let [usr (muser/get-user-by-name (:username params))]
@@ -199,7 +201,7 @@
       (if (= (:page-url config/multiplex) hostname)
           false
           username)))
-  
+
 
 (defroutes home-routes
   (POST "/store/:apikey" [url txt type apikey tags]
@@ -218,7 +220,7 @@
     (if-let [username (is-subdomain)]
       (show-single (util/int-or-default id 0))
       (status 404 "your page could not be found")))
-  (GET  "/about" [] 
+  (GET  "/about" []
     (if-let [username (is-subdomain)]
       (status 404 "your page could not be found")
       (render-page-about)))
