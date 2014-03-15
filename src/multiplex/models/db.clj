@@ -27,3 +27,7 @@
 (defentity mpx_posts)
 (defentity mpx_tags)
 (defentity mpx_users)
+
+(def posts-table "mpx_posts")
+(def tags-table "mpx_tags")
+(def users-table "mpx_users")

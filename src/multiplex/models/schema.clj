@@ -1,12 +1,10 @@
 (ns multiplex.models.schema
-  (:use     [korma.db :only (defdb mysql postgres)])
+  (:use     [korma.db :only (defdb mysql postgres)]
+            [multiplex.config :only (mydb)]
+            [multiplex.models.db :only (posts-table tags-table users-table)])
   (:require [clojure.java.jdbc :as sql]
-            [multiplex.config :as config]
             [multiplex.models.load :as load]
             [multiplex.util :as util]))
-
-(def- posts-table "mpx_posts")
-(def- users-table "mpx_users")
 
 (defn create-posts-table
   [db-cred]
@@ -99,12 +97,12 @@
 
 (defn create-tables []
   (do
-    (create-posts-table config/mydb)
-    (create-users-table config/mydb)
-    (create-functions-etc config/mydb)
-    (load/load-posts-table config/mydb)
-    (load/load-users-table config/mydb)))
-    
+    (create-posts-table mydb)
+    (create-users-table mydb)
+    (create-functions-etc mydb)
+    (load/load-posts-table mydb)
+    (load/load-users-table mydb)))
+
 (defn -main []
   (print "Creating DB structure...") (flush)
   (create-tables)
