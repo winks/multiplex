@@ -113,7 +113,7 @@
 
 (defn get-avatar [n]
   (let [prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))]
-    (str prefix (:avatar(nth config/user-data (int-or-default n 0))))))
+    (str prefix (:avatar (nth config/user-data (int-or-default n 0))))))
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))

@@ -88,22 +88,25 @@
 (defn render-page-index []
   (layout/render "page_index.html"))
 
+(defn render-page-user-x [params usr]
+  (let [author (:uid usr)
+        avatar (util/get-avatar author)
+        where-clause (if (mpost/valid-itemtype? (:itemtype params))
+                         {:author author :itemtype (:itemtype params)}
+                         {:author author})
+        posts-map (get-some (:limit params) (:page params) where-clause)]
+    (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar avatar)))))
+
 (defn render-page-user [params]
-  (if-let [usr (muser/get-user-by-key (:apikey params))
-           author (:uid usr)
-           avatar (:avatar (nth config/user-data author))]
-    (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author author :itemtype (:itemtype params)} {:author author})
-          posts-map (get-some (:limit params) (:page params) where-clause)]
-      (layout/render "page_user.html" (assoc posts-map :post (assoc usr :avatar (util/get-avatar (:uid usr))))))
+  (if-let [usr (muser/get-user-by-key (:apikey params))]
+    (render-page-user-x params usr)
     (if-let [usr (muser/get-user-by-name (:username params))]
-      (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:author (:uid usr) :itemtype (:itemtype params)} {:author (:uid usr)})
-            posts-map (get-some (:limit params) (:page params) where-clause)]
-        (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar (util/get-avatar (:uid usr))))))
+      (render-page-user-x params usr)
       (render-page-content "User does not exist."))))
 
 (defn render-page-stream [params]
   (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:itemtype (:itemtype params)} {})]
-  (show-some (:limit params) (:page params) where-clause)))
+    (show-some (:limit params) (:page params) where-clause)))
 
 (defn render-page-add
   [params]
