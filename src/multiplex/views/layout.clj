@@ -1,6 +1,6 @@
 (ns multiplex.views.layout
   (:use noir.request)
-  (:require [clabango.parser :as parser]
+  (:require [selmer.parser :as parser]
             [multiplex.config :as config]
             [multiplex.util :as util]))
 

@@ -6,7 +6,7 @@
    [lib-noir "0.4.9"]
    [compojure "1.1.5"]
    [ring-server "0.2.7"]
-   [clabango "0.5"]
+   [selmer "0.6.2"]
    [clj-time "0.5.0"]
    [com.taoensso/timbre "1.5.2"]
    [com.taoensso/tower "1.4.0"]

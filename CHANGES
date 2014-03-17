@@ -20,12 +20,12 @@
 * DONE 0.2.8 - first implementation of user subdomains
 * DONE 0.2.9 - finalize postgres migration
 * DONE 0.2.9 - Fix some util stuff
-* DONE 0.2.9 - Got rid of user-icons, added user-data
-* DONE 0.2.9 - Basic theme support
+* DONE 0.3.0 - Got rid of user-icons, added user-data
+* DONE 0.3.0 - Basic theme support
+* DONE 0.3.0 - Replaced clabango with selmer
 
 # TODO
 
-* switch to selmer
 * prettify meta data
 * implement tags fully
 * import whole soup account

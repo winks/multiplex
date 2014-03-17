@@ -79,14 +79,17 @@
 (defn BLANK []
   (layout/render "page_blank.html"))
 
-(defn render-page-content [content]
-  (layout/render "page_content.html" {:content (or content "empty")}))
+(defn render-page-content [content html]
+  (layout/render "page_content.html" {:content content :html html}))
+
+(defn render-page-html [html]
+  (render-page-content "" html))
+
+(defn render-page-plain [content]
+  (render-page-content content ""))
 
 (defn home-page []
   (layout/render "page_home.html" {:content (util/mdfile->html "/md/docs.md")}))
-
-(defn render-page-changes []
-  (layout/render "page_content.html" {:content (util/mdfile->html "/md/changes.md")}))
 
 (defn render-page-about []
   (layout/render "page_about.html"))
@@ -108,7 +111,7 @@
     (render-page-user-x params usr)
     (if-let [usr (muser/get-user-by-name (:username params))]
       (render-page-user-x params usr)
-      (render-page-content "User does not exist."))))
+      (render-page-plain "User does not exist."))))
 
 (defn render-page-stream [params]
   (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:itemtype (:itemtype params)} {})]
@@ -228,7 +231,7 @@
   (GET  "/about/changes" []
     (if-let [username (is-subdomain)]
       (status 404 "your page could not be found")
-      (render-page-changes)))
+      (render-page-html (util/mdfile->html "/md/changes.md")))
   (GET  "/everyone" [page limit type]
     (if-let [username (is-subdomain)]
       (status 404 "your page could not be found")
