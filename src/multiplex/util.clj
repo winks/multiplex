@@ -117,7 +117,7 @@
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
-        meta-foo (if (= "" (:meta coll)) "{}" (:meta coll))
+        meta-foo (if (= "" (clojure.string/trim (:meta coll))) "{}" (:meta coll))
         updated (put-time (read-time (str (:updated coll))))
         prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))
         url (if (< (count (:url coll)) (count config/rel-path))

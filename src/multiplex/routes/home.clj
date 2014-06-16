@@ -231,7 +231,7 @@
   (GET  "/about/changes" []
     (if-let [username (is-subdomain)]
       (status 404 "your page could not be found")
-      (render-page-html (util/mdfile->html "/md/changes.md")))
+      (render-page-html (util/mdfile->html "/md/changes.md"))))
   (GET  "/everyone" [page limit type]
     (if-let [username (is-subdomain)]
       (status 404 "your page could not be found")
