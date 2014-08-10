@@ -23,6 +23,9 @@
 * DONE 0.3.0 - Got rid of user-icons, added user-data
 * DONE 0.3.0 - Basic theme support
 * DONE 0.3.0 - Replaced clabango with selmer
+* DONE 0.3.0 - Don't resize animated gifs
+* DONE 0.3.0 - Fixed missing bookmarklet
+* DONE 0.3.0 - Fixed Postgres sequences
 
 # TODO
 

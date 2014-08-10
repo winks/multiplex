@@ -13,6 +13,7 @@
 
 (defn sanitize-title [s]
   (-> s
+      (clojure.string/replace #"^▶ " "")
       (clojure.string/replace #" - YouTube$" "")
       (clojure.string/replace #" - MyVideo$" "")
       (clojure.string/replace #" on Vimeo$" "")))
