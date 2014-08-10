@@ -99,18 +99,21 @@
 
 (defn render-page-user-x [params usr]
   (let [author (:uid usr)
+        apikey (:apikey usr)
         avatar (util/get-avatar author)
         where-clause (if (mpost/valid-itemtype? (:itemtype params))
                          {:author author :itemtype (:itemtype params)}
                          {:author author})
         posts-map (get-some (:limit params) (:page params) where-clause)]
-    (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar avatar)))))
+    (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar avatar :apikey apikey)))))
 
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]
-    (render-page-user-x params usr)
+    (do (println "by-apikey")
+    (render-page-user-x params usr))
     (if-let [usr (muser/get-user-by-name (:username params))]
-      (render-page-user-x params usr)
+    (do (println "by-name")
+      (render-page-user-x params usr))
       (render-page-plain "User does not exist."))))
 
 (defn render-page-stream [params]
@@ -148,7 +151,7 @@
     (do
       (println (str "xxx: " sizes resized))
       (println (str "store-image: " (:url params)))
-        (if-let [need (gfx/needs-resize? sizes resized)]
+        (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
           (let [r (gfx/resize img abs-filename (first resized) (second resized))
                 params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
                                                                  :thumbsize (clojure.string/join ":" resized)))]
@@ -239,8 +242,7 @@
                            :page (util/int-or-default page 1)
                            :itemtype (util/string-or-default type)})))
   (GET  "/meta/:apikey" [apikey page limit type]
-    (render-page-user {:username (muser/get-user-by-key apikey)
-                       :limit (util/int-or-default limit 10)
+    (render-page-user {:limit (util/int-or-default limit 10)
                        :page (util/int-or-default page 1)
                        :itemtype (util/string-or-default type)
                        :apikey apikey}))
