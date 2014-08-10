@@ -1,6 +1,6 @@
 (defproject
   multiplex
-  "0.2.9"
+  "0.3.0"
   :dependencies
   [[org.clojure/clojure "1.5.1"]
    [lib-noir "0.4.9"]
