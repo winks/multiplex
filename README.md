@@ -14,31 +14,54 @@ For now, you will need PostgreSQL, MySQL support is deprecated/untested.
 
 ## First setup
 
-Fetch all dependencies via:
+  1. Copy `src/multiplex/config.clj.dist` to `src/multiplex/config.clj`.
 
-    lein deps
+     Most important are the DB connection and the hostname.
 
-Copy `src/multiplex/config.clj.dist` to `src/multiplex/config.clj` and edit to your liking.
-Especially edit the line starting with `(def mydb` or inject via shell variables:
+     Look for `(def mydb` or inject via shell variables:
 
-    export CLEARDB_DATABASE_URL="postgres://USER:PASS@127.0.0.1/DBNAME"
+        export CLEARDB_DATABASE_URL="postgres://USER:PASS@127.0.0.1/DBNAME"
 
-Now load the DB schema by starting `lein repl` and executing this:
+     and `(def multiplex`.
 
-    (use 'multiplex.models.schema)
-    (create-tables)
+  2. Fetch all dependencies via:
 
-Then exit with Ctrl-D. You're done!
+        lein deps
+
+
+  3. Create a postgres user and DB if you haven't already:
+
+        su - postgres
+        createuser -P USER
+        createdb -O USER DBNAME
+
+  4. Now load the DB schema by starting `lein repl` and executing this:
+
+        (use 'multiplex.models.schema)
+        (create-tables)
+
+     Then exit with Ctrl-D. You're done!
+
 
 ## Running
 
-To start a web server for the application, run:
+To hack on `multiplex`, run:
+
+    lein trampoline ring server
+
+or use `run_dev.sh`.
+
+
+For the production setup, run:
 
     lein with-profile production trampoline ring server
 
-or use ```run.sh```
+or use ```run.sh```.
+
+
 
 ## License
 
 Copyright © 2013-2014 Florian Anderiasch and contributors.
-Distributed under the Eclipse Public License, the same as Clojure uses. See the file COPYING.
+Distributed under the Eclipse Public License, the same as Clojure uses.
+See the file COPYING.

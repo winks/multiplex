@@ -26,7 +26,7 @@
 (defn abs-file [file] (str abs-path "/" file))
 (defn rel-file [file] (str rel-path "/" file))
 
-(def mydb (or (System/getenv "CLEARDB_DATABASE_URL") "mysql://USER:PASS@127.0.0.1/DBNAME"))
+(def mydb (or (System/getenv "CLEARDB_DATABASE_URL") "postgres://USER:PASS@127.0.0.1/DBNAME"))
 
 (defn salt-password
   "when setting up multiplex, think about some creative per-user salt, preferably without something random to allow people to login later"
