@@ -13,7 +13,7 @@
       (if (= "postgres" (subs db-cred 0 8))
         (sql/do-commands
           (str "CREATE SEQUENCE " posts-table "_id_seq"
-               "    START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;")
+               "    START WITH 3 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;")
           (str "CREATE TABLE " posts-table " ("
             "id integer NOT NULL PRIMARY KEY DEFAULT nextval('" posts-table "_id_seq'), "
             "author integer NOT NULL, "
@@ -46,7 +46,7 @@
       (if (= "postgres" (subs db-cred 0 8))
         (sql/do-commands
           (str "CREATE SEQUENCE " users-table "_id_seq"
-               "    START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;")
+               "    START WITH 3 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;")
           (str "CREATE TABLE " users-table " ("
             "uid integer NOT NULL PRIMARY KEY DEFAULT nextval('" users-table "_id_seq'), "
             "username character varying(100) NOT NULL UNIQUE, "
