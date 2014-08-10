@@ -26,5 +26,3 @@
 (def all-routes [home-routes app-routes])
 
 (def app (middleware/app-handler all-routes))
-
-(def war-handler (middleware/war-handler app))

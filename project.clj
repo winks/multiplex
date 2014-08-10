@@ -2,22 +2,22 @@
   multiplex
   "0.3.0"
   :dependencies
-  [[org.clojure/clojure "1.5.1"]
-   [lib-noir "0.4.9"]
-   [compojure "1.1.5"]
-   [ring-server "0.2.7"]
-   [selmer "0.6.2"]
-   [clj-time "0.5.0"]
-   [com.taoensso/timbre "1.5.2"]
-   [com.taoensso/tower "1.4.0"]
-   [markdown-clj "0.9.19"]
-   [org.clojure/java.jdbc "0.2.3"]
-   [mysql/mysql-connector-java "5.1.6"]
-   [postgresql "9.1-901.jdbc4"]
-   [korma "0.3.0-RC5"]
-   [digest "1.3.0"]
-   [org.clojure/data.json "0.2.2"]
-   [org.clojure/tools.trace "0.7.5"]
+  [[org.clojure/clojure "1.6.0"]
+   [lib-noir "0.8.4"]
+   [compojure "1.1.8"]
+   [ring-server "0.3.1"]
+   [selmer "0.6.9"]
+   [clj-time "0.8.0"]
+   [com.taoensso/timbre "3.2.1"]
+   [com.taoensso/tower "2.0.2"]
+   [markdown-clj "0.9.47"]
+   [org.clojure/java.jdbc "0.3.5"]
+   [mysql/mysql-connector-java "5.1.31"]
+   [postgresql "9.3-1101.jdbc4"]
+   [korma "0.3.3"]
+   [digest "1.4.4"]
+   [org.clojure/data.json "0.2.5"]
+   [org.clojure/tools.trace "0.7.8"]
    [log4j
     "1.2.15"
     :exclusions
@@ -26,7 +26,7 @@
      com.sun.jdmk/jmxtools
      com.sun.jmx/jmxri]]]
   :ring
-  {:handler multiplex.handler/war-handler,
+  {:handler multiplex.handler/app,
    :init multiplex.handler/init,
    :destroy multiplex.handler/destroy}
   :profiles
@@ -39,7 +39,7 @@
   :url
   "https://github.com/winks/multiplex"
   :plugins
-  [[lein-ring "0.8.3"]]
+  [[lein-ring "0.8.10"]]
   :description
   "A little tumblelog"
   :min-lein-version "2.0.0")
