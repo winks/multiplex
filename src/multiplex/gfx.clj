@@ -25,9 +25,21 @@
         src (java.nio.file.Paths/get uri)]
     (java.nio.file.Files/probeContentType src)))
 
+(defn num-frames
+  [gif-path]
+  (let [file (java.io.File. gif-path)
+        irs (com.sun.imageio.plugins.gif.GIFImageReaderSpi.)
+        ir (com.sun.imageio.plugins.gif.GIFImageReader. irs)
+        foo (javax.imageio.ImageIO/createImageInputStream file)
+        ir2 (doto ir (.setInput foo))]
+     (.getNumImages ir2 true)))
+
 (defn needs-resize?
-  [orig-sizes new-sizes]
-  (not= orig-sizes new-sizes))
+  [orig-sizes new-sizes filename]
+  (let [ext (util/file-extension filename)]
+    (if (= "gif" ext)
+      (if (= 1 (num-frames filename)) true false)
+      (not= orig-sizes new-sizes))))
 
 (defn calc-resized
   [image]
