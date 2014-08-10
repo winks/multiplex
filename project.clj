@@ -1,6 +1,6 @@
-(defproject
-  multiplex
-  "0.3.0"
+(defproject multiplex "0.3.0"
+  :description "A little tumblelog"
+  :url "https://github.com/winks/multiplex"
   :dependencies
   [[org.clojure/clojure "1.6.0"]
    [lib-noir "0.8.4"]
@@ -18,29 +18,22 @@
    [digest "1.4.4"]
    [org.clojure/data.json "0.2.5"]
    [org.clojure/tools.trace "0.7.8"]
-   [log4j
-    "1.2.15"
-    :exclusions
-    [javax.mail/mail
-     javax.jms/jms
-     com.sun.jdmk/jmxtools
-     com.sun.jmx/jmxri]]]
-  :ring
-  {:handler multiplex.handler/app,
-   :init multiplex.handler/init,
-   :destroy multiplex.handler/destroy}
+   [log4j "1.2.15" :exclusions [javax.mail/mail
+                                javax.jms/jms
+                                com.sun.jdmk/jmxtools
+                                com.sun.jmx/jmxri]]]
+  :plugins [[lein-ring "0.8.10"]]
+  :ring {:handler multiplex.handler/app,
+         :init    multiplex.handler/init,
+         :destroy multiplex.handler/destroy}
   :profiles
-  {:production
-   {:ring
-    {:open-browser? false, :stacktraces? false, :auto-reload? false}},
-   :dev
-   {:dependencies [[ring-mock "0.1.3"] [ring/ring-devel "1.1.8"]]
-    :ring {:open-browser? false}}}
-  :url
-  "https://github.com/winks/multiplex"
-  :plugins
-  [[lein-ring "0.8.10"]]
-  :description
-  "A little tumblelog"
+  {:uberjar {:aot :all}
+   :production {:ring {:open-browser? false
+                       :stacktraces?  false
+                       :auto-reload?  false}}
+   :dev {:dependencies [[ring-mock "0.1.5"]
+                        [ring/ring-devel "1.3.0"]
+                        [pjstadig/humane-test-output "0.6.0"]]
+         :env {:dev true}
+         :ring {:open-browser? false}}}
   :min-lein-version "2.0.0")
-(comment [com.h2database/h2 "1.3.170"])
