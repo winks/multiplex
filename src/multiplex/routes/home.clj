@@ -98,23 +98,24 @@
 (defn render-page-index []
   (layout/render "page_index.html"))
 
-(defn render-page-user-x [params usr]
+(defn render-page-user-x [params usr loggedin]
   (let [author (:uid usr)
         apikey (:apikey usr)
         avatar (util/get-avatar author)
         where-clause (if (mpost/valid-itemtype? (:itemtype params))
                          {:author author :itemtype (:itemtype params)}
                          {:author author})
-        posts-map (get-some (:limit params) (:page params) where-clause)]
-    (layout/render "page_user.html" (assoc posts-map :post (assoc (cleanup usr) :avatar avatar :apikey apikey)))))
+        posts-map (get-some (:limit params) (:page params) where-clause)
+        post (if (true? loggedin)
+                 (assoc (cleanup usr) :avatar avatar :apikey apikey)
+                 (assoc (cleanup usr) :avatar avatar))]
+    (layout/render "page_user.html" (assoc posts-map :post post))))
 
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]
-    (do (println "by-apikey")
-    (render-page-user-x params usr))
+    (render-page-user-x params usr true)
     (if-let [usr (muser/get-user-by-name (:username params))]
-    (do (println "by-name")
-      (render-page-user-x params usr))
+      (render-page-user-x params usr false)
       (render-page-plain "User does not exist."))))
 
 (defn render-page-stream [params]
