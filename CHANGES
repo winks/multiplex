@@ -35,3 +35,5 @@
 * show soup account/friendstream and allow to repost to multiplex
 * allow reposting
 * add filters by post type
+* fix pagination on user pages
+* refactor use of page/limit GET params (in get-some)
