@@ -9,6 +9,7 @@
 (defn prepare-map []
   {:uid nil
    :username nil
+   :hostname nil
    :email nil
    :password nil
    :apikey nil
@@ -47,6 +48,12 @@
   (first (select db/mpx_users
            (where {:username username})
            (limit 1))))
+
+(defn get-user-by-hostname
+  [s]
+  (first (select db/mpx_users
+          (where {:hostname s})
+          (limit 1))))
 
 ; abstraction
 
