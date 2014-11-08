@@ -1,4 +1,5 @@
 (ns multiplex.util
+  (:use noir.request)
   (:require [noir.io :as io]
             [clojure.data.json :as json]
             [markdown.core :as md]
@@ -6,6 +7,31 @@
             [digest :as digest]
             [clj-time.format :as tformat]
             [multiplex.config :as config]))
+
+(defn is-custom-host
+  ([]
+    (is-custom-host (:server-name *request*)))
+  ([hostname]
+    (let [subdomain (first (clojure.string/split hostname #"\."))
+          re (java.util.regex.Pattern/compile (str "^" subdomain "\\."))
+          domainname (clojure.string/replace hostname re "")]
+        (if (= (:page-url config/multiplex) hostname)
+          false
+          hostname))))
+
+(defn is-subdomain
+  ([]
+    (is-subdomain (:server-name *request*)))
+  ([hostname]
+    (let [subdomain (first (clojure.string/split hostname #"\."))
+          re (java.util.regex.Pattern/compile (str "^" subdomain "\\."))
+          domainname (clojure.string/replace hostname re "")
+          cfg (:page-url config/multiplex)]
+        (if (= cfg hostname)
+          false
+          (if (not (= cfg domainname))
+            false
+            subdomain)))))
 
 (defn read-time
   [time]

@@ -38,55 +38,7 @@
   ([params]
     (cleanup params []))
   ([params what]
-    (assoc (apply dissoc params (conj what :apikey :title)) :created nil :updated nil)))
-
-(defn is-subdomain
-  ([]
-    (is-subdomain (:server-name *request*)))
-  ([hostname]
-    (let [subdomain (first (clojure.string/split hostname #"\."))
-          re (java.util.regex.Pattern/compile (str "^" subdomain "\\."))
-          domainname (clojure.string/replace hostname re "")
-          cfg "example.org"]
-        (if (= cfg hostname)
-          false
-          (if (not (= cfg domainname))
-            false
-            subdomain)))))
-
-(comment
-(defn is-subdomain []
-  (let [hostname (:server-name *request*)
-        username (first (clojure.string/split hostname #"\."))]
-      (if (= (:page-url config/multiplex) hostname)
-          false
-          username)))
-
-(defn is-cname
-  ([]
-    (is-cname (:server-name *request*)))
-  ([hostname]
-    (let [subdomain (first (clojure.string/split hostname #"\."))
-          re (java.util.regex.Pattern/compile (str "^" subdomain "\\."))
-          domainname (clojure.string/replace hostname re "")
-          cfg "example.org"]
-        (if (= cfg hostname)
-          false
-          (if (= cfg domainname)
-            false
-            hostname)))))
-)
-
-(defn is-custom-host
-  ([]
-    (is-custom-host (:server-name *request*)))
-  ([hostname]
-    (let [subdomain (first (clojure.string/split hostname #"\."))
-          re (java.util.regex.Pattern/compile (str "^" subdomain "\\."))
-          domainname (clojure.string/replace hostname re "")]
-        (if (= (:page-url config/multiplex) hostname)
-          false
-          hostname))))
+    (assoc (apply dissoc params (conj what :apikey)) :created nil :updated nil)))
 
 ; pages from DB
 (defn show-single [id]
@@ -257,29 +209,29 @@
   (POST "/store/:apikey" [url txt type apikey tags]
       (render-page-store apikey (untaint url txt type tags)))
   (POST "/signup" [username email password code]
-    (if-let [username (is-subdomain)]
+    (if-let [username (util/is-subdomain)]
       (status 404 "your page could not be found")
       (render-page-signup (untaint-signup username email password code))))
   (GET  "/signup" [code]
-    (if-let [hostname (is-custom-host)]
+    (if-let [hostname (util/is-custom-host)]
       (status 404 "your page could not be found")
       (render-page-signup {:code (util/string-or-default code "")})))
   (GET  "/add/:apikey" [url txt type tags apikey title]
     (render-page-add (untaint url txt type (util/string-or-default tags) apikey title)))
   (GET  "/post/:id" [id]
-    (if-let [hostname (is-custom-host)]
+    (if-let [hostname (util/is-custom-host)]
       (show-single (util/int-or-default id 0))
       (status 404 "your page could not be found")))
   (GET  "/about" []
-    (if-let [hostname (is-custom-host)]
+    (if-let [hostname (util/is-custom-host)]
       (status 404 "your page could not be found")
       (render-page-about)))
   (GET  "/about/changes" []
-    (if-let [hostname (is-custom-host)]
+    (if-let [hostname (util/is-custom-host)]
       (status 404 "your page could not be found")
       (render-page-html (util/mdfile->html "/md/changes.md"))))
   (GET  "/everyone" [page limit type]
-    (if-let [hostname (is-custom-host)]
+    (if-let [hostname (util/is-custom-host)]
       (status 404 "your page could not be found")
       (render-page-stream {:limit (util/int-or-default limit 10)
                            :page (util/int-or-default page 1)
@@ -290,7 +242,7 @@
                        :itemtype (util/string-or-default type)
                        :apikey apikey}))
   (GET  "/" [page limit type]
-    (if-let [hostname (is-custom-host)]
+    (if-let [hostname (util/is-custom-host)]
       (render-page-user {:hostname hostname
                          :limit (util/int-or-default limit 10)
                          :page (util/int-or-default page 1)

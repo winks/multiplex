@@ -27,10 +27,12 @@
 * DONE 0.3.0 - Fixed missing bookmarklet
 * DONE 0.3.0 - Fixed Postgres sequences
 * DONE 0.3.1 - Add cname support
+* DONE 0.3.1 - Add title support
+* DONE 0.3.1 - Various CSS and design tweaks, esp. metadata
+* DONE 0.3.1 - Tweaked about and changelog
 
 # TODO
 
-* prettify meta data
 * implement tags fully
 * import whole soup account
 * show soup account/friendstream and allow to repost to multiplex

@@ -55,12 +55,19 @@ a:hover {
   text-decoration: underline;
 }
 
-.bd         {font-weight:bold;}
-.u          {text-decoration: none}
-img         {border:0;}
-.hidden     {visibility: hidden;}
-.perma      {
-  font-size: small;
+.bd {
+  font-weight:bold;
+}
+.u {
+  text-decoration: none
+}
+img {
+  border:0;
+}
+.hidden {
+  visibility: hidden; height: 0px;
+}
+.perma {
   vertical-align: top;
 }
 .user-header {
@@ -130,6 +137,13 @@ li.alert {
 }
 li.video p {
     margin-left: 32px;
+}
+.meta-bag {
+   margin-left: 32px;
+   margin-top: 0px;
+}
+.meta-bag a {
+    cursor: pointer;
 }
 
 form {

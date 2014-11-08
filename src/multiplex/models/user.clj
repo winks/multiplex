@@ -15,7 +15,9 @@
    :apikey nil
    :signupcode nil
    :created nil
-   :updated nil})
+   :updated nil
+   :title nil
+   :theme nil})
 
 ; SQLish
 

@@ -1,33 +1,33 @@
 <li class="pic">
 {% include "multiplex/views/templates/snippet_avatar.html" %}
 {% include "multiplex/views/templates/snippet_perma.html" %}
+<div id="media-{{post.id}}">
 {% if post.meta.thumb %}
-<a href="{{post.url}}"><img src="{{post.url}}.thumb.{{post.meta.thumb}}" /></a>
+<a href="{{post.url}}"><img src="{{post.url}}.thumb.{{post.meta.thumb}}" alt="{{post.id}}.thumb" /></a>
 {% else %}
-<img src="{{post.url}}" />
+<img src="{{post.url}}" alt="{{post.id}}" />
 {% endif %}
+</div>
 
 {% if post.meta %}
   <div id="meta-bag-{{post.id}}" class="meta-bag">
-    <a id="meta-link-{{post.id}}">META +</a>
-
-  <script>
-$("#meta-link-{{post.id}}").on("click", function(e) {
-  $("#meta-{{post.id}}").toggleClass("hidden");
-/*  $("#meta-link-{{post.id}}").text('META -');*/
-});</script>
-    <div id="meta-{{post.id}}" class="hidden">
+    <a id="meta-link-{{post.id}}">[+]</a>
+    <span id="meta-{{post.id}}" class="hidden">
     {% if post.meta.url %}
-      <div id="meta-url-{{post.id}}">
-      {{post.meta.url}}
-      </div>
+      <span id="meta-url-{{post.id}}">
+      <a href="{{post.meta.url}}">source</a>
+      </span>&nbsp;
     {% endif %}
     {% if post.meta.size %}
-      <div id="meta-size-{{post.id}}">
+      <span id="meta-size-{{post.id}}">
       {{post.meta.size}}
-      </div>
+      </span>&nbsp;
     {% endif %}
-    </div>
+    </span>
+    <script type="application/javascript">
+$("#meta-link-{{post.id}}").on("click", function(e) {
+  $("#meta-{{post.id}}").toggleClass("hidden");
+});</script>
   </div>
 {% endif %}
 </li>

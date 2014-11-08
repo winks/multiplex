@@ -56,7 +56,9 @@
             "apikey character varying(64) NOT NULL UNIQUE, "
             "signupcode character varying(64) DEFAULT NULL::character varying, "
             "created timestamp(0) without time zone DEFAULT now(), "
-            "updated timestamp(0) without time zone NOT NULL)"))
+            "updated timestamp(0) without time zone NOT NULL,"
+            "title character varying(64) NOT NULL default '',"
+            "theme text NOT NULL default '')"))
         (sql/do-commands
           (str "CREATE TABLE `" users-table "` (`uid` int(10) unsigned NOT NULL AUTO_INCREMENT, "
             "`username` varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
@@ -67,6 +69,8 @@
             "`signupcode` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL, "
             "`created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', "
             "`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, "
+            "`title` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '', "
+            "`theme` TEXT COLLATE utf8_unicode_ci NOT NULL DEFAULT '', "
             "PRIMARY KEY (`uid`), "
             "UNIQUE KEY `username` (`username`), "
             "UNIQUE KEY `email` (`email`), "

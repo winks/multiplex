@@ -1,4 +1,4 @@
-(defproject multiplex "0.3.0"
+(defproject multiplex "0.3.1-dev"
   :description "A little tumblelog"
   :url "https://github.com/winks/multiplex"
   :dependencies
