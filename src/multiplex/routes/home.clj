@@ -175,11 +175,14 @@
 (defn render-page-store [apikey params]
   (if-let [user (muser/get-user-by-key apikey)]
     (let [itemtype (if (empty? (:itemtype params)) (util/guess-type (:url params) (:txt params)) (:itemtype params))
-          params (assoc params :itemtype itemtype :author (:uid user))]
+          params (assoc params :itemtype itemtype :author (:uid user))
+          newid (store-dispatch params)
+          post (mpost/get-post-by-id (:id newid))]
       (do
         (println params)
-        (store-dispatch params)
-        (layout/render "page_justposted.html" {:content (clojure.string/join ":" (vals params))} )))
+        (layout/render "page_justposted.html" {:post post
+                                               :id (:id newid)
+                                               :content (str "Saved as" (:id newid) "<br>")})))
     (BLANK)))
 
 ; dispatch

@@ -1,7 +1,8 @@
 (ns multiplex.models.post
   (:use korma.core
         [korma.db :only (defdb mysql postgres)])
-  (:require [multiplex.config :as config]
+  (:require [clojure.java.jdbc :as sql]
+            [multiplex.config :as config]
             [multiplex.models.db :as db]))
 
 (def itemtypes ["image" "video" "audio" "link" "text"])
@@ -51,6 +52,6 @@
 (defn new-post [params]
   (let [query (str "INSERT INTO mpx_posts"
                    " (id, updated, created, author, itemtype, url, txt, meta, tag)"
-                   " VALUES (nextval('mpx_posts_id_seq'), NOW(), NOW(), ? ,?, ?, ?, ?, ?);")]
-    (exec-raw [query [(:author params) (:itemtype params) (:url params) (:txt params) (:meta params) (:tag params)]])))
+                   " VALUES (nextval('mpx_posts_id_seq'), NOW(), NOW(), ? ,?, ?, ?, ?, ?) RETURNING id;")]
+    (sql/query config/mydb  [query (:author params) (:itemtype params) (:url params) (:txt params) (:meta params) (:tag params)])))
 

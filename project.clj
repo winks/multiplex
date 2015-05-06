@@ -11,7 +11,7 @@
    [com.taoensso/timbre "3.2.1"]
    [com.taoensso/tower "2.0.2"]
    [markdown-clj "0.9.47"]
-   [org.clojure/java.jdbc "0.3.5"]
+   [org.clojure/java.jdbc "0.3.6"]
    [mysql/mysql-connector-java "5.1.31"]
    [postgresql "9.3-1101.jdbc4"]
    [korma "0.3.3"]

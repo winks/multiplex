@@ -3,15 +3,15 @@
             [multiplex.config :only (mydb)]
             [multiplex.models.db :only (posts-table tags-table users-table)])
   (:require [clojure.java.jdbc :as sql]
-            [multiplex.models.load :as load]
+            [multiplex.models.load :as mload]
             [multiplex.util :as util]))
 
 (defn create-posts-table
   [db-cred]
   (try
-    (sql/with-connection db-cred
+    (sql/with-db-connection [conn db-cred]
       (if (= "postgres" (subs db-cred 0 8))
-        (sql/do-commands
+        (sql/db-do-commands conn
           (str "CREATE SEQUENCE " posts-table "_id_seq"
                "    START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;")
           (str "CREATE TABLE " posts-table " ("
@@ -25,7 +25,7 @@
             "created timestamp(0) without time zone DEFAULT now() NOT NULL, "
             "updated timestamp(0) without time zone NOT NULL"
             ")"))
-        (sql/do-commands
+        (sql/db-do-commands conn
           (str "CREATE TABLE " posts-table " (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
             "`author` int(11) unsigned NOT NULL, "
             "`itemtype` varchar(100) DEFAULT NULL, "
@@ -42,9 +42,9 @@
 (defn create-users-table
   [db-cred]
   (try
-    (sql/with-connection db-cred
+    (sql/with-db-connection [conn db-cred]
       (if (= "postgres" (subs db-cred 0 8))
-        (sql/do-commands
+        (sql/db-do-commands conn
           (str "CREATE SEQUENCE " users-table "_id_seq"
                "    START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;")
           (str "CREATE TABLE " users-table " ("
@@ -59,7 +59,7 @@
             "updated timestamp(0) without time zone NOT NULL,"
             "title character varying(64) NOT NULL default '',"
             "theme text NOT NULL default '')"))
-        (sql/do-commands
+        (sql/db-do-commands conn
           (str "CREATE TABLE `" users-table "` (`uid` int(10) unsigned NOT NULL AUTO_INCREMENT, "
             "`username` varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
             "`hostname` varchar(100) COLLATE utf8_unicode_ci NOT NULL, "
@@ -81,9 +81,9 @@
 (defn create-functions-etc
   [db-cred]
   (try
-    (sql/with-connection db-cred
+    (sql/with-db-connection [conn db-cred]
       (if (= "postgres" (subs db-cred 0 8))
-        (sql/do-commands
+        (sql/db-do-commands conn
           (str "CREATE FUNCTION update_updated_column() RETURNS trigger "
                "    LANGUAGE plpgsql "
                "    AS $$ "
@@ -106,8 +106,8 @@
     (create-posts-table mydb)
     (create-users-table mydb)
     (create-functions-etc mydb)
-    (load/load-posts-table mydb)
-    (load/load-users-table mydb)))
+    (mload/load-posts-table mydb)
+    (mload/load-users-table mydb)))
 
 (defn -main []
   (print "Creating DB structure...") (flush)
