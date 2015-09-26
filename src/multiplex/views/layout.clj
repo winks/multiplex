@@ -23,6 +23,6 @@
                         (assoc params :context (:context *request*)
                                       :page-title page-title
                                       :page-header page-header
-                                      :user-link user-link
+                                      :user-link "/"
                                       :multiplex cfg))))
 
