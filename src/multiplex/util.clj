@@ -138,8 +138,10 @@
       default)))
 
 (defn get-avatar [n]
-  (let [prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))]
-    (str prefix (:avatar (nth config/user-data (int-or-default n 0))))))
+  (let [avatar (:avatar (nth config/user-data (int-or-default n 0)))]
+    (if-let [static-url (:static-url config/multiplex)]
+      (str (:page-scheme config/multiplex) "://" static-url avatar)
+      avatar)))
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
