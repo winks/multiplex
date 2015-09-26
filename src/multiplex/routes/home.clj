@@ -57,7 +57,9 @@
      :page-newer page-newer
      :page-older page-older
      :pages pages
+     :page (int page)
      :page-count page-count
+     :limit n
      :itemtype itemtype}))
 
 (defn show-some

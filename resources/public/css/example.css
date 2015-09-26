@@ -145,3 +145,12 @@ form input[type="text"].smaller {
 form input[type="submit"] {
   width: 100px;
 }
+
+.pagination {
+    font-size: large;
+}
+
+.pagination strong {
+    font-size: larger;
+    text-decoration: underline;
+}

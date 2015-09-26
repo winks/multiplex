@@ -21,13 +21,15 @@
 
 {% endfor %}
 
+<div class="pagination">
 {% if page-newer %}
-<a href="?page={{page-newer}}{% if itemtype %}&type={{itemtype}}{% endif %}">&laquo;&laquo;</a>
+<a href="?page={{page-newer }}{% if itemtype %}&type={{itemtype}}{% endif %}{% if limit %}&limit={{limit}}{% endif %}">&laquo;&laquo;</a>
 {% endif %}
 {% for pg in pages %}
- <a href="?page={{pg}}{% if itemtype %}&type={{itemtype}}{% endif %}">{{pg}}</a>
+ <a href="?page={{pg        }}{% if itemtype %}&type={{itemtype}}{% endif %}{% if limit %}&limit={{limit}}{% endif %}">{% ifequal pg page %}<strong>{% endifequal %}{{pg}}{% ifequal pg page %}</strong>{% endifequal %}</a>
 {% endfor %}
 {% if page-older %}
- <a href="?page={{page-older}}{% if itemtype %}&type={{itemtype}}{% endif %}">&raquo;&raquo;</a>
+ <a href="?page={{page-older}}{% if itemtype %}&type={{itemtype}}{% endif %}{% if limit %}&limit={{limit}}{% endif %}">&raquo;&raquo;</a>
 {% endif %}
+</div>
 </ul>
