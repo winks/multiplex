@@ -183,3 +183,15 @@
 (defn sha-512
   [arg]
   (md-hash "SHA-512" arg))
+
+(defn calculate-pagination
+  [num page post-count]
+  (let [page-count (int (Math/ceil (/ post-count num)))
+        page-newer (when-not (< page 2) (dec page))
+        page-older (when-not (>= page page-count) (inc page))
+        pages (range 1 (inc page-count))]
+    {:page-newer page-newer
+     :page-older page-older
+     :pages pages
+     :page-count page-count
+     :post-count post-count}))

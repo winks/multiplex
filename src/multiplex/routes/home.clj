@@ -46,21 +46,16 @@
 
 (defn get-some
   [n page where-clause]
-  (let [posts (map util/add-fields (mpost/get-posts n (* n (dec page)) where-clause))
-        current (clojure.core/count posts)
-        page-newer (when-not (< page 2) (dec page))
-        page-older (when-not (< current n) (inc page))
-        page-count (mpost/get-post-count where-clause)
-        pages (range 1 (inc (/ (+ n (- page-count (mod page-count n))) n)))
+  (let [offset (* n (dec page))
+        posts (map util/add-fields (mpost/get-posts n offset where-clause))
+        post-count (mpost/get-post-count where-clause)
+        pagination (util/calculate-pagination n page post-count)
         itemtype (:itemtype where-clause)]
-    {:posts posts
-     :page-newer page-newer
-     :page-older page-older
-     :pages pages
-     :page (int page)
-     :page-count page-count
-     :limit n
-     :itemtype itemtype}))
+      (assoc pagination
+        :posts posts
+        :page page
+        :limit n
+        :itemtype itemtype)))
 
 (defn show-some
   ([n]
