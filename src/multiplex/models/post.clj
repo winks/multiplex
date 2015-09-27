@@ -53,5 +53,5 @@
   (let [query (str "INSERT INTO mpx_posts"
                    " (id, updated, created, author, itemtype, url, txt, meta, tag)"
                    " VALUES (nextval('mpx_posts_id_seq'), NOW(), NOW(), ? ,?, ?, ?, ?, ?) RETURNING id;")]
-    (sql/query config/mydb  [query (:author params) (:itemtype params) (:url params) (:txt params) (:meta params) (:tag params)])))
+    (sql/query config/mydb [query (:author params) (:itemtype params) (:url params) (:txt params) (:meta params) (:tag params)])))
 

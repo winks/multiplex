@@ -3,11 +3,11 @@
   :url "https://github.com/winks/multiplex"
   :dependencies
   [[org.clojure/clojure "1.6.0"]
-   [lib-noir "0.8.4"]
-   [compojure "1.1.8"]
-   [ring-server "0.3.1"]
-   [selmer "0.6.9"]
-   [clj-time "0.8.0"]
+   [lib-noir "0.9.9"]
+   [compojure "1.4.0"]
+   [ring-server "0.4.0"]
+   [selmer "0.9.2"]
+   [clj-time "0.11.0"]
    [com.taoensso/timbre "3.2.1"]
    [com.taoensso/tower "2.0.2"]
    [markdown-clj "0.9.47"]

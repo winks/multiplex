@@ -1,5 +1,6 @@
 (ns multiplex.views.layout
   (:use noir.request)
+  (:use ring.util.anti-forgery)
   (:require [selmer.parser :as parser]
             [multiplex.config :as config]
             [multiplex.util :as util]))
@@ -11,6 +12,8 @@
                       :page-scheme "http"
                       :bookmark-text "Bookmark me"
                       :theme "default"})
+
+(parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 
 (defn render [template & [params]]
   (let [uid (util/int-or-default (:uid (:post params)) 0)

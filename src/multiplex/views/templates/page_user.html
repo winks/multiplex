@@ -5,7 +5,12 @@
 
 <div class="user-header">
 {% include "multiplex/views/templates/snippet_avatar.html" %}
-<div class="user-header-text"><h2>{{ page-header }}</a></h2></div>
+<div class="user-header-text"><h2>{{ page-header }}</h2></div>
+    <div class="type-buttons">
+    <img src="/img/map1/photo.png" width="32" height="37" alt="photo" />
+    <img src="/img/map1/audio.png" width="32" height="37" alt="audio" />
+    <img src="/img/map1/video.png" width="32" height="37" alt="video" />
+    </div>
 </div>
 
 {% if post.apikey %}

@@ -30,7 +30,7 @@ body {
   text-align: center;
 }
 .footer {
-  border-top: 1px solid #cc000;
+  border-top: 1px solid #cc0000;
 }
 
 h1, h2, h3  {
@@ -66,14 +66,18 @@ img         {border:0;}
 .user-header {
   background-color: #ffbb00;
   height: 40px;
+    clear: both;
+    margin-top: 20px;
 }
 .user-header-text {
-  margin-top: 8px;
+  margin-top: -20px;
   vertical-align: top;
+    float: left;
 }
 .user-header-text h2 {
   padding-top: 8px;
   padding-left: 40px;
+  padding-right: 80px;
 }
 .avatar {
   float: left;
@@ -100,6 +104,7 @@ ul.main {
     padding: 3px 0 3px 34px;
     margin: .4em 0;
     line-height: 35px;
+    clear: both;
 }
 
 .main li a {
@@ -148,9 +153,17 @@ form input[type="submit"] {
 
 .pagination {
     font-size: large;
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .pagination strong {
     font-size: larger;
     text-decoration: underline;
+}
+
+.type-buttons {
+    float: right;
+    text-align: right;
 }

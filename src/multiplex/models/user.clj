@@ -1,7 +1,8 @@
 (ns multiplex.models.user
   (:use korma.core
         [korma.db :only (defdb mysql postgres)])
-  (:require [multiplex.config :as config]
+  (:require [clojure.java.jdbc :as sql]
+            [multiplex.config :as config]
             [multiplex.models.db :as db]
             [multiplex.util :as util]))
 
@@ -17,13 +18,17 @@
    :created nil
    :updated nil
    :title nil
-   :theme nil})
+   :theme nil
+   })
 
 ; SQLish
 
 (defn new-user [user]
-  (insert db/mpx_users
-          (values user)))
+  (let [query (str "INSERT INTO " db/users-table
+                "(uid, username, hostname, email, password, apikey, signupcode, created, updated, title, theme)"
+                " VALUES(nextval('" db/users-table "_id_seq'), ?, ?, ?, ?, ?, ?, NOW(), NOW(), '', '') RETURNING uid;")]
+    (sql/query config/mydb [query (:username user) (:hostname user) (:email user) (:password user) (:apikey user) (:signupcode user)])))
+
 
 (defn update-user-credentials
   "Update password and apikey for a user."
@@ -66,7 +71,7 @@
 
 (defn create-user [params]
   (if (seq (:username params))
-    (let [db-params  (merge (prepare-map) (assoc params :apikey "FIXME" :password "FIXME"))
+    (let [db-params  (merge (prepare-map) (assoc params :apikey "FIXME" :password "FIXME" :hostname "FIXME"))
           uid        (:GENERATED_KEY (new-user db-params))
           new-apikey (util/hash-apikey (config/salt-apikey (:username params) (:password params) uid))
           new-pass   (util/hash-password (config/salt-password (:username params) (:password params) uid))]

@@ -12,6 +12,7 @@ Have a look at your <a href="/user/{{username}}/{{apikey}}">user page</a>.
 {% else %}
 
 <form action="/signup" id="signupform" method="post">
+    {% csrf-field %}
     <input type="hidden" name="code" value="{{code}}" />
     <p><label>Username:<br /> <input type="text" name="username" /></label></p>
     <p><label>Password:<br /> <input type="password" name="password" /></label></p>
