@@ -5,8 +5,9 @@ apt-get update
 dpkg -l | grep postgresql || apt-get install -y postgresql
 dpkg -l | grep openjdk-7-jdk || apt-get install -y openjdk-7-jdk
 [ -d "/home/vagrant/bin" ] || sudo -u vagrant mkdir /home/vagrant/bin
-ls /home/vagrant/bin/lein || sudo -u vagrant wget -P /home/vagrant/bin https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein >/dev/null 2>&1
-chmod +x /home/vagrant/bin/lein
+export LEIN=/home/vagrant/bin/lein
+[ -f "${LEIN}" ] || sudo -u vagrant wget -O "${LEIN}" https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein >/dev/null 2>&1
+chmod +x "${LEIN}"
 SCRIPT
 
 
