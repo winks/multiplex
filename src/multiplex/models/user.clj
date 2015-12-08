@@ -1,12 +1,11 @@
 (ns multiplex.models.user
-  (:use korma.core
-        [korma.db :only (defdb mysql postgres)])
-  (:require [clojure.java.jdbc :as sql]
+  (:require [korma.core :refer :all]
+            [clojure.java.jdbc :as sql]
             [multiplex.config :as config]
             [multiplex.models.db :as db]
             [multiplex.util :as util]))
 
-; prepare 
+; prepare
 (defn prepare-map []
   {:uid nil
    :username nil

@@ -1,35 +1,34 @@
 (ns multiplex.routes.home
-  (:use compojure.core
-        noir.request
-        [noir.response :only (redirect status)])
   (:require [clojure.data.json :as json]
+            [clojure.string :as str]
+            [compojure.core :refer :all]
+            [noir.request :refer :all]
+            [noir.response :as response]
             [multiplex.config :as config]
             [multiplex.gfx :as gfx]
-            [multiplex.models.user :as muser]
-            [multiplex.models.post :as mpost]
-            [multiplex.models.tag :as mtag]
+            [multiplex.models [user :as muser]
+                              [post :as mpost]
+                              [tag :as mtag]]
             [multiplex.util :as util]
             [multiplex.views.layout :as layout]))
 
 (defn sanitize-title [s]
   (-> s
-      (clojure.string/replace #"^▶ " "")
-      (clojure.string/replace #" - YouTube$" "")
-      (clojure.string/replace #" - MyVideo$" "")
-      (clojure.string/replace #" on Vimeo$" "")))
+      (str/replace #"^▶ " "")
+      (str/replace #" - YouTube$" "")
+      (str/replace #" - MyVideo$" "")
+      (str/replace #" on Vimeo$" "")))
 
 ; parameter mangling
 (defn form-fill
   [params]
-    (if
-      (and (empty? (:txt params)) (seq (:title params)))
+    (if (and (empty? (:txt params)) (seq (:title params)))
       (assoc params :txt (sanitize-title (:title params)))
       params))
 
 (defn prepare-page-add
   [params]
-  (if
-    (muser/valid-apikey? (:apikey params))
+  (if (muser/valid-apikey? (:apikey params))
     (form-fill params)
     (assoc params :apikey "")))
 
@@ -96,9 +95,9 @@
                          {:author author :itemtype (:itemtype params)}
                          {:author author})
         posts-map (get-some (:limit params) (:page params) where-clause)
-        post (if (true? loggedin)
-                 (assoc (cleanup usr) :avatar avatar :apikey apikey)
-                 (assoc (cleanup usr) :avatar avatar))]
+        post (if loggedin
+                (assoc (cleanup usr) :avatar avatar :apikey apikey)
+                (assoc (cleanup usr) :avatar avatar))]
     (layout/render "page_user.html" (assoc posts-map :post post))))
 
 (defn render-page-user [params]
@@ -138,7 +137,7 @@
         sizes (gfx/image-size img)
         resized (gfx/calc-resized img)
         params (assoc params :id nil
-                             :meta {:size (clojure.string/join ":" sizes) :url (:url params)}
+                             :meta {:size (str/join ":" sizes) :url (:url params)}
                              :url (config/rel-file filename))]
     (do
       (println (str "xxx: " sizes resized))
@@ -146,7 +145,7 @@
         (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
           (let [r (gfx/resize img abs-filename (first resized) (second resized))
                 params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
-                                                                 :thumbsize (clojure.string/join ":" resized)))]
+                                                                 :thumbsize (str/join ":" resized)))]
             (prep-new params))
             (prep-new params)))))
 
@@ -163,9 +162,9 @@
     (mpost/new-post (cleanup params))))
 
 (defn store-dispatch [params]
-  (if (.equals "image" (:itemtype params))
+  (if (= "image" (:itemtype params))
     (store-image params)
-      (if (.equals "text" (:itemtype params))
+      (if (= "text" (:itemtype params))
         (store-text params)
         (store-link-etc params))))
 
@@ -191,11 +190,11 @@
     (untaint url txt itemtype tags apikey ""))
   ([url txt itemtype tags apikey title]
     {:url url
-     :txt (clojure.string/trim txt)
+     :txt (str/trim txt)
      :itemtype itemtype
      :apikey apikey
      :tag (mtag/sanitize-tags tags)
-     :title (clojure.string/trim title)}))
+     :title (str/trim title)}))
 
 (defn untaint-signup
   "TODO: this needs some real checks"
@@ -210,29 +209,29 @@
       (render-page-store apikey (untaint url txt type tags)))
   (POST "/signup" [username email password code]
     (if-let [username (util/is-subdomain)]
-      (status 404 "your page could not be found")
+      (response/status 404 "your page could not be found")
       (render-page-signup (untaint-signup username email password code))))
   (GET  "/signup" [code]
     (if-let [hostname (util/is-custom-host)]
-      (status 404 "your page could not be found")
+      (response/status 404 "your page could not be found")
       (render-page-signup {:code (util/string-or-default code "")})))
   (GET  "/add/:apikey" [url txt type tags apikey title]
     (render-page-add (untaint url txt type (util/string-or-default tags) apikey title)))
   (GET  "/post/:id" [id]
     (if-let [hostname (util/is-custom-host)]
       (show-single (util/int-or-default id 0))
-      (status 404 "your page could not be found")))
+      (response/status 404 "your page could not be found")))
   (GET  "/about" []
     (if-let [hostname (util/is-custom-host)]
-      (status 404 "your page could not be found")
+      (response/status 404 "your page could not be found")
       (render-page-about)))
   (GET  "/about/changes" []
     (if-let [hostname (util/is-custom-host)]
-      (status 404 "your page could not be found")
+      (response/status 404 "your page could not be found")
       (render-page-html (util/mdfile->html "/md/changes.md"))))
   (GET  "/everyone" [page limit type]
     (if-let [hostname (util/is-custom-host)]
-      (status 404 "your page could not be found")
+      (response/status 404 "your page could not be found")
       (render-page-stream {:limit (util/int-or-default limit 10)
                            :page (util/int-or-default page 1)
                            :itemtype (util/string-or-default type)})))

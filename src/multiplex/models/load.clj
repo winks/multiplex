@@ -1,8 +1,7 @@
 (ns multiplex.models.load
-  (:use     [korma.db :only (defdb mysql postgres)]
-            [multiplex.config :only (mydb)]
-            [multiplex.models.db :only (posts-table tags-table users-table)])
   (:require [clojure.java.jdbc :as sql]
+            [multiplex.config :only (mydb)]
+            [multiplex.models.db :only (posts-table tags-table users-table)]
             [multiplex.util :as util]))
 
 (defn load-posts-table

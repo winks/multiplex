@@ -1,11 +1,10 @@
 (ns multiplex.models.tag
-  (:use korma.core
-        [korma.db :only (defdb mysql postgres)])
-  (:require [multiplex.config :as config]
+  (:require [korma.core :refer :all]
+            [multiplex.config :as config]
             [multiplex.models.db :as db]
             [multiplex.util :as util]))
 
-; prepare 
+; prepare
 (defn prepare-map []
   {:uid nil
    :username nil
@@ -23,4 +22,3 @@
 ; SQLish
 
 ; abstraction
-

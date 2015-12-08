@@ -1,8 +1,8 @@
 (ns multiplex.handler
-  (:use multiplex.routes.home
-        compojure.core)
-  (:require [noir.util.middleware :as middleware]
-            [compojure.route :as route]))
+  (:require [compojure.core :refer :all]
+            [compojure.route :as route]
+            [noir.util.middleware :as middleware]
+            [multiplex.routes.home :refer :all]))
 
 (defroutes app-routes
   (route/resources "/")

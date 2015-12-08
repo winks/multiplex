@@ -1,7 +1,7 @@
 (ns multiplex.views.layout
-  (:use noir.request)
-  (:use ring.util.anti-forgery)
-  (:require [selmer.parser :as parser]
+  (:require [noir.request :refer :all]
+            [ring.util.anti-forgery :refer :all]
+            [selmer.parser :as parser]
             [multiplex.config :as config]
             [multiplex.util :as util]))
 
@@ -28,4 +28,3 @@
                                       :page-header page-header
                                       :user-link "/"
                                       :multiplex cfg))))
-

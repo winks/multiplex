@@ -1,7 +1,7 @@
 (ns multiplex.models.db
-  (:use korma.core
-        [korma.db :only (defdb mysql postgres)])
-  (:require [multiplex.config :as config]))
+  (:require [korma.core :refer :all]
+            [korma.db :as kdb]
+            [multiplex.config :as config]))
 
 (defn convert-db-uri
   "convert a JDBC/Heroku DB-DSN/URI to parts"
@@ -18,11 +18,11 @@
       (keyword x) y
     }))
 
-(defdb dbm
-  (let [x (convert-db-uri config/mydb)]
-    (if (= "postgres" (:type x))
-      (postgres (assoc x :delimiters ""))
-      (mysql x))))
+(kdb/defdb dbm
+  (let [db-info (convert-db-uri config/mydb)]
+    (if (= "postgres" (:type db-info))
+      (kdb/postgres (assoc db-info :delimiters ""))
+      (kdb/mysql db-info))))
 
 (defentity mpx_posts)
 (defentity mpx_tags)

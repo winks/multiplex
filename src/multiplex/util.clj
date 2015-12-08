@@ -1,9 +1,10 @@
 (ns multiplex.util
-  (:use noir.request)
-  (:require [noir.io :as io]
+  (:require [noir.request :refer :all]
+            [noir.io :as io]
             [clojure.data.json :as json]
             [markdown.core :as md]
             [clojure.java.io :as cjio]
+            [clojure.string :as str]
             [digest :as digest]
             [clj-time.format :as tformat]
             [multiplex.config :as config]))
@@ -12,9 +13,9 @@
   ([]
     (is-custom-host (:server-name *request*)))
   ([hostname]
-    (let [subdomain (first (clojure.string/split hostname #"\."))
+    (let [subdomain (first (str/split hostname #"\."))
           re (java.util.regex.Pattern/compile (str "^" subdomain "\\."))
-          domainname (clojure.string/replace hostname re "")]
+          domainname (str/replace hostname re "")]
         (if (= (:page-url config/multiplex) hostname)
           false
           hostname))))
@@ -23,9 +24,9 @@
   ([]
     (is-subdomain (:server-name *request*)))
   ([hostname]
-    (let [subdomain (first (clojure.string/split hostname #"\."))
+    (let [subdomain (first (str/split hostname #"\."))
           re (java.util.regex.Pattern/compile (str "^" subdomain "\\."))
-          domainname (clojure.string/replace hostname re "")
+          domainname (str/replace hostname re "")
           cfg (:page-url config/multiplex)]
         (if (= cfg hostname)
           false
@@ -67,17 +68,17 @@
 (defn file-extension
   "gets the lower-cased file extension from a string"
   [name]
-  (let [parts (reverse (clojure.string/split name #"\."))
-        ext (clojure.string/lower-case (first parts))]
-    (if (.equals "jpeg" ext)
+  (let [parts (reverse (str/split name #"\."))
+        ext (str/lower-case (first parts))]
+    (if (= "jpeg" ext)
       "jpg"
       ext)))
 
 (defn host-name
   "gets the host name part from an url"
   [url]
-  (let [x (clojure.string/replace url #"http(s)?://(www\.)?" "")]
-    (first (clojure.string/split x #"/"))))
+  (let [x (str/replace url #"http(s)?://(www\.)?" "")]
+    (first (str/split x #"/"))))
 
 (defn guess-type
   "if the post type is not given, try guessing from contents"
@@ -98,16 +99,13 @@
   "extract the unique part of a video url, e.g. from youtube.com/watch?v=FOO"
   [s]
   (let [host (host-name s)]
-    (if
-      (some #{host} config/sites-youtube)
+    (if (some #{host} config/sites-youtube)
       (let [matcher (re-matcher #"[\?&]v=([a-zA-Z0-9_-]+)" s)]
         {:site "youtube" :code (second (re-find matcher))})
-      (if
-        (some #{host} config/sites-vimeo)
+      (if (some #{host} config/sites-vimeo)
         (let [matcher (re-matcher #"/([0-9]+)" s)]
           {:site "vimeo" :code (second (re-find matcher))})
-        (if
-          (some #{host} config/sites-soundcloud)
+        (if (some #{host} config/sites-soundcloud)
           {:site "soundcloud" :code ""}
           {:site "err" :code ""})))))
 
@@ -115,10 +113,9 @@
   ([s]
     (string-or-default s ""))
   ([s default]
-    (if
-      (empty? s)
+    (if (empty? s)
       default
-      (clojure.string/trim s))))
+      (str/trim s))))
 
 (defn int-or-default
   "try to coerce to integer or return a safe default"
@@ -145,7 +142,7 @@
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
-        meta-foo (if (= "" (clojure.string/trim (:meta coll))) "{}" (:meta coll))
+        meta-foo (if (= "" (str/trim (:meta coll))) "{}" (:meta coll))
         updated (put-time (read-time (str (:updated coll))))
         prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))
         url (if (< (count (:url coll)) (count config/rel-path))
