@@ -167,11 +167,11 @@
 (defn hash-password [arg]
   (digest/sha-512 arg))
 
-(defn md-hash
-  [algorithm arg]
-  (let [md (java.security.MessageDigest/getInstance algorithm)
-        digest (.digest md (.getBytes arg))]
-    (.toString (BigInteger. 1 digest) 16)))
+(defn md-hash [algorithm s]
+  (->> (-> (java.security.MessageDigest/getInstance algorithm)
+           (.digest (.getBytes s "UTF-8")))
+       (map #(format "%02x" %))
+       (apply str)))
 
 (defn md5
   [arg]
