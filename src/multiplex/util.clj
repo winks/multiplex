@@ -107,7 +107,10 @@
           {:site "vimeo" :code (second (re-find matcher))})
         (if (some #{host} config/sites-soundcloud)
           {:site "soundcloud" :code ""}
-          {:site "err" :code ""})))))
+          (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
+            (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
+              {:site "imgur-gifv" :code (second (re-find matcher))})
+              {:site "err" :code ""}))))))
 
 (defn string-or-default
   ([s]

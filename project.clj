@@ -9,7 +9,7 @@
    [selmer "0.9.2"]
    [clj-time "0.11.0"]
    [com.taoensso/timbre "4.1.2"]
-   [com.taoensso/tower "3.0.0"]
+   [com.taoensso/tower "3.0.0" :exclusions [org.clojure/clojure]]
    [markdown-clj "0.9.47"]
    [org.clojure/java.jdbc "0.3.7"]
    [mysql/mysql-connector-java "5.1.31"]

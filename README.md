@@ -59,6 +59,10 @@ For the production setup, run:
 or use ```run.sh```.
 
 
+## Tests (to be improved)
+
+    lein test
+
 
 ## License
 

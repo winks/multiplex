@@ -14,6 +14,8 @@
 (def sites-xy '("example.example"))
 (def sites-audio (flatten (conj sites-soundcloud sites-xy)))
 
+(def sites-imgur-gifv '("imgur.com" "i.imgur.com"))
+
 (def multiplex {:page-title "multiplex"
                 :page-url "example.org"
                 :page-scheme "http"
