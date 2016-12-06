@@ -73,10 +73,13 @@ img {
 .user-header {
   background-color: #D6F674;
   height: 40px;
+  clear: both;
+  margin-top: 20px;
 }
 .user-header-text {
-  margin-top: 8px;
+  margin-top: -20px;
   vertical-align: top;
+  float: left;
 }
 .user-header-text h2 {
   padding-top: 8px;
