@@ -83,7 +83,7 @@ img         {border:0;}
   float: left;
 }
 .avatar img {
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 hr {
@@ -163,7 +163,7 @@ form input[type="submit"] {
     text-decoration: underline;
 }
 
-.type-buttons {
+.pagination-by-type {
     float: right;
     text-align: right;
 }

@@ -195,3 +195,10 @@
      :pages pages
      :page-count page-count
      :post-count post-count}))
+
+(defn type-pagination [type page limit]
+  (let [pt (str "type=" type)
+        pp (if (> 1 page) nil (str "page=" page))
+        pl (if (= config/default-limit limit) nil (str "limit=" limit))
+        parts [pt pl pp]]
+    (str "?" (clojure.string/join "&" (filter not-empty parts)))))

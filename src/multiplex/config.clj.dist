@@ -1,6 +1,7 @@
 (ns multiplex.config)
 
 (def itemtypes '("image" "link" "text" "video" "audio"))
+(def default-limit 10)
 
 (def img-types '("jpg" "png" "gif" "svg" "jpeg"))
 (def img-max-size [640 480])

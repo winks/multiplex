@@ -86,7 +86,7 @@ img {
   float: left;
 }
 .avatar img {
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 hr {
@@ -167,4 +167,9 @@ form input[type="submit"] {
 .pagination strong {
     font-size: larger;
     text-decoration: underline;
+}
+
+.pagination-by-type {
+    float: right;
+    text-align: right;
 }

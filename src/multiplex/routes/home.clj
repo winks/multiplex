@@ -232,18 +232,18 @@
   (GET  "/everyone" [page limit type]
     (if-let [hostname (util/is-custom-host)]
       (response/status 404 "your page could not be found")
-      (render-page-stream {:limit (util/int-or-default limit 10)
+      (render-page-stream {:limit (util/int-or-default limit config/default-limit)
                            :page (util/int-or-default page 1)
                            :itemtype (util/string-or-default type)})))
   (GET  "/meta/:apikey" [apikey page limit type]
-    (render-page-user {:limit (util/int-or-default limit 10)
+    (render-page-user {:limit (util/int-or-default limit config/default-limit)
                        :page (util/int-or-default page 1)
                        :itemtype (util/string-or-default type)
                        :apikey apikey}))
   (GET  "/" [page limit type]
     (if-let [hostname (util/is-custom-host)]
       (render-page-user {:hostname hostname
-                         :limit (util/int-or-default limit 10)
+                         :limit (util/int-or-default limit config/default-limit)
                          :page (util/int-or-default page 1)
                          :itemtype (util/string-or-default type)})
       (render-page-index))))
