@@ -33,6 +33,7 @@
 * DONE 0.3.1 - fix pagination on user pages
 * DONE 0.3.1 - add filters by post type
 * DONE 0.3.2 - Add support for gifv (on imgur)
+* DONE 0.3.2 - pagination by content type
 
 # TODO
 
