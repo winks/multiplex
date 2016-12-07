@@ -16,6 +16,7 @@
    [postgresql "9.3-1102.jdbc41"]
    [korma "0.3.3"]
    [digest "1.4.4"]
+   [clj-rss "0.2.3"]
    [org.clojure/data.json "0.2.6"]
    [org.clojure/tools.trace "0.7.8"]
    [log4j "1.2.15" :exclusions [javax.mail/mail

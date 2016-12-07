@@ -4,6 +4,7 @@
             [compojure.core :refer :all]
             [noir.request :refer :all]
             [noir.response :as response]
+            [clj-rss.core :as rss]
             [multiplex.config :as config]
             [multiplex.gfx :as gfx]
             [multiplex.models [user :as muser]
@@ -18,6 +19,12 @@
       (str/replace #" - YouTube$" "")
       (str/replace #" - MyVideo$" "")
       (str/replace #" on Vimeo$" "")))
+
+(defn rssify [x]
+  {:title (:txt x)
+   :description (:url x)
+   :pubDate (:created x)
+   :category (:itemtype x)})
 
 ; parameter mangling
 (defn form-fill
@@ -127,7 +134,6 @@
   (let [params (assoc params :meta (json/write-str (:meta params)))]
     (mpost/new-post (cleanup params))))
 
-
 (defn store-image [params]
   (let [ext (util/file-extension (:url params))
         filename (str (util/hash-filename (:url params)) "." ext)
@@ -180,6 +186,9 @@
                                                :id (:id newid)
                                                :content (str "Saved as" (:id newid) "<br>")})))
     (BLANK)))
+
+(defn render-rss [items title link description]
+  (rss/channel-xml {:title title :link link :description description} items))
 
 ; dispatch
 (defn untaint
@@ -240,6 +249,21 @@
                        :page (util/int-or-default page 1)
                        :itemtype (util/string-or-default type)
                        :apikey apikey}))
+  (GET  "/rss" []
+    (if-let [hostname (util/is-custom-host)]
+      (let [author (muser/get-user-by-hostname hostname )
+            posts (get-some 10 1 {:author (:uid author)})
+            items (map rssify (:posts posts))]
+        (render-rss
+         items
+          (:page-title config/multiplex)
+          (str (:page-scheme config/multiplex) "://" (:page-url config/multiplex))
+          (:title author)))
+      (render-rss
+        []
+        (:page-title config/multiplex)
+        (str (:page-scheme config/multiplex) "://" (:page-url config/multiplex))
+        "")))
   (GET  "/" [page limit type]
     (if-let [hostname (util/is-custom-host)]
       (render-page-user {:hostname hostname
