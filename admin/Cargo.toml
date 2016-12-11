@@ -1,0 +1,9 @@
+[package]
+name = "multiplex-admin"
+version = "0.0.1"
+authors = ["Florian Anderiasch <fa@art-core.org>"]
+
+[dependencies]
+getopts = "0.2"
+postgres = { version = "0.13", features = ["with-chrono"] }
+chrono = "0.2.25"
