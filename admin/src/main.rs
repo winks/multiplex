@@ -2,15 +2,16 @@ extern crate getopts;
 extern crate postgres;
 extern crate chrono;
 
-use getopts::Options;
+use getopts::{Fail, Options};
 use postgres::{Connection, TlsMode};
 use postgres::types::ToSql;
 use std::env;
 use std::io;
-use std::ops::IndexMut;
-use std::ops::Index;
+use std::process;
 use chrono::NaiveDateTime;
 
+const TBL_USERS: &'static str = "mpx_users";
+const TBL_POSTS: &'static str = "mpx_posts";
 
 struct User {
     uid: i32,
@@ -45,7 +46,7 @@ fn parse_int(s: String) -> i32 {
         None => 0,
     };
 
-    return num;
+    num
 }
 
 fn print_usage(program: &str, opts: Options) {
@@ -53,16 +54,23 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
+fn exit_with_err(e: Fail) {
+    println!("Error: {}", e);
+    println!("Exiting.");
+    process::exit(1);
+}
+
 fn delete_post(id: i32, conn: &Connection) -> u64 {
-    let sql = "UPDATE mpx_posts SET deleted = 1 WHERE id = $1";
+    let sql = format!("UPDATE {} SET deleted = 1 WHERE id = $1", TBL_POSTS);
     let updates = conn.execute(&sql, &[&id]).unwrap();
     return updates;
 }
 
 fn get_users(uid: i32, conn: &Connection) -> Vec<Option<User>> {
-    let mut sql = "SELECT uid, username, email, password, apikey, signupcode,
-                          created, updated, hostname, title, theme
-                     FROM mpx_users".to_string();
+    let mut sql = format!("
+    SELECT uid, username, email, password, apikey, signupcode,
+           created, updated, hostname, title, theme
+      FROM {}", TBL_USERS);
     let p_all: &[&ToSql] = &[];
     let p_single: &[&ToSql] = &[&uid];
     let mut p = p_all;
@@ -96,24 +104,25 @@ fn get_users(uid: i32, conn: &Connection) -> Vec<Option<User>> {
 }
 
 fn get_posts(limit: i32, offset: i32, author: i32, conn: &Connection) -> Vec<Option<Post>> {
-    let mut sql = "SELECT id, author, itemtype, url, txt,
-                          meta, tag, created, updated
-                     FROM mpx_posts".to_string();
+    let mut sql = format!("
+    SELECT id, author, itemtype, url, txt,
+           meta, tag, created, updated
+      FROM {}", TBL_POSTS);
     let p_all: &[&ToSql] = &[];
     let p_single: &[&ToSql] = &[&author];
     let mut p = p_all;
     if author > 0 {
-        sql = format!("{} WHERE author = $1 ", &sql);
+        sql = format!("{} WHERE author = $1", &sql);
         p = p_single;
-    } else {
-        sql = format!("{} ORDER BY id ASC", &sql);
-        if limit > 0 {
-            sql = format!("{} LIMIT {}", &sql, limit);
-            if offset > 0 {
-                sql = format!("{} OFFSET {}", &sql, offset);
-            }
+    }
+    sql = format!("{} ORDER BY id ASC", &sql);
+    if limit > 0 {
+        sql = format!("{} LIMIT {}", &sql, limit);
+        if offset > 0 {
+            sql = format!("{} OFFSET {}", &sql, offset);
         }
     }
+
     println!("{}", sql);
     let query = conn.prepare(&sql).unwrap();
     let mut posts = vec![];
@@ -167,42 +176,39 @@ fn main() {
     let program = args[0].clone();
 
     let mut opts = Options::new();
-    opts.optopt("l", "limit", "LIMIT X for get_posts", "LIMIT");
-    opts.optopt("o", "offset", "OFFSET X for get_posts", "OFFSET");
-    opts.optopt("a", "author", "AUTHOR X for get_posts", "AUTHOR");
-    opts.optopt("d", "delete", "DELETE post #ID", "ID");
+    opts.optflag("s", "show", "show entries");
     opts.optflag("u", "userlist", "list users");
     opts.optflag("h", "help", "show help");
 
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => {
-            m
-        }
-        Err(f) => {
-            panic!(f.to_string())
-        }
-    };
+    opts.optopt("a", "author", "AUTHOR X for get_posts", "AUTHOR");
+    opts.optopt("l", "limit", "LIMIT X for get_posts", "LIMIT");
+    opts.optopt("o", "offset", "OFFSET X for get_posts", "OFFSET");
+    opts.optopt("d", "delete", "DELETE post #ID", "ID");
 
-    if matches.opt_present("h") {
+    let matches = opts.parse(&args[1..]).map_err(exit_with_err).unwrap();
+
+    if matches.opt_present("h") || env::args().count() < 2 {
         print_usage(&program, opts);
         return;
     }
-    let limit = match matches.opt_str("l") {
+    let opt_limit = match matches.opt_str("l") {
         Some(s) => parse_int(s),
         None => 0,
     };
-    let offset = match matches.opt_str("o") {
+    let opt_offset = match matches.opt_str("o") {
         Some(s) => parse_int(s),
         None => 0,
     };
-    let author = match matches.opt_str("a") {
+    let opt_author = match matches.opt_str("a") {
         Some(s) => parse_int(s),
         None => 0,
     };
-    let delete = match matches.opt_str("d") {
+    let opt_delete = match matches.opt_str("d") {
         Some(s) => parse_int(s),
         None => 0,
     };
+    let opt_userlist = matches.opt_present("u");
+    let opt_entries = matches.opt_present("s");
 
     let key = "DB_MULTIPLEX";
     let db_string = match env::var(key) {
@@ -211,35 +217,37 @@ fn main() {
     };
 
     let conn = Connection::connect(db_string, TlsMode::None).unwrap();
-    println!("");
 
-    if matches.opt_present("u") {
+    if opt_userlist {
         show_userlist(&conn);
         return;
     }
 
-
-    if delete > 0 {
+    if opt_delete > 0 {
         let mut buffer = String::new();
-        println!("Do you really want to delete post #{}? y/n?", delete);
+        println!("Do you really want to delete post #{}? y/n?", opt_delete);
         io::stdin().read_line(&mut buffer).expect("Failed to read line");
 
         if "y" == buffer.trim().to_lowercase() {
             println!("yes");
-            let updates = delete_post(delete, &conn);
+            let updates = delete_post(opt_delete, &conn);
             println!("{} rows were updated", updates);
-            return;
         }
         return;
     }
 
-    let posts = get_posts(limit, offset, author, &conn);
-    for post in posts {
-        let p = post.unwrap();
-        let users = get_users(p.author, &conn);
-        for user in users {
-            show_post(&p, user.unwrap());
+    if opt_entries {
+        let posts = get_posts(opt_limit, opt_offset, opt_author, &conn);
+        for post in posts {
+            let p = post.unwrap();
+            let users = get_users(p.author, &conn);
+            for user in users {
+                show_post(&p, user.unwrap());
+            }
         }
+        return;
     }
 
+    // fallback
+    print_usage(&program, opts);
 }
