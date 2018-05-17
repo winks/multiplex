@@ -10,6 +10,7 @@
 (def config-fallback {:page-title "multiplex"
                       :page-url ""
                       :page-scheme "http"
+                      :page-scheme-static "http"
                       :bookmark-text "Bookmark me"
                       :theme "default"})
 
@@ -25,12 +26,14 @@
         theme (if (> uid 0)(:theme (nth config/user-data uid)) (:theme config-fallback))
         cfg (assoc (or config/multiplex config-fallback) :theme theme)
         user-link (if-let [host (util/is-custom-host)] host (:page-url config/multiplex))
+        static-prefix (if-let [site (:static-site cfg)] (str (:page-scheme-static cfg) "://" site) "foo")
         page-title (if-let [x (:title (:post params))] x (:page-title cfg))
         page-header (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))]
     (parser/render-file (str template-path template)
                         (assoc params :context (:context *request*)
                                       :page-header page-header
                                       :page-title page-title
+                                      :static-prefix static-prefix
                                       :type-navi-link (phelper "link" params)
                                       :type-navi-text (phelper "text" params)
                                       :type-navi-image (phelper "image" params)

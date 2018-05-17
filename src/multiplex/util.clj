@@ -140,14 +140,14 @@
 (defn get-avatar [n]
   (let [avatar (:avatar (nth config/user-data (int-or-default n 0)))]
     (if-let [static-url (:static-url config/multiplex)]
-      (str (:page-scheme config/multiplex) "://" static-url avatar)
+      (str (:page-scheme-static config/multiplex) "://" static-url avatar)
       avatar)))
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
         meta-foo (if (= "" (str/trim (:meta coll))) "{}" (:meta coll))
         updated (put-time (read-time (str (:updated coll))))
-        prefix (str (:page-scheme config/multiplex) "://" (:static-url config/multiplex))
+        prefix (str (:page-scheme-static config/multiplex) "://" (:static-url config/multiplex))
         url (if (< (count (:url coll)) (count config/rel-path))
                 ""
                 (if (= config/rel-path (subs (:url coll) 0 (count config/rel-path)))

@@ -34,6 +34,8 @@
 * DONE 0.3.1 - add filters by post type
 * DONE 0.3.2 - Add support for gifv (on imgur)
 * DONE 0.3.2 - pagination by content type
+* DONE 0.3.3 - optionally configure all assets from other domain
+* DONE 0.3.3 - fix hardcoded http://
 
 # TODO
 
