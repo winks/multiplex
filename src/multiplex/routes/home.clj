@@ -159,7 +159,7 @@
   (let [vi       (util/video-info (:url params))
         thumb    (util/thumbnail-url vi)
         ext      (util/file-extension thumb)
-        filename (str (:code vi) "." ext)
+        filename (str (:thumb-id vi) "." ext)
         abs-file (config/abs-file-thumb filename (:site vi))
         x        (util/download-file thumb abs-file)
         img      (gfx/read-image abs-file)

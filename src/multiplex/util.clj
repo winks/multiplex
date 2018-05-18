@@ -69,7 +69,7 @@
   "gets the lower-cased file extension from a string"
   [name]
   (let [parts (reverse (str/split name #"\."))
-        ext (str/lower-case (first parts))]
+        ext (re-find #"[a-z]+" (str/lower-case (first parts)))]
     (if (= "jpeg" ext)
       "jpg"
       ext)))
@@ -100,11 +100,17 @@
   [s]
   (let [host (host-name s)]
     (if (some #{host} config/sites-youtube)
-      (let [matcher (re-matcher #"[\?&]v=([a-zA-Z0-9_-]+)" s)]
-        {:site "youtube" :code (second (re-find matcher))})
+      (let [matcher (re-matcher #"[\?&]v=([a-zA-Z0-9_-]+)" s)
+            code (second (re-find matcher))]
+        {:site "youtube" :code code :thumb-id code})
       (if (some #{host} config/sites-vimeo)
-        (let [matcher (re-matcher #"/([0-9]+)" s)]
-          {:site "vimeo" :code (second (re-find matcher))})
+        (let [matcher (re-matcher #"/([0-9]+)" s)
+              code (second (re-find matcher))
+              json-data (slurp (str "https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/" code))
+              asd (json/read-str json-data :key-fn keyword)
+              matcher2 (re-matcher #"/video/([0-9]+)" (:thumbnail_url asd))
+              thumb-id (second (re-find matcher2))]
+          {:site "vimeo" :code code :thumb-id thumb-id :thumb-width (:thumbnail_width asd) :duration (:duration asd)})
         (if (some #{host} config/sites-soundcloud)
           {:site "soundcloud" :code ""}
           (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
@@ -117,7 +123,9 @@
   [m]
   (if (= "youtube" (:site m))
     (str "https://i.ytimg.com/vi/" (:code m) "/hqdefault.jpg")
-    "None"))
+    (if (= "vimeo" (:site m))
+      (str "https://i.vimeocdn.com/video/" (:thumb-id m) ".jpg?mw=480"); (:thumb-width m))
+      "")))
 
 (defn string-or-default
   ([s]

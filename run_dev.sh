@@ -1,2 +1,2 @@
 #!/bin/sh
-lein trampoline ring server
+PORT=8081 lein trampoline ring server
