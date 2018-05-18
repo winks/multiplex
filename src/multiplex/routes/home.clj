@@ -155,6 +155,19 @@
             (prep-new params))
             (prep-new params)))))
 
+(defn store-video-thumb [params]
+  (let [vi       (util/video-info (:url params))
+        thumb    (util/thumbnail-url vi)
+        ext      (util/file-extension thumb)
+        filename (str (:code vi) "." ext)
+        abs-file (config/abs-file-thumb filename (:site vi))
+        x        (util/download-file thumb abs-file)
+        img      (gfx/read-image abs-file)
+        resized  (gfx/calc-resized img)
+        params   (assoc params :meta (assoc vi :thumbnail filename
+                                               :thumbsize (str/join ":" resized)))]
+    (prep-new params)))
+
 (defn store-text [params]
   (let [params (assoc params :id nil
                              :meta "")]
@@ -168,11 +181,13 @@
     (mpost/new-post (cleanup params))))
 
 (defn store-dispatch [params]
-  (if (= "image" (:itemtype params))
-    (store-image params)
+  (if (= "video" (:itemtype params))
+    (store-video-thumb params)
+    (if (= "image" (:itemtype params))
+      (store-image params)
       (if (= "text" (:itemtype params))
         (store-text params)
-        (store-link-etc params))))
+        (store-link-etc params)))))
 
 (defn render-page-store [apikey params]
   (if-let [user (muser/get-user-by-key apikey)]

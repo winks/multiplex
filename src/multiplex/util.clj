@@ -112,6 +112,13 @@
               {:site "imgur-gifv" :code (second (re-find matcher))})
               {:site "err" :code ""}))))))
 
+(defn thumbnail-url
+  "get the thumbnail url for a video site"
+  [m]
+  (if (= "youtube" (:site m))
+    (str "https://i.ytimg.com/vi/" (:code m) "/hqdefault.jpg")
+    "None"))
+
 (defn string-or-default
   ([s]
     (string-or-default s ""))

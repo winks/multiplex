@@ -1,8 +1,8 @@
-<li class="audio">
+  <li class="audio">
 {% include "multiplex/views/templates/snippet_avatar.html" %}
 {% include "multiplex/views/templates/snippet_perma.html" %}
 {% ifequal post.site "soundcloud" %}
-<div id="oEmbed-{{post.id}}"></div>
+    <div id="oEmbed-{{post.id}}"></div>
 <script>
 SC.initialize({
   client_id: 'YOUR_CLIENT_ID'
@@ -11,8 +11,8 @@ SC.initialize({
 var track_url = '{{ post.url }}';
 SC.oEmbed(track_url, { auto_play: false, maxwidth: 400 }, document.getElementById("oEmbed-{{post.id}}"));
 </script>
-<p>{{ post.txt }}</p>
+    <p>{{ post.txt }}</p>
 {% else %}
-  Unknown format.
+    Unknown format: {{ post.url }}
 {% endifequal %}
-</li>
+  </li>

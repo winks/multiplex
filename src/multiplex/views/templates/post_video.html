@@ -1,15 +1,23 @@
-<li class="video">
+  <li class="video">
 {% include "multiplex/views/templates/snippet_avatar.html" %}
 {% include "multiplex/views/templates/snippet_perma.html" %}
 {% ifequal post.site "vimeo" %}
- <iframe src="http://player.vimeo.com/video/{{ post.code }}" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-<p>{{ post.txt }}</p>
+    <iframe src="http://player.vimeo.com/video/{{ post.code }}" width="640" height="480" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+    <p>{{ post.txt }}</p>
 {% else %}
  {% ifequal post.site "youtube" %}
-  <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/{{ post.code }}?rel=0" frameborder="0" allowfullscreen></iframe>
-<p>{{ post.txt }}</p>
+    <div class="video-content">
+      <div id="video-thumb-{{ post.id }}" style="background: transparent url({{ post.static-url }}/dump/{{ post.site }}/{{ post.meta.thumbnail }}) 0px -20px no-repeat; width: 560px; height: 350px;">
+        <img src="{{ post.static-url }}/img/playbutton_big.png" alt="img-{{ post.id }}" width="500" height="315" style="margin-left: -10px;" />
+      </div>
+<script>
+var iframe_{{ post.id }} = '<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/{{ post.code }}?rel=0" frameborder="0" allowfullscreen></iframe>';
+document.querySelector('#video-thumb-{{ post.id }}').onclick = function (ev) { ev.currentTarget.innerHTML = iframe_{{ post.id }}; ev.currentTarget.style.background = ""; };
+</script>
+      <p><a href="http://youtube.com/watch?v={{ post.code }}">{{ post.txt }}</a></p>
+    </div>
  {% else %}
-  Unknown video format.
+    Unknown video format: {{ post.url }}
  {% endifequal %}
 {% endifequal %}
-</li>
+  </li>

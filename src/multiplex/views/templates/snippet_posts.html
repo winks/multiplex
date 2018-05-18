@@ -21,6 +21,7 @@
 
 {% endfor %}
 
+</ul>
 <div class="pagination">
 {% if page-newer %}
 <a href="?page={{page-newer }}{% if itemtype %}&type={{itemtype}}{% endif %}{% if limit %}&limit={{limit}}{% endif %}">&laquo;&laquo;</a>
@@ -32,4 +33,3 @@
  <a href="?page={{page-older}}{% if itemtype %}&type={{itemtype}}{% endif %}{% if limit %}&limit={{limit}}{% endif %}">&raquo;&raquo;</a>
 {% endif %}
 </div>
-</ul>

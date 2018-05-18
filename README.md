@@ -66,6 +66,8 @@ or use ```run.sh```.
 
 ## License
 
-Copyright © 2013-2014 Florian Anderiasch and contributors.
+Copyright © 2013-2018 Florian Anderiasch and contributors.
 Distributed under the Eclipse Public License, the same as Clojure uses.
 See the file COPYING.
+
+Icons by [Maps Icons Collection](https://mapicons.mapsmarker.com), CC-BY-SA 3.0
