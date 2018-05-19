@@ -233,6 +233,10 @@
     (if-let [hostname (util/is-custom-host)]
       (show-single (util/int-or-default id 0))
       (render-page-404)))
+  (GET  "/users" []
+    (if-let [hostname (util/is-custom-host)]
+      (render-page-404)
+      (render-page :users (muser/get-public-users) "")))
   (GET  "/about" []
     (if-let [hostname (util/is-custom-host)]
       (render-page-404)

@@ -61,6 +61,13 @@
           (where {:hostname s})
           (limit 1))))
 
+(defn get-public-users
+  []
+  (select db/mpx_users
+   (fields :uid :username :hostname :title)
+    (where {:private false})
+    (order :hostname :ASC)))
+
 ; abstraction
 
 (defn valid-apikey?

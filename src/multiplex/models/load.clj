@@ -1,7 +1,7 @@
 (ns multiplex.models.load
   (:require [clojure.java.jdbc :as sql]
-            [multiplex.config :only (mydb)]
-            [multiplex.models.db :only (posts-table tags-table users-table)]
+            [multiplex.config :refer (mydb)]
+            [multiplex.models.db :refer (posts-table tags-table users-table)]
             [multiplex.util :as util]))
 
 (defn load-posts-table

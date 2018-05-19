@@ -1,7 +1,7 @@
 (ns multiplex.models.schema
   (:require [clojure.java.jdbc :as sql]
-            [multiplex.config :only (mydb)]
-            [multiplex.models.db :only (posts-table tags-table users-table)]
+            [multiplex.config :refer (mydb)]
+            [multiplex.models.db :refer (posts-table tags-table users-table)]
             [multiplex.models.load :as mload]
             [multiplex.util :as util]))
 
@@ -77,6 +77,18 @@
             "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;"))))
      (catch Exception e (.getNextException e))))
 
+(defn migrate-users-table-1
+  [db-cred]
+  (try
+    (sql/with-db-connection [conn db-cred]
+      (if (= "postgres" (subs db-cred 0 8))
+        (sql/db-do-commands conn
+          (str "ALTER TABLE " users-table " ADD COLUMN private boolean NOT NULL DEFAULT '0';" ))
+        (sql/db-do-commands conn
+          (str "ALTER TABLE `" users-table "` ADD COLUMN private tinyint NOT NULL DEFAULT '0';"))))
+     (catch Exception e (.getNextException e))))
+
+
 (defn create-functions-etc
   [db-cred]
   (try
@@ -107,6 +119,10 @@
     (create-functions-etc mydb)
     (mload/load-posts-table mydb)
     (mload/load-users-table mydb)))
+
+(defn migrate-tables []
+  (do
+    (migrate-users-table-1 mydb)))
 
 (defn -main []
   (print "Creating DB structure...") (flush)

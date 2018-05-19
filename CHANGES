@@ -38,9 +38,10 @@
 * DONE 0.3.3 - fix hardcoded http://
 * DONE 0.3.3 - YT preview images and click to load
 * DONE 0.3.3 - Vimeo preview images and click to load
-* DONE 0.3.3 - Removed unneeded JS
+* DONE 0.3.3 - removed unneeded JS
 * DONE 0.3.3 - click to load for soundcloud
 * DONE 0.3.3 - improved hostname handling
+* DONE 0.3.4 - add list of users, first db migration
 
 # TODO
 

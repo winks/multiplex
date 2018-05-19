@@ -20,27 +20,36 @@ For now, you will need PostgreSQL, MySQL support is deprecated/untested.
 
      Look for `(def mydb` or inject via shell variables:
 
+```
         export CLEARDB_DATABASE_URL="postgres://USER:PASS@127.0.0.1/DBNAME"
+```
 
      and `(def multiplex`.
 
   2. Fetch all dependencies via:
 
+```
         lein deps
+```
 
 
   3. Create a postgres user and DB if you haven't already:
 
+```
         su - postgres
         createuser -P USER
         createdb -O USER DBNAME
+```
 
   4. Now load the DB schema by starting `lein repl` and executing this:
 
-        (use 'multiplex.models.schema)
+```
+        (use '[multiplex.models.schema])
         (create-tables)
+        (migrate-tables)
+```
 
-     Then exit with Ctrl-D. You're done!
+     Then exit with *Ctrl-D*. You're done!
 
 
 ## Running
