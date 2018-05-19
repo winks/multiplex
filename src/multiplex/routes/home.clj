@@ -103,8 +103,8 @@
                          {:author author})
         posts-map (get-some (:limit params) (:page params) where-clause)
         post (if loggedin
-                (assoc (cleanup usr) :avatar avatar :apikey apikey)
-                (assoc (cleanup usr) :avatar avatar))]
+                (assoc (cleanup usr) :avatar avatar :username (:username usr) :apikey apikey)
+                (assoc (cleanup usr) :avatar avatar :username (:username usr)))]
     (layout/render "page_user.html" (assoc posts-map :post post))))
 
 (defn render-page-user [params]
@@ -146,14 +146,13 @@
                              :meta {:size (str/join ":" sizes) :url (:url params)}
                              :url (config/rel-file filename))]
     (do
-      (println (str "xxx: " sizes resized))
-      (println (str "store-image: " (:url params)))
-        (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
-          (let [r (gfx/resize img abs-filename (first resized) (second resized))
-                params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
-                                                                 :thumbsize (str/join ":" resized)))]
-            (prep-new params))
-            (prep-new params)))))
+      (println (str "store-image: " (:url params) sizes resized))
+      (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
+        (let [r (gfx/resize img abs-filename (first resized) (second resized))
+              params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
+                                                               :thumbsize (str/join ":" resized)))]
+          (prep-new params))
+        (prep-new params)))))
 
 (defn store-video-thumb [params]
   (let [vi       (util/video-info (:url params))
@@ -183,11 +182,13 @@
 (defn store-dispatch [params]
   (if (= "video" (:itemtype params))
     (store-video-thumb params)
-    (if (= "image" (:itemtype params))
-      (store-image params)
-      (if (= "text" (:itemtype params))
-        (store-text params)
-        (store-link-etc params)))))
+    (if (= "audio" (:itemtype params))
+      (store-video-thumb params)
+      (if (= "image" (:itemtype params))
+        (store-image params)
+        (if (= "text" (:itemtype params))
+          (store-text params)
+          (store-link-etc params))))))
 
 (defn render-page-store [apikey params]
   (if-let [user (muser/get-user-by-key apikey)]

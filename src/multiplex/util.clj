@@ -68,11 +68,13 @@
 (defn file-extension
   "gets the lower-cased file extension from a string"
   [name]
-  (let [parts (reverse (str/split name #"\."))
-        ext (re-find #"[a-z]+" (str/lower-case (first parts)))]
-    (if (= "jpeg" ext)
-      "jpg"
-      ext)))
+  (if (empty? name)
+    ""
+    (let [parts (reverse (str/split name #"\."))
+          ext (re-find #"[a-z]+" (str/lower-case (first parts)))]
+      (if (= "jpeg" ext)
+        "jpg"
+        ext))))
 
 (defn host-name
   "gets the host name part from an url"
@@ -95,6 +97,13 @@
             "image"
             "link"))))))
 
+(defn read-remote
+  "read from remote url"
+  [url default]
+  (try
+    (slurp url)
+    (catch Exception ex default)))
+
 (defn video-info
   "extract the unique part of a video url, e.g. from youtube.com/watch?v=FOO"
   [s]
@@ -112,7 +121,15 @@
               thumb-id (second (re-find matcher2))]
           {:site "vimeo" :code code :thumb-id thumb-id :thumb-width (:thumbnail_width asd) :duration (:duration asd)})
         (if (some #{host} config/sites-soundcloud)
-          {:site "soundcloud" :code ""}
+          (let [html (read-remote s "")
+                matcher (re-matcher #"content=\"soundcloud://sounds:([0-9]+)\"" html)
+                matcher2 (re-matcher #"og:image\" content=\"([^\"]+)\"" html)
+                img (or (second (re-find matcher2)) "")
+                ext (file-extension img)
+                parts (str/split img #"/")]
+            (if-let [code (second (re-find matcher))]
+              {:site "soundcloud" :code code :thumb-id (str/replace (last parts) (str "." ext) "") :thumb-path (str/replace img (last parts) "") :thumb-ext ext}
+              {:site "soundcloud" :code nil}))
           (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
             (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
               {:site "imgur-gifv" :code (second (re-find matcher))})
@@ -125,7 +142,9 @@
     (str "https://i.ytimg.com/vi/" (:code m) "/hqdefault.jpg")
     (if (= "vimeo" (:site m))
       (str "https://i.vimeocdn.com/video/" (:thumb-id m) ".jpg?mw=480"); (:thumb-width m))
-      "")))
+      (if (= "soundcloud" (:site m))
+        (str (:thumb-path m) (:thumb-id m) "." (:thumb-ext m))
+        ""))))
 
 (defn string-or-default
   ([s]
