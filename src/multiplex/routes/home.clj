@@ -75,7 +75,7 @@
 ; simple pages
 (defn render-page
  ([page-name] (layout/render (str "page_" (name page-name) ".html")))
- ([page-name content html] (layout/render "page_" (name page-name) ".html" {:content content :html html})))
+ ([page-name content html] (layout/render (str "page_" (name page-name) ".html") {:content content :html html})))
 
 (defn render-page-404
  ([] (render-page-404 "The page could not be found."))

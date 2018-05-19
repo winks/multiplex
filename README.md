@@ -47,9 +47,7 @@ For now, you will need PostgreSQL, MySQL support is deprecated/untested.
 
 To hack on `multiplex`, run:
 
-    lein trampoline ring server
-
-or use `run_dev.sh`.
+    PORT=3000 lein trampoline ring server
 
 
 For the production setup, run:

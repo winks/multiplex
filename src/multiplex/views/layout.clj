@@ -25,7 +25,6 @@
   (let [uid (util/int-or-default (:uid (:post params)) 0)
         theme (if (> uid 0)(:theme (nth config/user-data uid)) (:theme config-fallback))
         cfg (assoc (or config/multiplex config-fallback) :theme theme)
-        user-link (if-let [host (util/is-custom-host)] host (:page-url config/multiplex))
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site false) "")
         page-title (if-let [x (:title (:post params))] x (:page-title cfg))
         page-header (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))]
@@ -34,10 +33,10 @@
                                       :page-header page-header
                                       :page-title page-title
                                       :assets-prefix assets-prefix
+                                      :base-url (util/make-url (:page-scheme cfg) (:page-url cfg) true)
                                       :type-navi-link (phelper "link" params)
                                       :type-navi-text (phelper "text" params)
                                       :type-navi-image (phelper "image" params)
                                       :type-navi-audio (phelper "audio" params)
                                       :type-navi-video (phelper "video" params)
-                                      :user-link "/"
                                       :multiplex cfg))))

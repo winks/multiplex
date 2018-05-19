@@ -31,7 +31,7 @@ body {
   text-align: center;
 }
 .footer {
-  border-top: 1px solid #99cc00;
+  border-top: 1px solid #ad80a5;
   padding-top: 5px;
 }
 
@@ -92,10 +92,6 @@ img {
 }
 .avatar img {
   margin-top: 2px;
-}
-
-hr {
-  margin: 20px 0;
 }
 
 ul.main {
@@ -215,3 +211,5 @@ form input[type="submit"] {
     float: right;
     text-align: right;
 }
+
+hr { margin: 20px 0; padding: 0; border: none; border-top: medium double #ad80a5; color: #ad80a5; text-align: center; }
