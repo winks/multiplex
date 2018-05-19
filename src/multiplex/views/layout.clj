@@ -23,15 +23,16 @@
 
 (defn render [template & [params]]
   (let [uid (util/int-or-default (:uid (:post params)) 0)
-        theme (if (> uid 0)(:theme (nth config/user-data uid)) (:theme config-fallback))
-        cfg (assoc (or config/multiplex config-fallback) :theme theme)
+        theme         (if-let [x (:theme (:post params))] x (or (:theme config/multiplex) (:theme config-fallback)))
+        cfg           (assoc (or config/multiplex config-fallback) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site false) "")
-        page-title (if-let [x (:title (:post params))] x (:page-title cfg))
-        page-header (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))]
+        page-title    (if-let [x (:title (:post params))] x (:page-title cfg))
+        page-header   (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))]
     (parser/render-file (str template-path template)
                         (assoc params :context (:context *request*)
                                       :page-header page-header
                                       :page-title page-title
+                                      :theme theme
                                       :assets-prefix assets-prefix
                                       :base-url (util/make-url (:page-scheme cfg) (:page-url cfg) true)
                                       :type-navi-link (phelper "link" params)

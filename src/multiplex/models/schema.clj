@@ -88,6 +88,16 @@
           (str "ALTER TABLE `" users-table "` ADD COLUMN private tinyint NOT NULL DEFAULT '0';"))))
      (catch Exception e (.getNextException e))))
 
+(defn migrate-users-table-2
+  [db-cred]
+  (try
+    (sql/with-db-connection [conn db-cred]
+      (if (= "postgres" (subs db-cred 0 8))
+        (sql/db-do-commands conn
+          (str "ALTER TABLE " users-table " ADD COLUMN avatar character varying(255) NOT NULL DEFAULT '/img/default-avatar.png';" ))
+        (sql/db-do-commands conn
+          (str "ALTER TABLE `" users-table "` ADD COLUMN avatar varchar(255) NOT NULL DEFAULT '/img/default-avatar.png';"))))
+     (catch Exception e (.getNextException e))))
 
 (defn create-functions-etc
   [db-cred]
@@ -122,7 +132,8 @@
 
 (defn migrate-tables []
   (do
-    (migrate-users-table-1 mydb)))
+    (migrate-users-table-1 mydb)
+    (migrate-users-table-2 mydb)))
 
 (defn -main []
   (print "Creating DB structure...") (flush)

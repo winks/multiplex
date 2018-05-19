@@ -84,7 +84,7 @@
 (defn render-page-user-x [params usr loggedin]
   (let [author (:uid usr)
         apikey (:apikey usr)
-        avatar (util/get-avatar author)
+        avatar (:avatar usr)
         where-clause (if (mpost/valid-itemtype? (:itemtype params))
                          {:author author :itemtype (:itemtype params)}
                          {:author author})

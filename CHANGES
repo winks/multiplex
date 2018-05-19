@@ -42,6 +42,7 @@
 * DONE 0.3.3 - click to load for soundcloud
 * DONE 0.3.3 - improved hostname handling
 * DONE 0.3.4 - add list of users, first db migration
+* DONE 0.3.4 - moved avatars to users table, db migration
 
 # TODO
 

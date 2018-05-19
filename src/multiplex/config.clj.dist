@@ -18,9 +18,12 @@
 (def sites-imgur-gifv '("imgur.com" "i.imgur.com"))
 
 (def multiplex {:page-title "multiplex"
-                :page-url "example.org"
                 :page-scheme "http"
+                :page-url "example.org"
+                :static-scheme "http"
                 :static-url "static.example.org"
+                :assets-scheme "http"
+                :assets-url "static.example.org"
                 :bookmark-text "Bookmark me"
                 :theme  "default"})
 (def abs-path "/srv/www/multiplex/resources/public/dump")
@@ -40,9 +43,3 @@
   "when setting up multiplex, think about some creative per-user salt, preferably using something random here"
   [username password userid]
   (str username ".wtf.is.this.shit." (System/currentTimeMillis)))
-
-; this should obviously be a vector of n different image urls, with index == users.uid
-(def user-data
-  (vec (take 10 (repeat
-    {:avatar "/img/default-avatar.png"
-     :theme "default"}))))
