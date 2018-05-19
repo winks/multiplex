@@ -73,26 +73,13 @@
       "page_posts.html" (get-some n page where-clause))))
 
 ; simple pages
-(defn BLANK []
-  (layout/render "page_blank.html"))
+(defn render-page
+ ([page-name] (layout/render (str "page_" (name page-name) ".html")))
+ ([page-name content html] (layout/render "page_" (name page-name) ".html" {:content content :html html})))
 
-(defn render-page-content [content html]
-  (layout/render "page_content.html" {:content content :html html}))
-
-(defn render-page-html [html]
-  (render-page-content "" html))
-
-(defn render-page-plain [content]
-  (render-page-content content ""))
-
-(defn home-page []
-  (layout/render "page_home.html" {:content (util/mdfile->html "/md/docs.md")}))
-
-(defn render-page-about []
-  (layout/render "page_about.html"))
-
-(defn render-page-index []
-  (layout/render "page_index.html"))
+(defn render-page-404
+ ([] (render-page-404 "The page could not be found."))
+ ([content] {:status 404 :headers {"Content-Type" "text/html"} :body (layout/render "page_404.html" {:content content})}))
 
 (defn render-page-user-x [params usr loggedin]
   (let [author (:uid usr)
@@ -112,7 +99,7 @@
     (render-page-user-x params usr true)
     (if-let [usr (muser/get-user-by-hostname (:hostname params))]
       (render-page-user-x params usr false)
-      (render-page-plain "User does not exist."))))
+      (render-page-404 "User does not exist."))))
 
 (defn render-page-stream [params]
   (let [where-clause (if (mpost/valid-itemtype? (:itemtype params)) {:itemtype (:itemtype params)} {})]
@@ -201,7 +188,7 @@
         (layout/render "page_justposted.html" {:post post
                                                :id (:id newid)
                                                :content (str "Saved as" (:id newid) "<br>")})))
-    (BLANK)))
+    (render-page :blank)))
 
 (defn render-rss [items title link description]
   (rss/channel-xml {:title title :link link :description description} items))
@@ -234,29 +221,29 @@
       (render-page-store apikey (untaint url txt type tags)))
   (POST "/signup" [username email password code]
     (if-let [username (util/is-subdomain)]
-      (response/status 404 "your page could not be found")
+      (render-page-404)
       (render-page-signup (untaint-signup username email password code))))
   (GET  "/signup" [code]
     (if-let [hostname (util/is-custom-host)]
-      (response/status 404 "your page could not be found")
+      (render-page-404)
       (render-page-signup {:code (util/string-or-default code "")})))
   (GET  "/add/:apikey" [url txt type tags apikey title]
     (render-page-add (untaint url txt type (util/string-or-default tags) apikey title)))
   (GET  "/post/:id" [id]
     (if-let [hostname (util/is-custom-host)]
       (show-single (util/int-or-default id 0))
-      (response/status 404 "your page could not be found")))
+      (render-page-404)))
   (GET  "/about" []
     (if-let [hostname (util/is-custom-host)]
-      (response/status 404 "your page could not be found")
-      (render-page-about)))
+      (render-page-404)
+      (render-page :about)))
   (GET  "/about/changes" []
     (if-let [hostname (util/is-custom-host)]
-      (response/status 404 "your page could not be found")
-      (render-page-html (util/mdfile->html "/md/changes.md"))))
+      (render-page-404)
+      (render-page :content "" (util/mdfile->html "/md/changes.md"))))
   (GET  "/everyone" [page limit type]
     (if-let [hostname (util/is-custom-host)]
-      (response/status 404 "your page could not be found")
+      (render-page-404)
       (render-page-stream {:limit (util/int-or-default limit config/default-limit)
                            :page (util/int-or-default page 1)
                            :itemtype (util/string-or-default type)})))
@@ -286,4 +273,4 @@
                          :limit (util/int-or-default limit config/default-limit)
                          :page (util/int-or-default page 1)
                          :itemtype (util/string-or-default type)})
-      (render-page-index))))
+      (render-page :index))))
