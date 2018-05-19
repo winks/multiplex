@@ -22,11 +22,11 @@
       (select db/mpx_posts
         (where {:id id})
         (join db/mpx_users (= :mpx_users.uid :author))
-        (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username]))))
+        (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username] [:mpx_users.hostname :hostname]))))
     (select db/mpx_posts
       (where {:id id})
       (join db/mpx_users (= :mpx_users.uid :author))
-      (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username]))))
+      (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username] [:mpx_users.hostname :hostname]))))
 
 (defn get-posts
   ([n]
@@ -36,7 +36,7 @@
   ([n off where-clause]
     (let [q (-> (select* db/mpx_posts)
                 (join db/mpx_users (= :mpx_users.uid :author))
-                (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username])
+                (fields :id :author :itemtype :url :txt :meta :tag :created :updated [:mpx_users.username :username] [:mpx_users.hostname :hostname])
                 (order :id :DESC)
                 (limit n)
                 (offset off))]

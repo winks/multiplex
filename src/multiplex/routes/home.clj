@@ -260,12 +260,12 @@
         (render-rss
          items
           (:page-title config/multiplex)
-          (str (:page-scheme config/multiplex) "://" (:page-url config/multiplex))
+          (util/make-url (:page-scheme config/multiplex) (:page-url config/multiplex) true)
           (:title author)))
       (render-rss
         []
         (:page-title config/multiplex)
-        (str (:page-scheme config/multiplex) "://" (:page-url config/multiplex))
+        (util/make-url (:page-scheme config/multiplex) (:page-url config/multiplex) true)
         "")))
   (GET  "/" [page limit type]
     (if-let [hostname (util/is-custom-host)]

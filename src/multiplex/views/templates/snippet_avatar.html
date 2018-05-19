@@ -1,7 +1,7 @@
     <div class="avatar">
 {% if post.avatar %}
-      <a href="{{ user-link }}"><img src="{{ post.avatar }}" alt="{{ post.username }}'s avatar" /></a>
+      <a href="{{ post.author.url }}"><img src="{{ post.avatar }}" alt="{{ post.username }}'s avatar" /></a>
 {% else %}
-      <img src="{{ post.static-url }}/img/default-avatar.png" alt="default" />
+      <img src="{{ post.assets-url }}/img/default-avatar.png" alt="default" />
 {% endif %}
     </div>

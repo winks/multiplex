@@ -76,6 +76,15 @@
         "jpg"
         ext))))
 
+(defn make-url [scheme host add-port?]
+  (if add-port?
+    (let [port (:server-port *request*)]
+      (if (or (and (= scheme "http") (= port 80))
+              (and (= scheme "https") (= port 43)))
+        (str scheme "://" host)
+        (str scheme "://" host ":" port)))
+    (str scheme "://" host)))
+
 (defn host-name
   "gets the host name part from an url"
   [url]
@@ -174,14 +183,19 @@
 (defn get-avatar [n]
   (let [avatar (:avatar (nth config/user-data (int-or-default n 0)))]
     (if-let [static-url (:static-url config/multiplex)]
-      (str (:page-scheme-static config/multiplex) "://" static-url avatar)
+      (str (make-url (:assets-scheme config/multiplex) static-url false) avatar)
       avatar)))
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
         meta-foo (if (= "" (str/trim (:meta coll))) "{}" (:meta coll))
         updated (put-time (read-time (str (:updated coll))))
-        prefix (str (:page-scheme-static config/multiplex) "://" (:static-url config/multiplex))
+        prefix (make-url (:assets-scheme config/multiplex) (:static-url config/multiplex) false)
+        author (assoc {} :author (:author coll)
+                         :username (:username coll)
+                         :hostname (:hostname coll)
+                         :url (make-url (:page-scheme config/multiplex) (:hostname coll) true)
+                         :avatar (get-avatar (:author coll)))
         url (if (< (count (:url coll)) (count config/rel-path))
                 ""
                 (if (= config/rel-path (subs (:url coll) 0 (count config/rel-path)))
@@ -189,10 +203,11 @@
                     (:url coll)))]
     (assoc coll :code (:code info)
                 :site (:site info)
-                :avatar (get-avatar (:author coll))
+                :avatar (:avatar author)
                 :url url
                 :static-url prefix
                 :updated (or updated (:updated coll))
+                :author author
                 :meta (json/read-str meta-foo :key-fn keyword))))
 
 (defn hash-filename [arg]
