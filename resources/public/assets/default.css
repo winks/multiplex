@@ -138,8 +138,45 @@ li.fav p a {
 li.alert {
     background-image: url(/img/ico/alert.png);
 }
-li.video p {
+li.video .video-content {
     margin-left: 32px;
+    padding-top: 20px;
+}
+li.audio .audio-content {
+    margin-left: 32px;
+    padding-top: 20px;
+}
+.video-thumb-youtube {
+    width: 560px;
+    height: 315px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.video-thumb-vimeo {
+    width: 500px;
+    height: 281px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.audio-thumb-soundcloud {
+    width: 560px;
+    height: 166px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.video-thumb-youtube img {
+   margin-left: 0px;
+}
+.video-thumb-vimeo img {
+   margin-left: 0;
+}
+.video-thumb-shifted {
+   margin-top: -17px;
+   margin-bottom: 17px;
+   margin-left: 0px;
 }
 .meta-bag {
    margin-left: 32px;
