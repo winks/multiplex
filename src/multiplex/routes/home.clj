@@ -133,7 +133,7 @@
                              :meta {:size (str/join ":" sizes) :url (:url params)}
                              :url (config/rel-file filename))]
     (do
-      (println (str "store-image: " (:url params) sizes resized))
+      (println (str "DEBUG store-image: " (:url params) sizes resized))
       (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
         (let [r (gfx/resize img abs-filename (first resized) (second resized))
               params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
@@ -152,18 +152,20 @@
         resized  (gfx/calc-resized img)
         params   (assoc params :meta (assoc vi :thumbnail filename
                                                :thumbsize (str/join ":" resized)))]
-    (prep-new params)))
+    (do
+      (println (str "DEBUG store-video-thumb: " params))
+      (prep-new params))))
 
 (defn store-text [params]
   (let [params (assoc params :id nil
                              :meta "")]
-    (println (str "store-text: " (:url params)))
+    (println (str "DEBUG store-text: " (:url params)))
     (mpost/new-post (cleanup params [:url]))))
 
 (defn store-link-etc [params]
   (let [params (assoc params :id nil
                              :meta "")]
-    (println (str "store-link-etc: " (:url params)))
+    (println (str "DEBUG store-link-etc: " (:url params)))
     (mpost/new-post (cleanup params))))
 
 (defn store-dispatch [params]
@@ -184,7 +186,7 @@
           newid (store-dispatch params)
           post (mpost/get-post-by-id (:id newid))]
       (do
-        (println params)
+        (println (str "DEBUG just-posted: "params))
         (layout/render "page_justposted.html" {:post post
                                                :id (:id newid)
                                                :content (str "Saved as" (:id newid) "<br>")})))
