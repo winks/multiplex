@@ -18,14 +18,28 @@
    :updated nil
    :title nil
    :theme nil
+   :private nil
+   :avatar nil
    })
+
+(defn strip-secrets
+  [m]
+  (if (map? m)
+    (-> m
+      (dissoc :password)
+      (dissoc :email)
+      (dissoc :signupcode))
+    (->> m
+      (map #(dissoc % :password))
+      (map #(dissoc % :email))
+      (map #(dissoc % :signupcode)))))
 
 ; SQLish
 
 (defn new-user [user]
   (let [query (str "INSERT INTO " db/users-table
-                "(uid, username, hostname, email, password, apikey, signupcode, created, updated, title, theme)"
-                " VALUES(nextval('" db/users-table "_id_seq'), ?, ?, ?, ?, ?, ?, NOW(), NOW(), '', '') RETURNING uid;")]
+                "(uid, username, hostname, email, password, apikey, signupcode, created, updated, title, theme, private)"
+                " VALUES(nextval('" db/users-table "_id_seq'), ?, ?, ?, ?, ?, ?, NOW(), NOW(), '', '', '0') RETURNING uid;")]
     (sql/query config/mydb [query (:username user) (:hostname user) (:email user) (:password user) (:apikey user) (:signupcode user)])))
 
 
@@ -39,34 +53,40 @@
 
 (defn get-user-by-id
   [id]
-  (first (select db/mpx_users
-          (where {:id id})
-          (limit 1))))
+  (strip-secrets
+    (first (select db/mpx_users
+            (where {:id id})
+            (limit 1)))))
 
 (defn get-user-by-key
   [apikey]
-  (first (select db/mpx_users
-           (where {:apikey apikey})
-           (limit 1))))
+  (when-let [u (first
+    (select db/mpx_users
+      (where {:apikey apikey})
+      (limit 1)))]
+      (strip-secrets u)))
 
 (defn get-user-by-name
   [username]
-  (first (select db/mpx_users
-           (where {:username username})
-           (limit 1))))
+  (strip-secrets
+    (first (select db/mpx_users
+             (where {:username username})
+             (limit 1)))))
 
 (defn get-user-by-hostname
   [s]
-  (first (select db/mpx_users
-          (where {:hostname s})
-          (limit 1))))
+  (strip-secrets
+    (first (select db/mpx_users
+            (where {:hostname s})
+            (limit 1)))))
 
 (defn get-public-users
   []
-  (select db/mpx_users
-   (fields :uid :username :hostname :title :avatar)
-    (where {:private false})
-    (order :hostname :ASC)))
+  (strip-secrets
+    (select db/mpx_users
+      (fields :uid :username :hostname :title :avatar)
+      (where {:private false})
+      (order :hostname :ASC))))
 
 ; abstraction
 

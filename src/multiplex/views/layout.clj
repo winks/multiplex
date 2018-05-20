@@ -22,8 +22,9 @@
     (util/type-pagination type p l)))
 
 (defn render [template & [params]]
+(println params)
   (let [uid (util/int-or-default (:uid (:post params)) 0)
-        theme         (if-let [x (:theme (:post params))] x (or (:theme config/multiplex) (:theme config-fallback)))
+        theme         (or (:theme config/multiplex) (:theme config-fallback))
         cfg           (assoc (or config/multiplex config-fallback) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site false) "")
         page-title    (if-let [x (:title (:post params))] x (:page-title cfg))
