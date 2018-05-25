@@ -44,6 +44,7 @@
 * DONE 0.3.4 - add list of users, first db migration
 * DONE 0.3.4 - moved avatars to users table, db migration
 * DONE 0.3.4 - improved theme handling
+* DONE 0.3.4 - added favicons
 
 # TODO
 

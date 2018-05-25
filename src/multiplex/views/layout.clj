@@ -23,8 +23,9 @@
 
 (defn render [template & [params]]
   (let [uid (util/int-or-default (:uid (:post params)) 0)
-        theme         (or (:theme (:post params)) (:theme config/multiplex) (:theme config-fallback))
-        cfg           (assoc (or config/multiplex config-fallback) :theme theme)
+        theme         (first (filter seq [(:theme (:post params)) (:theme config/multiplex) (:theme config-fallback)]))
+        username      (first (filter seq [(:username (:post params)) "default"]))
+        cfg           (assoc (first (filter seq [config/multiplex config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site false) "")
         page-title    (if-let [x (:title (:post params))] x (:page-title cfg))
         page-header   (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))]
@@ -33,6 +34,7 @@
                                       :page-header page-header
                                       :page-title page-title
                                       :theme theme
+                                      :username username
                                       :assets-prefix assets-prefix
                                       :base-url (util/make-url (:page-scheme cfg) (:page-url cfg) true)
                                       :type-navi-link (phelper "link" params)
