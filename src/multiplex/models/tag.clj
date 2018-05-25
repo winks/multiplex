@@ -17,7 +17,7 @@
 
 (defn sanitize-tags [s]
   (let [tags (clojure.string/split s #" ")]
-    (clojure.string/join "," (filter seq (map clojure.string/trim tags)))))
+    (clojure.string/join "," (remove empty? (map clojure.string/trim tags)))))
 
 ; SQLish
 

@@ -23,7 +23,8 @@
                                 javax.jms/jms
                                 com.sun.jdmk/jmxtools
                                 com.sun.jmx/jmxri]]]
-  :plugins [[lein-ring "0.12.4"]]
+  :plugins [[lein-ring "0.12.4"]
+            [lein-kibit "0.1.6"]]
   :ring {:handler multiplex.handler/app,
          :init    multiplex.handler/init,
          :destroy multiplex.handler/destroy}

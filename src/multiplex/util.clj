@@ -30,7 +30,7 @@
           cfg (:page-url config/multiplex)]
         (if (= cfg hostname)
           false
-          (if (not (= cfg domainname))
+          (if-not (= cfg domainname)
             false
             subdomain)))))
 
@@ -240,7 +240,7 @@
 
 (defn type-pagination [type page limit]
   (let [pt (str "type=" type)
-        pp (if (> 1 (int-or-default page 1)) nil (str "page=" page))
-        pl (if (= config/default-limit limit) nil (str "limit=" limit))
+        pp (when-not (> 1 (int-or-default page 1)) (str "page=" page))
+        pl (when-not (= config/default-limit limit) (str "limit=" limit))
         parts [pt pl pp]]
     (str "?" (clojure.string/join "&" (filter not-empty parts)))))

@@ -85,14 +85,13 @@
   (let [author (:uid usr)
         apikey (:apikey usr)
         avatar (:avatar usr)
+        theme  (:theme usr)
         where-clause (if (mpost/valid-itemtype? (:itemtype params))
                          {:author author :itemtype (:itemtype params)}
                          {:author author})
         posts-map (get-some (:limit params) (:page params) where-clause)
-        post (if loggedin
-                (assoc (cleanup usr) :avatar avatar :username (:username usr) :apikey apikey)
-                (assoc (cleanup usr) :avatar avatar :username (:username usr)))]
-    (layout/render "page_user.html" (assoc posts-map :post post))))
+        post (assoc (cleanup usr) :avatar avatar :username (:username usr) :theme theme)]
+    (layout/render "page_user.html" (assoc posts-map :post (if loggedin (assoc post :apikey apikey) post)))))
 
 (defn render-page-user [params]
   (if-let [usr (muser/get-user-by-key (:apikey params))]

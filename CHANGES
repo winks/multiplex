@@ -43,11 +43,14 @@
 * DONE 0.3.3 - improved hostname handling
 * DONE 0.3.4 - add list of users, first db migration
 * DONE 0.3.4 - moved avatars to users table, db migration
+* DONE 0.3.4 - improved theme handling
 
 # TODO
 
-* implement tags fully
+* implement tags
 * import whole soup account
 * show soup account/friendstream and allow to repost to multiplex
 * allow reposting
 * refactor use of page/limit GET params (in get-some)
+* remove korma, migrate to hugsql/migratus
+* compare with a fresh luminus app and remove noir cruft
