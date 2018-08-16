@@ -76,14 +76,8 @@
         "jpg"
         ext))))
 
-(defn make-url [scheme host add-port?]
-  (if add-port?
-    (let [port (:server-port *request*)]
-      (if (or (and (= scheme "http") (= port 80))
-              (and (= scheme "https") (= port 43)))
-        (str scheme "://" host)
-        (str scheme "://" host ":" port)))
-    (str scheme "://" host)))
+(defn make-url [scheme host]
+  (str scheme "://" host))
 
 (defn host-name
   "gets the host name part from an url"
@@ -184,11 +178,11 @@
   (let [info (video-info (:url coll))
         meta-foo (if (= "" (str/trim (:meta coll))) "{}" (:meta coll))
         updated (put-time (read-time (str (:updated coll))))
-        prefix (make-url (:static-scheme config/multiplex) (:static-url config/multiplex) false)
+        prefix (make-url (:static-scheme config/multiplex) (:static-url config/multiplex))
         author (assoc {} :author (:author coll)
                          :username (:username coll)
                          :hostname (:hostname coll)
-                         :url (make-url (:page-scheme config/multiplex) (:hostname coll) true)
+                         :url (make-url (:page-scheme config/multiplex) (:hostname coll))
                          :avatar (:avatar coll))
         url (if (< (count (:url coll)) (count config/rel-path))
                 ""
