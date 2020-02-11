@@ -118,7 +118,7 @@
       (if (some #{host} config/sites-vimeo)
         (let [matcher (re-matcher #"/([0-9]+)" s)
               code (second (re-find matcher))
-              json-data (slurp (str "https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/" code))
+              json-data (read-remote (str "https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/" code) "{\"thumbnail_url\":\"\"}")
               asd (json/read-str json-data :key-fn keyword)
               matcher2 (re-matcher #"/video/([0-9]+)" (:thumbnail_url asd))
               thumb-id (second (re-find matcher2))]

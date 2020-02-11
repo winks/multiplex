@@ -31,6 +31,7 @@
 
 (defn abs-file [file] (str abs-path "/" file))
 (defn rel-file [file] (str rel-path "/" file))
+(defn abs-file-thumb [file site] (str abs-path "/" site "/" file))
 
 (def mydb (or (System/getenv "CLEARDB_DATABASE_URL") "postgres://USER:PASS@127.0.0.1/DBNAME"))
 
