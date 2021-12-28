@@ -9,12 +9,15 @@
     [multiplex.config :refer [env]]
     [ring.middleware.flash :refer [wrap-flash]]
     [ring.adapter.undertow.middleware.session :refer [wrap-session]]
+    [ring.middleware.session.cookie :refer [cookie-store]]
     [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
     [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
     [buddy.auth.backends.session :refer [session-backend]])
   )
+
+(def cookie-bytes (byte-array (map byte [62 5 83 101 25 58 115 55 5 23 89 89 46 110 29 13])))
 
 (defn wrap-internal-error [handler]
   (fn [req]
@@ -65,5 +68,6 @@
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
-            (dissoc :session)))
+            (assoc-in [:session :store] (cookie-store {:key cookie-bytes}))
+            (assoc-in [:session :cookie-name] "multiplex-sessions")))
       wrap-internal-error))
