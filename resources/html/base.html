@@ -26,7 +26,9 @@
               <div id="nav-menu" class="navbar-menu">
                   <div class="navbar-start">
                       <a href="/" class="navbar-item{% ifequal page "home.html" %} is-active{%endifequal%}">Home</a>
+                      <a href="/docs" class="navbar-item{% ifequal page "docs.html" %} is-active{%endifequal%}">Docs</a>
                       <a href="/about" class="navbar-item{% ifequal page "about.html" %} is-active{%endifequal%}">About</a>
+                      <a href="/posts" class="navbar-item{% ifequal page "posts.html" %} is-active{%endifequal%}">Posts</a>
                       {% ifequal loggedin "true" %}
                       <a href="/logout" class="navbar-item">Logout ({{user}})</a>
                       {%else%}

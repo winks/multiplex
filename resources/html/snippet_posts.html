@@ -1,0 +1,10 @@
+<ul class="main">
+    {% for post in posts %}
+    
+    {% ifequal post.itemtype "video" %}
+     {% include "post_video.html" %}
+    {% endifequal %}
+    
+    {% endfor %}
+    
+    </ul>

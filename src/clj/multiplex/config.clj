@@ -11,3 +11,25 @@
     [(args)
      (source/from-system-props)
      (source/from-env)]))
+
+(def itemtypes '("image" "link" "text" "video" "audio"))
+(def default-limit 10)
+
+(def img-types '("jpg" "png" "gif" "svg" "jpeg"))
+(def img-max-size [640 480])
+
+(def sites-youtube '("youtube.com" "youtu.be"))
+(def sites-vimeo '("vimeo.com"))
+(def sites-myvideo '("myvideo.de"))
+(def sites-video (flatten (conj sites-youtube sites-vimeo sites-myvideo)))
+
+(def sites-soundcloud '("soundcloud.com" "snd.sc"))
+(def sites-xy '("example.example"))
+(def sites-audio (flatten (conj sites-soundcloud sites-xy)))
+
+(def sites-imgur-gifv '("imgur.com" "i.imgur.com"))
+
+(defn abs-file-thumb [file site] (str (env :abs-path) "/" site "/" file))
+
+(defn abs-file [file] (str (env :abs-path) "/" file))
+(defn rel-file [file] (str (env :rel-path) "/" file))
