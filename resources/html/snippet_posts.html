@@ -1,10 +1,23 @@
 <ul class="main">
-    {% for post in posts %}
-    
-    {% ifequal post.itemtype "video" %}
-     {% include "post_video.html" %}
+{% for post in posts %}
+
+{% ifequal post.itemtype "video" %}
+  {% include "post_video.html" %}
+{% else %}
+  {% ifequal post.itemtype "link" %}
+    {% include "post_link.html" %}
+  {% else %}
+    {% ifequal post.itemtype "image" %}
+      {% include "post_image.html" %}
+    {% else %}
+      {% ifequal post.itemtype "audio" %}
+        {% include "post_audio.html" %}
+      {% else %}
+        {% include "post_text.html" %}
+      {% endifequal %}
     {% endifequal %}
-    
-    {% endfor %}
-    
-    </ul>
+  {% endifequal %}
+{% endifequal %}
+
+{% endfor %}
+</ul>
