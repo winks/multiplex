@@ -82,10 +82,12 @@
             (if-let [code (second (re-find matcher))]
               {:site "soundcloud" :code code :thumb-id (cstr/replace (last parts) (str "." ext) "") :thumb-path (cstr/replace img (last parts) "") :thumb-ext ext}
               {:site "soundcloud" :code nil}))
-          (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
-            (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
-              {:site "imgur-gifv" :code (second (re-find matcher))})
-              {:site "err" :code ""}))))))
+          (if (some #{host} config/sites-mixcloud)
+            {:site "mixcloud" :code nil}
+            (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
+              (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
+                {:site "imgur-gifv" :code (second (re-find matcher))})
+                {:site "err" :code ""})))))))
 
 ; TODO cond after post-new
 (defn thumbnail-url
@@ -134,8 +136,8 @@
                 (if (= (config/env :rel-path) (subs (:url coll) 0 (count (config/env :rel-path))))
                     (str prefix (:url coll))
                     (:url coll)))]
-    (assoc coll :code (:code info)
-                :site (:site info)
+    (assoc coll :code (or (:code meta) (:code info))
+                :site (or (:site meta) (:site info))
                 :url url
                 :thumb-path (str prefix (config/env :rel-path))
                 ;:updated (or updated (:updated coll))

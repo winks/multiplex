@@ -20,6 +20,10 @@ document.getElementById('audio-thumb-{{ post.id }}').onclick = function (ev) {
         <p><a href="{{ post.url }}">{{ post.txt }}</a></p>
     </div>
 {% else %}
+  {% ifequal post.site "mixcloud" %}
+<iframe width="90%" height="120" src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed={{ post.code }}" frameborder="0" ></iframe>
+  {% else %}
     Unknown format: {{ post.url }}
+  {% endifequal %}
 {% endifequal %}
 </li>

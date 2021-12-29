@@ -23,12 +23,11 @@
 (def sites-myvideo ["myvideo.de"])
 (def sites-video (flatten (conj sites-youtube sites-vimeo sites-myvideo)))
 
-(def sites-soundcloud '("soundcloud.com" "snd.sc"))
-;(def sites-xy '("example.example"))
-(def sites-audio (flatten (conj sites-soundcloud))); sites-xy)))
-; TODO mixcloud
+(def sites-soundcloud ["soundcloud.com" "snd.sc"])
+(def sites-mixcloud ["mixcloud.com"])
+(def sites-audio (flatten (conj sites-soundcloud sites-mixcloud)))
 
-(def sites-imgur-gifv '("imgur.com" "i.imgur.com"))
+(def sites-imgur-gifv ["imgur.com" "i.imgur.com"])
 
 (defn abs-file-thumb [file site] (str (env :abs-path) "/" site "/" file))
 
