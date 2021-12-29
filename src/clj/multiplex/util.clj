@@ -1,7 +1,7 @@
 (ns multiplex.util
   (:require [clojure.data.json :as json]
             [clojure.java.io :as cjio]
-            [clojure.string :as str]
+            [clojure.string :as cstr]
             [multiplex.config :as config]))
 
 ;[clj-time.format :as tformat]
@@ -32,8 +32,8 @@
   [name]
   (if (empty? name)
     ""
-    (let [parts (reverse (str/split name #"\."))
-          ext (re-find #"[a-z]+" (str/lower-case (first parts)))]
+    (let [parts (reverse (cstr/split name #"\."))
+          ext (re-find #"[a-z]+" (cstr/lower-case (first parts)))]
       (if (= "jpeg" ext)
         "jpg"
         ext))))
@@ -46,8 +46,8 @@
 (defn host-name
   "gets the host name part from an url"
   [url]
-  (let [x (str/replace (str/lower-case url) #"http(s)?://(www\.)?" "")]
-    (first (str/split x #"/"))))
+  (let [x (cstr/replace (cstr/lower-case url) #"http(s)?://(www\.)?" "")]
+    (first (cstr/split x #"/"))))
 
 (defn read-remote
   "read from remote url"
@@ -78,15 +78,16 @@
                 matcher2 (re-matcher #"og:image\" content=\"([^\"]+)\"" html)
                 img (or (second (re-find matcher2)) "")
                 ext (file-extension img)
-                parts (str/split img #"/")]
+                parts (cstr/split img #"/")]
             (if-let [code (second (re-find matcher))]
-              {:site "soundcloud" :code code :thumb-id (str/replace (last parts) (str "." ext) "") :thumb-path (str/replace img (last parts) "") :thumb-ext ext}
+              {:site "soundcloud" :code code :thumb-id (cstr/replace (last parts) (str "." ext) "") :thumb-path (cstr/replace img (last parts) "") :thumb-ext ext}
               {:site "soundcloud" :code nil}))
           (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
             (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
               {:site "imgur-gifv" :code (second (re-find matcher))})
               {:site "err" :code ""}))))))
 
+; TODO cond after post-new
 (defn thumbnail-url
   "get the thumbnail url for a video site"
   [m]
@@ -104,7 +105,7 @@
   ([s default]
     (if (empty? s)
       default
-      (str/trim s))))
+      (cstr/trim s))))
 
 (defn int-or
   "try to coerce to integer or return a safe default"
@@ -112,22 +113,19 @@
   (if (nil? s)
     default
   (try
-    (let [n (if (instance? java.lang.Integer s)
-                (long s)
-                (if (instance? java.lang.Long s)
-                    s
-                    (if (instance? java.lang.String s)
-                        (Long/valueOf s)
-                        (if (instance? java.lang.Double s)
-                            (long s)
-                            default))))]
+    (let [n (cond
+              (instance? java.lang.Integer s) (long s)
+              (instance? java.lang.Long s) s
+              (instance? java.lang.String s) (Long/valueOf s)
+              (instance? java.lang.Double s) (long s)
+              :else default)]
       (if (pos? n) n default))
     (catch Exception e
       default))))
 
 (defn add-fields [coll]
   (let [info (video-info (:url coll))
-        meta-foo (if (= "" (str/trim (:meta coll))) "{}" (:meta coll))
+        meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)
         ;updated (:updated coll);(put-time (read-time (str (:updated coll))))
         prefix (make-url (:static-scheme (config/env :multiplex)) (:static-url (config/env :multiplex)))
@@ -171,4 +169,4 @@
         pp (when-not (> 1 (int-or page 1)) (str "page=" page))
         pl (when-not (= config/default-limit limit) (str "limit=" limit))
         parts [pt pl pp]]
-    (str "?" (clojure.string/join "&" (filter not-empty parts)))))
+    (str "?" (cstr/join "&" (filter not-empty parts)))))

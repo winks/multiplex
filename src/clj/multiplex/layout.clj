@@ -48,13 +48,13 @@
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
         page-title    (if-let [x (:title authr)] x (:page-title cfg))
         page-header   (if-let [x (:title authr)] x (str (:username authr) "'s multiplex" ))
+        ; TODO refactor? done in get-posts already
         itemtype      (util/string-or (get params :type))
         limit         (util/int-or (get params :limit) config/default-limit)
         page          (util/int-or (get params :page) 1)
+
         pcount        (util/int-or (get params :pcount) 0)
         pagina        (util/calculate-pagination limit page pcount)
-        xx1 (println limit page pcount)
-        xx2 (println pagina)
         user          (:user (:session request))
         loggedin      (some? user)]
   (content-type
@@ -68,7 +68,7 @@
                   :page-title page-title
                   :theme theme
                   :assets-prefix assets-prefix
-                  :base-url (util/make-url (:page-scheme cfg) (:page-url cfg))
+                  :base-url (util/make-url (:page-scheme cfg) (:page-url cfg) request)
                   :flash (:flash request)}
           :navi { :type-link (phelper "link" params)
                   :type-text (phelper "text" params)
