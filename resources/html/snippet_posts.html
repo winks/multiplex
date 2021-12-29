@@ -21,3 +21,14 @@
 
 {% endfor %}
 </ul>
+<div class="pagination">
+  {% if pagi.page-newer %}
+  <a href="?page={{ pagi.page-newer }}{% if pagi.type %}&type={{ pagi.type }}{% endif %}{% if pagi.limit %}&limit={{ pagi.limit }}{% endif %}">&laquo;&laquo;</a>
+  {% endif %}
+  {% ifequal pagi.page-count 1 %}{% else %}   {% for pg in pagi.pages %}
+   <a href="?page={{ pg             }}{% if pagi.type %}&type={{ pagi.type }}{% endif %}{% if pagi.limit %}&limit={{ pagi.limit }}{% endif %}">{% ifequal pg pagi.page %}<strong>{% endifequal %}{{ pg }}{% ifequal pg pagi.page %}</strong>{% endifequal %}</a>
+  {% endfor %}    {% endifequal %}
+  {% if pagi.page-older %}
+   <a href="?page={{ pagi.page-older }}{% if pagi.type %}&type={{ pagi.type }}{% endif %}{% if pagi.limit %}&limit={{ pagi.limit }}{% endif %}">&raquo;&raquo;</a>
+  {% endif %}
+</div>

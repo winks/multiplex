@@ -48,6 +48,13 @@
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
         page-title    (if-let [x (:title authr)] x (:page-title cfg))
         page-header   (if-let [x (:title authr)] x (str (:username authr) "'s multiplex" ))
+        itemtype      (util/string-or (get params :type))
+        limit         (util/int-or (get params :limit) config/default-limit)
+        page          (util/int-or (get params :page) 1)
+        pcount        (util/int-or (get params :pcount) 0)
+        pagina        (util/calculate-pagination limit page pcount)
+        xx1 (println limit page pcount)
+        xx2 (println pagina)
         user          (:user (:session request))
         loggedin      (some? user)]
   (content-type
@@ -68,6 +75,7 @@
                   :type-image (phelper "image" params)
                   :type-audio (phelper "audio" params)
                   :type-video (phelper "video" params)}
+          :pagi (assoc pagina :limit limit :page page :type itemtype)
           :page template
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8")))

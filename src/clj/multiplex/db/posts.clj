@@ -9,15 +9,15 @@
   (let [id       (util/int-or (get params :id) 0)
         crit     (assoc crit :author (:author params) :id id)]
     (cond
-      (> id 0) (db/get-post crit)
-      (empty? (:itemtype crit)) (db/get-posts crit)
-      :else (db/get-posts-filtered crit))))
+      (> id 0)                  [1 (db/get-post crit)]
+      (empty? (:itemtype crit)) [(:count (db/get-post-count crit)) (db/get-posts crit)]
+      :else                     [(:count (db/get-post-count-filtered crit)) (db/get-posts-filtered crit)])))
 
 (defn get-all-posts [params crit]
   (println "get-all-posts")
   (cond
-    (empty? (:itemtype crit)) (db/get-all-posts crit)
-    :else (db/get-all-posts-filtered crit)))
+    (empty? (:itemtype crit)) [11122 (db/get-all-posts crit)]
+    :else                     [11123 (db/get-all-posts-filtered crit)]))
 
 (defn get-posts [what params & [request]]
   (let [params   (or params {})
@@ -29,7 +29,7 @@
         crit     (if (util/valid-post-type? itemtype) (assoc crit :itemtype itemtype) crit)
         orig     (cond
                    (= :some what) (get-some-posts params crit)
-                   :else (get-all-posts params crit))]
-    (->> orig
+                   :else          (get-all-posts params crit))]
+    [(first orig) (->> (second orig)
          (map #(util/add-fields %))
-         (map #(util/set-author % request)))))
+         (map #(util/set-author % request)))]))

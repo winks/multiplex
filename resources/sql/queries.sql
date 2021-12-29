@@ -69,6 +69,18 @@ WHERE p.author = u.uid AND p.author = :author AND p.itemtype = :itemtype
 ORDER BY p.created DESC
 LIMIT :limit OFFSET :offset
 
+-- :name get-post-count :? :1
+-- :doc retrieves posts count
+SELECT count(p.id)
+FROM mpx_posts p, mpx_users u
+WHERE p.author = u.uid AND p.author = :author
+
+-- :name get-post-count-filtered :? :1
+-- :doc retrieves posts given the uid and itemtype
+SELECT count(p.id)
+FROM mpx_posts p, mpx_users u
+WHERE p.author = u.uid AND p.author = :author AND p.itemtype = :itemtype
+
 -----------
 
 -- :name get-all-posts :? :*

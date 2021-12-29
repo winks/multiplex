@@ -43,8 +43,8 @@
 ; simple pages
 (defn render-page
   ([request page-name]              (layout/render2 request (str "page_" (name page-name) ".html")))
-  ([request page-name data]         (layout/render2 request (str "page_" (name page-name) ".html") data))
-  ([request page-name content html] (layout/render2 request (str "page_" (name page-name) ".html") {:content content :html html})))
+  ([request page-name data]         (layout/render2 request (str "page_" (name page-name) ".html") data)))
+  ;([request page-name content html] (layout/render2 request (str "page_" (name page-name) ".html") {:content content :html html})))
 
 (defn render-page-404
   ([request] (render-page-404 request "The page could not be found."))
@@ -56,8 +56,7 @@
         author (dbu/get-user-by-hostname {:hostname (:server-name request)} mreq)
         posts (dbp/get-posts :some (assoc qp :author (:uid author)) mreq)
         author2 (util/set-author author request)]
-        (println author2)
-    (render-page request :posts {:posts posts :post {:author (:author author2)}}))) ;:subsite author2
+    (render-page request :posts (merge qp {:posts (second posts) :pcount (first posts) :post {:author (:author author2)}})))) ;:subsite author2
 
 (defn all-posts-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
@@ -65,7 +64,7 @@
     (let [qp (merge (util/keywordize (:query-params request)) (:path-params request))
           mreq (select-keys request [:server-port :scheme])
           posts (dbp/get-posts :all qp mreq)]
-      (render-page request :posts {:posts posts}))))
+      (render-page request :posts (merge qp {:posts (second posts) :pcount (first posts)})))))
 
 (defn about-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
