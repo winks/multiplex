@@ -25,7 +25,7 @@
   [arg]
   (if (empty? arg)
     false
-    (some #(= arg %) (config/itemtypes))))
+    (some #(= arg %) config/itemtypes)))
 
 (defn file-extension
   "gets the lower-cased file extension from a string"
@@ -153,3 +153,22 @@
 
 (defn keywordize [m]
   (zipmap (map keyword (keys m)) (vals m)))
+
+(defn calculate-pagination
+  [num page post-count]
+  (let [page-count (int (Math/ceil (/ post-count num)))
+        page-newer (when-not (< page 2) (dec page))
+        page-older (when-not (>= page page-count) (inc page))
+        pages (range 1 (inc page-count))]
+    {:page-newer page-newer
+     :page-older page-older
+     :pages pages
+     :page-count page-count
+     :post-count post-count}))
+
+(defn type-pagination [type page limit]
+  (let [pt (str "type=" type)
+        pp (when-not (> 1 (int-or page 1)) (str "page=" page))
+        pl (when-not (= config/default-limit limit) (str "limit=" limit))
+        parts [pt pl pp]]
+    (str "?" (clojure.string/join "&" (filter not-empty parts)))))

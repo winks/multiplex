@@ -22,6 +22,11 @@
                       :bookmark-text "Bookmark me"
                       :theme "default"})
 
+(defn phelper [type params]
+  (let [p (util/int-or (:page params) 1)
+        l (util/int-or (:limit params) config/default-limit)]
+    (util/type-pagination type p l)))
+
 (defn render
   "renders the HTML template located relative to resources/html"
   [request template & [params]]
@@ -58,6 +63,11 @@
                   :assets-prefix assets-prefix
                   :base-url (util/make-url (:page-scheme cfg) (:page-url cfg))
                   :flash (:flash request)}
+          :navi { :type-link (phelper "link" params)
+                  :type-text (phelper "text" params)
+                  :type-image (phelper "image" params)
+                  :type-audio (phelper "audio" params)
+                  :type-video (phelper "video" params)}
           :page template
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8")))
