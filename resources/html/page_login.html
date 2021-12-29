@@ -1,0 +1,19 @@
+{% extends "page_base.html" %}
+{% block content %}
+
+<h2>Login</h2>
+
+<div><span class="has-text-danger">{{ flash }}</span></div>
+
+{% ifequal loggedin "true" %}
+You are already logged in. <a href="/logout">Click to log out.</a>
+{% else %}
+<form action="/login" id="loginform" method="post">
+    {% csrf-field %}
+    <p><label>Username:<br /> <input type="text" name="username" /></label></p>
+    <p><label>Password:<br /> <input type="password" name="password" /></label></p>
+    <input type="submit" value="post" />
+</form>
+{% endifequal %}
+
+{% endblock %}

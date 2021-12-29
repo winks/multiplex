@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page-title }}</title>
+    <link href="{{ assets-prefix }}/assets/{{ theme }}.css" media="screen, print" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="{{ assets-prefix }}/assets/default.favicon.png"> <!-- TODO {{ site.uid }}.favicon -->
+  </head>
+  <body>
+    <div id="header">wresting information from those dread machines</div>
+    <div id="body">
+      <div id="content">
+{% block content %}{% endblock %}
+      </div>
+    </div>
+    <div id="footer">
+      <span class="footer">
+      an <a href="{{ base-url }}/about">art-core</a> project &middot; <a href="/">back to the start</a> &middot;
+      <!--<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0</a><br />-->
+      {% ifequal loggedin "true" %}
+      <a href="/logout">logout ({{user}})</a>
+      {%else%}
+      <a href="/login">login</a>
+      {%endifequal%}
+      </span>
+    </div>
+    {% block page-scripts %}{% endblock %}
+  </body>
+</html>

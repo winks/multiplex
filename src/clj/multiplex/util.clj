@@ -2,11 +2,16 @@
   (:require [clojure.data.json :as json]
             [clojure.java.io :as cjio]
             [clojure.string :as str]
-            [clj-time.format :as tformat]
             [multiplex.config :as config]))
 
+;[clj-time.format :as tformat]
 ;[markdown.core :as md]
 ;[digest :as digest]
+
+(defn is-custom-host [hostname]
+  (if (= (:page-url (config/env :multiplex)) hostname)
+    false
+    hostname))
 
 ;(defn read-time
 ;  [time]
@@ -14,6 +19,13 @@
 ;(defn put-time
 ;  [time]
 ;  (tformat/unparse (tformat/formatter "yyyy-MM-dd HH:mm") time))
+
+(defn valid-post-type?
+  "determines if the given type of post is allowed"
+  [arg]
+  (if (empty? arg)
+    false
+    (some #(= arg %) (config/itemtypes))))
 
 (defn file-extension
   "gets the lower-cased file extension from a string"
@@ -26,13 +38,15 @@
         "jpg"
         ext))))
 
-(defn make-url [scheme host]
-  (str scheme "://" host))
+(defn make-url [scheme host & [params]]
+  (let [port (:server-port (or params {:server-port 0}))
+        port (if (> port 0) (str ":" port) "")]
+    (str scheme "://" host port)))
 
 (defn host-name
   "gets the host name part from an url"
   [url]
-  (let [x (str/replace url #"http(s)?://(www\.)?" "")]
+  (let [x (str/replace (str/lower-case url) #"http(s)?://(www\.)?" "")]
     (first (str/split x #"/"))))
 
 (defn read-remote
@@ -84,17 +98,39 @@
         (str (:thumb-path m) (:thumb-id m) "." (:thumb-ext m))
         ""))))
 
-(defn add-fields [coll author]
+(defn string-or-default
+  ([s]
+    (string-or-default s ""))
+  ([s default]
+    (if (empty? s)
+      default
+      (str/trim s))))
+
+(defn int-or-default
+  "try to coerce to integer or return a safe default"
+  [s default]
+  (if (nil? s)
+    default
+  (try
+    (let [n (if (instance? java.lang.Integer s)
+                (long s)
+                (if (instance? java.lang.Long s)
+                    s
+                    (if (instance? java.lang.String s)
+                        (Long/valueOf s)
+                        (if (instance? java.lang.Double s)
+                            (long s)
+                            default))))]
+      (if (pos? n) n default))
+    (catch Exception e
+      default))))
+
+(defn add-fields [coll]
   (let [info (video-info (:url coll))
         meta-foo (if (= "" (str/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)
         ;updated (:updated coll);(put-time (read-time (str (:updated coll))))
         prefix (make-url (:static-scheme (config/env :multiplex)) (:static-url (config/env :multiplex)))
-        author (assoc {} :author (:uid author)
-                         :username (:username author)
-                         :hostname (:hostname author)
-                         :url (make-url (:page-scheme (config/env :multiplex)) (:hostname author))
-                         :avatar (:avatar author))
         url (if (< (count (:url coll)) (count (config/env :rel-path)))
                 ""
                 (if (= (config/env :rel-path) (subs (:url coll) 0 (count (config/env :rel-path))))
@@ -103,9 +139,17 @@
     (assoc coll :code (:code info)
                 :site (:site info)
                 :url url
-                ;:static-url prefix
                 :thumb-path (str prefix (config/env :rel-path))
                 ;:updated (or updated (:updated coll))
                 :thumbnail (:thumbnail meta)
-                :author author
                 :meta meta)))
+
+(defn set-author [coll & [request]]
+  (let [request (or request {})
+        fields  [:username :hostname :title :avatar :theme :is_private]
+        author  (select-keys coll fields)
+        author  (assoc author :url (make-url (:page-scheme (config/env :multiplex)) (:hostname author) request))]
+    (assoc (apply (partial dissoc coll) fields) :author author)))
+
+(defn keywordize [m]
+  (zipmap (map keyword (keys m)) (vals m)))

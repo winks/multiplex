@@ -1,0 +1,11 @@
+{% extends "page_base.html" %}
+{% block content %}
+
+<h2>multiplex &middot; users</h2>
+
+<ul class="user-list">
+{% for user in users %}
+  <li><a href="{{ user.url }}">{{ user.title}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

@@ -37,21 +37,26 @@
 (defn render2
   "renders the HTML template located relative to resources/html"
   [request template & [params]]
-  (let [theme (first (filter seq [(:theme (:post params)) (:theme (config/env :multiplex)) (:theme config-fallback)]))
+  (let [theme         (first (filter seq [(:theme (:site params)) (:theme (config/env :multiplex)) (:theme config-fallback)]))
         cfg           (assoc (first (filter seq [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
         page-title    (if-let [x (:title (:post params))] x (:page-title cfg))
-        page-header   (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))]
+        page-header   (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))
+        user          (:user (:session request))
+        loggedin      (some? user)]
   (content-type
     (ok
       (parser/render-file
         template
         (assoc params
+          :flash (:flash request)
           :page-header page-header
           :page-title page-title
           :theme theme
           :assets-prefix assets-prefix
           :base-url (util/make-url (:page-scheme cfg) (:page-url cfg))
+          :loggedin loggedin
+          :user user
           :page template
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8")))
@@ -67,4 +72,4 @@
   [error-details]
   {:status  (:status error-details)
    :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body    (parser/render-file "error.html" error-details)})
+   :body    (parser/render-file "page_error.html" error-details)})
