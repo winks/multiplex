@@ -10,7 +10,7 @@
 
 (defn get-user-by-hostname [params & [request]]
   (let [orig (db/get-user-by-hostname params)]
-    (assoc orig :url (urlize orig request))))
+    (urlize orig request)))
 
 (defn get-public-users [request]
   (let [users (filter #(not (:is_private %)) (db/get-all-users))]

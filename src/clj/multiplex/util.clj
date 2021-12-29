@@ -98,15 +98,15 @@
         (str (:thumb-path m) (:thumb-id m) "." (:thumb-ext m))
         ""))))
 
-(defn string-or-default
+(defn string-or
   ([s]
-    (string-or-default s ""))
+    (string-or s ""))
   ([s default]
     (if (empty? s)
       default
       (str/trim s))))
 
-(defn int-or-default
+(defn int-or
   "try to coerce to integer or return a safe default"
   [s default]
   (if (nil? s)
@@ -146,7 +146,7 @@
 
 (defn set-author [coll & [request]]
   (let [request (or request {})
-        fields  [:username :hostname :title :avatar :theme :is_private]
+        fields  [:username :hostname :title :avatar :theme :is_private :uid]
         author  (select-keys coll fields)
         author  (assoc author :url (make-url (:page-scheme (config/env :multiplex)) (:hostname author) request))]
     (assoc (apply (partial dissoc coll) fields) :author author)))

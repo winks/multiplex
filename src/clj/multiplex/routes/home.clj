@@ -54,15 +54,17 @@
   (let [qp (merge (util/keywordize (:query-params request)) (:path-params request))
         mreq (select-keys request [:server-port :scheme])
         author (dbu/get-user-by-hostname {:hostname (:server-name request)} mreq)
-        posts (dbp/get-posts (assoc qp :author (:uid author)) mreq)]
-    (render-page request :posts {:posts posts :site author})))
+        posts (dbp/get-posts :some (assoc qp :author (:uid author)) mreq)
+        author2 (util/set-author author request)]
+        (println author2)
+    (render-page request :posts {:posts posts :post {:author (:author author2)}}))) ;:subsite author2
 
 (defn all-posts-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
     (render-page-404 request)
     (let [qp (merge (util/keywordize (:query-params request)) (:path-params request))
           mreq (select-keys request [:server-port :scheme])
-          posts (dbp/get-all-posts qp mreq)]
+          posts (dbp/get-posts :all qp mreq)]
       (render-page request :posts {:posts posts}))))
 
 (defn about-page [request]

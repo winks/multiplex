@@ -40,8 +40,9 @@
   (let [theme         (first (filter seq [(:theme (:site params)) (:theme (config/env :multiplex)) (:theme config-fallback)]))
         cfg           (assoc (first (filter seq [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
-        page-title    (if-let [x (:title (:post params))] x (:page-title cfg))
-        page-header   (if-let [x (:title (:post params))] x (str (:username (:post params)) "'s multiplex" ))
+        authr         (:author (:post params))
+        page-title    (if-let [x (:title authr)] x (:page-title cfg))
+        page-header   (if-let [x (:title authr)] x (str (:username authr) "'s multiplex" ))
         user          (:user (:session request))
         loggedin      (some? user)]
   (content-type
