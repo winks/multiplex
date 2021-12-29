@@ -17,7 +17,7 @@
   <p>Have a look at the <a href="/about/changes">Changelog</a>.</p>
   <p>Here's a list of <a href="/users">public users</a>.</p>
   <hr>
-{% ifequal loggedin "true" %}
+{% ifequal auth.loggedin "true" %}
   <p>Use this bookmark (and add your API key): <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('{{ multiplex.page-scheme }}://{{ multiplex.page-url }}/add/YOURAPIKEY?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'multiplex','toolbar=no,width=700,height=350'));">{{ multiplex.bookmark-text }}</a><br />
   </p>
 {% endifequal %}

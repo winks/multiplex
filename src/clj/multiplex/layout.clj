@@ -37,10 +37,10 @@
 (defn render2
   "renders the HTML template located relative to resources/html"
   [request template & [params]]
-  (let [theme         (first (filter seq [(:theme (:site params)) (:theme (config/env :multiplex)) (:theme config-fallback)]))
+  (let [authr         (:author (:post params))
+        theme         (first (filter seq [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
         cfg           (assoc (first (filter seq [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
-        authr         (:author (:post params))
         page-title    (if-let [x (:title authr)] x (:page-title cfg))
         page-header   (if-let [x (:title authr)] x (str (:username authr) "'s multiplex" ))
         user          (:user (:session request))
@@ -50,14 +50,14 @@
       (parser/render-file
         template
         (assoc params
-          :flash (:flash request)
-          :page-header page-header
-          :page-title page-title
-          :theme theme
-          :assets-prefix assets-prefix
-          :base-url (util/make-url (:page-scheme cfg) (:page-url cfg))
-          :loggedin loggedin
-          :user user
+          :auth { :loggedin loggedin
+                  :user user}
+          :glob { :page-header page-header
+                  :page-title page-title
+                  :theme theme
+                  :assets-prefix assets-prefix
+                  :base-url (util/make-url (:page-scheme cfg) (:page-url cfg))
+                  :flash (:flash request)}
           :page template
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8")))

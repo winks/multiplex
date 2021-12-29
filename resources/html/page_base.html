@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page-title }}</title>
-    <link href="{{ assets-prefix }}/assets/{{ theme }}.css" media="screen, print" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="{{ assets-prefix }}/assets/default.favicon.png"> <!-- TODO {{ site.uid }}.favicon -->
+    <title>{{ glob.page-title }}</title>
+    <link href="{{ glob.assets-prefix }}/assets/{{ glob.theme }}.css" media="screen, print" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="{{ glob.assets-prefix }}/assets/default.favicon.png"> <!-- TODO {{ post.author.uid }}.favicon -->
   </head>
   <body>
     <div id="header">wresting information from those dread machines</div>
@@ -16,10 +16,10 @@
     </div>
     <div id="footer">
       <span class="footer">
-      an <a href="{{ base-url }}/about">art-core</a> project &middot; <a href="/">back to the start</a> &middot;
+      an <a href="{{ glob.base-url }}/about">art-core</a> project &middot; <a href="/">back to the start</a> &middot;
       <!--<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0</a><br />-->
-      {% ifequal loggedin "true" %}
-      <a href="/logout">logout ({{user}})</a>
+      {% ifequal auth.loggedin "true" %}
+      <a href="/logout">logout ({{ auth.user }})</a>
       {%else%}
       <a href="/login">login</a>
       {%endifequal%}

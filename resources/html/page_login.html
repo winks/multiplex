@@ -3,9 +3,9 @@
 
 <h2>Login</h2>
 
-<div><span class="has-text-danger">{{ flash }}</span></div>
+<div><span class="has-text-danger">{{ glob.flash }}</span></div>
 
-{% ifequal loggedin "true" %}
+{% ifequal auth.loggedin "true" %}
 You are already logged in. <a href="/logout">Click to log out.</a>
 {% else %}
 <form action="/login" id="loginform" method="post">
