@@ -69,17 +69,19 @@ WHERE p.author = u.uid AND p.author = :author AND p.itemtype = :itemtype
 ORDER BY p.created DESC
 LIMIT :limit OFFSET :offset
 
--- :name get-post-count :? :1
+-----
+
+-- :name get-posts-count :? :1
 -- :doc retrieves posts count
 SELECT count(p.id)
-FROM mpx_posts p, mpx_users u
-WHERE p.author = u.uid AND p.author = :author
+FROM mpx_posts p
+WHERE p.author = :author
 
--- :name get-post-count-filtered :? :1
+-- :name get-posts-filtered-count :? :1
 -- :doc retrieves posts given the uid and itemtype
 SELECT count(p.id)
-FROM mpx_posts p, mpx_users u
-WHERE p.author = u.uid AND p.author = :author AND p.itemtype = :itemtype
+FROM mpx_posts p
+WHERE p.author = :author AND p.itemtype = :itemtype
 
 -----------
 
@@ -98,3 +100,16 @@ FROM mpx_posts p, mpx_users u
 WHERE p.author = u.uid AND itemtype = :itemtype
 ORDER BY p.created DESC
 LIMIT :limit OFFSET :offset
+
+-----
+
+-- :name get-all-posts-count :? :1
+-- :doc retrieves posts count
+SELECT count(p.id)
+FROM mpx_posts p
+
+-- :name get-all-posts-filtered-count :? :1
+-- :doc retrieves posts given the uid and itemtype
+SELECT count(p.id)
+FROM mpx_posts p
+WHERE p.itemtype = :itemtype

@@ -2,6 +2,7 @@
   (:require
     [multiplex.config :as config]
     [multiplex.util :as util]
+    [multiplex.db.users :as dbu]
     [clojure.java.io]
     [selmer.parser :as parser]
     [selmer.filters :as filters]
@@ -42,7 +43,17 @@
 (defn render2
   "renders the HTML template located relative to resources/html"
   [request template & [params]]
-  (let [authr         (:author (:post params))
+  (let [
+        ; :post {:author (:author author2)}
+        aux (if (empty? (:author (:post params)))
+              (let [mreq (select-keys request [:server-port :scheme])
+                    author (dbu/get-user-by-hostname {:hostname (:server-name request)} mreq)
+                    author2 (util/set-author author request)]
+                (:author author2))
+              (:author (:post params)))
+
+        ;authr         (:author (:post params))
+        authr aux
         theme         (first (filter seq [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
         cfg           (assoc (first (filter seq [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
