@@ -67,7 +67,7 @@
   (let [id       (util/int-or (get params :id) 0)
         crit     (assoc crit :author (:author params) :id id)]
     (cond
-      (> id 0)                  [1 (db/get-post crit)]
+      (pos? id)                 [1 (db/get-post crit)]
       (empty? (:itemtype crit)) [(:count (db/get-posts-count crit)) (db/get-posts crit)]
       :else                     [(:count (db/get-posts-filtered-count crit)) (db/get-posts-filtered crit)])))
 

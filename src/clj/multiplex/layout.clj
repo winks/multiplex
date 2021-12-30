@@ -53,8 +53,8 @@
 
         ;authr         (:author (:post params))
         authr aux
-        theme         (first (filter seq [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
-        cfg           (assoc (first (filter seq [(config/env :multiplex) config-fallback])) :theme theme)
+        theme         (first (remove empty? [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
+        cfg           (assoc (first (remove empty? [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
         page-title    (if-let [x (:title authr)] x (:page-title cfg))
         page-header   (if-let [x (:title authr)] x (str (:username authr) "'s multiplex" ))

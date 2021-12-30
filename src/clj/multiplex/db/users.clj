@@ -17,5 +17,5 @@
     (urlize orig request)))
 
 (defn get-public-users [request]
-  (let [users (filter #(not (:is_private %)) (db/get-all-users))]
+  (let [users (remove :is_private (db/get-all-users))]
     (map #(urlize % request) users)))

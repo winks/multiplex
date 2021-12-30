@@ -13,7 +13,7 @@
 
 (defn logged-in? [request]
   (let [uid (or (:uid (:session request)) 0)]
-    (> uid 0)))
+    (pos? uid)))
 
 (defn set-login-flash! [msg {flash :flash}]
   (println "set-login-flash!" msg flash)
@@ -44,7 +44,7 @@
       :else                        (set-login-flash! "ee" request))))
 
 (defn add-item! [request]
-  (if (not (logged-in? request))
+  (if-not (logged-in? request)
     (redirect "/")
     (let [url (get (:form-params request) "url")
           txt (get (:form-params request) "txt")
@@ -100,7 +100,7 @@
 
 (defn meta-page [request]
   (let [uid (or (:uid (:session request)) 0)
-        profile (if (> uid 0) (dbu/get-profile {:uid uid} request) nil)]
+        profile (when (pos? uid) (dbu/get-profile {:uid uid} request))]
   (render-page request :meta {:profile profile})))
 
 (defn users-page [request]

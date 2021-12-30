@@ -39,7 +39,7 @@
 
 (defn make-url [scheme host & [params]]
   (let [port (:server-port (or params {:server-port 0}))
-        port (if (> port 0) (str ":" port) "")]
+        port (if (pos? port) (str ":" port) "")]
     (str scheme "://" host port)))
 
 (defn host-name
