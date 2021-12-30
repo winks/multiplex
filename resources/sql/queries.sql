@@ -15,7 +15,13 @@ UPDATE users
 SET first_name = :first_name, last_name = :last_name, email = :email
 WHERE id = :id
 
------------
+-- :name delete-user! :! :n
+-- :doc deletes a user record given the uid
+DELETE
+FROM mpx_users
+WHERE uid = :uid
+
+--------------------
 
 -- :name get-login :? :1
 -- :doc retrieves a user record given the username
@@ -48,12 +54,6 @@ SELECT uid, username, hostname, title, avatar, theme, is_private
 FROM mpx_users
 WHERE is_active = true AND hostname = :hostname
 
--- :name delete-user! :! :n
--- :doc deletes a user record given the uid
-DELETE
-FROM mpx_users
-WHERE uid = :uid
-
 ------------------------------------------------------------------------------
 -- :name create-post! :<! :raw
 -- :doc creates a new post
@@ -68,7 +68,13 @@ UPDATE mpx_posts
 SET url = :url, txt = :txt, tag = :tag, updated = now()
 WHERE id = :id
 
------------
+-- :name delete-post! :! :n
+-- :doc deletes a post given the id
+DELETE
+FROM mpx_posts
+WHERE id = :id
+
+--------------------
 
 -- :name get-post :? :*
 -- :doc retrieves post given the id

@@ -54,6 +54,22 @@
       (-> (redirect "/add")
           (assoc :flash (:id (first result)))))))
 
+(defn delete-item! [request]
+  (let [id (:id (:path-params request))
+        my-url "/"]
+    (if-not (logged-in? request)
+      (redirect my-url)
+       (let [editor (:uid (:session request))
+            mreq (select-keys request [:server-port :scheme])
+            posts (dbp/get-posts :some {:id id :author editor} mreq)]
+        (if-not (pos? (first posts))
+          (do
+            (println "Failed deleting [" id "], post not found")
+            (redirect my-url))
+          (let [result (dbp/delete-post! {:id id})]
+            (-> (redirect my-url)
+                (assoc :flash id))))))))
+
 (defn edit-item! [request]
   (let [id (:id (:path-params request))
         my-url (str "/post/" id)]
@@ -145,12 +161,9 @@
    ["/logout"   {:get clear-session!}]
    ["/meta"     {:get meta-page}]
    ["/post/:id/edit" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req :edit))}]
-   ["/post/:id" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req))
-                 ;:post (fn [{:keys [path-params query-params] :as req}] (edit-item! req))}]
-                 :post edit-item!}]
+   ["/post/:id/del"  {:post delete-item!}]
+   ["/post/:id"      {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req))
+                      :post edit-item!}]
    ["/posts"    {:get posts-page}]
    ["/users"    {:get users-page}]
    ["/"         {:get home-page}]])
-
-;    ["/login/:id" {:get (fn [{:keys [path-params] :as req}]
-;                         (set-user! (:id path-params) req))}]

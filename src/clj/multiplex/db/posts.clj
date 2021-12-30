@@ -67,6 +67,11 @@
     (println "dbp/update-post!" params)
     (db/update-post! params)))
 
+(defn delete-post! [params]
+  (let [params (assoc params :id (util/int-or (get params :id) 0))]
+    (println "dbp/delete-post!" params)
+    (db/delete-post! params)))
+
 (defn get-some-posts [params crit]
   (let [id       (util/int-or (get params :id) 0)
         crit     (assoc crit :author (:author params) :id id)]
