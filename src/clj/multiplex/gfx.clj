@@ -9,7 +9,7 @@
         (javax.imageio.ImageIO/read r)))
 
 (defn image-size
-  "returns width and height of a local image as a vector"
+  "returns width and height of a local BufferedImage as a vector"
   [image]
   (try
     [(.getWidth image) (.getHeight image)]
@@ -53,6 +53,7 @@
       sizes)))
 
 (defn resize
+  "resize a BufferedImage and save as <filename.EXT.thumb.EXT>"
   [image filename width-new height-new]
   (let [new-img (java.awt.image.BufferedImage. width-new height-new java.awt.image.BufferedImage/TYPE_INT_RGB)
         g (.createGraphics new-img)

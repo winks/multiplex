@@ -10,12 +10,14 @@
 (deftest test-config-abs-file-1
   (is (= (str (config/env :abs-path) "/foo1.jpg") (config/abs-file "foo1.jpg"))))
 (deftest test-config-abs-file-thumb-1
-  (is (= (str (config/env :abs-path) "/testsite/foo0.jpg") (config/abs-file-thumb "foo0.jpg" "mysite"))))
+  (is (= (str (config/env :abs-path) "/testsite/foo0.jpg") (config/abs-file-thumb "foo0.jpg" "testsite"))))
 
 ; now multiplex.util
 (deftest test-is-custom-host-1
   (is (= "example.f5n.de" (is-custom-host "example.f5n.de")))
   (is (= false (is-custom-host (:page-url (config/env :multiplex))))))
+
+; download-file
 
 (deftest test-valid-post-type-1
   (is (= false (valid-post-type? "")))
@@ -32,6 +34,14 @@
   (is (= "https://example.org" (make-url "https" "example.org")))
   (is (= "https://example.org" (make-url "https" "example.org" {:server-port 0})))
   (is (= "https://example.org:3000" (make-url "https" "example.org" {:server-port 3000}))))
+
+(deftest test-host-name-1
+  (is (= "example.org" (host-name "http://example.org")))
+  (is (= "example.org" (host-name "https://example.org")))
+  (is (= "example.org" (host-name "https://www.example.org")))
+  (is (= "sub.example.org" (host-name "https://sub.example.org/path"))))
+
+; read-remote
 
 (deftest test-video-info-err
   (let [info (video-info "http://example.com/foo.gif")]
@@ -53,6 +63,7 @@
     (is (= "youtube" (:site info)))
     (is (= "_hbEM9Sr9fi4" (:code info)))))
 
+; TODO not a unit test, IO
 (deftest test-video-info-vimeo-1
   (let [info (video-info "https://vimeo.com/62518619")]
     (is (= "vimeo" (:site info)))
@@ -64,6 +75,7 @@
     (is (= "mixcloud" (:site info)))
     (is (= nil (:code info)))))
 
+; TODO not a unit test, IO
 (deftest test-video-info-soundcloud-1
   (let [info (video-info "https://soundcloud.com/zuckerton-records/klangkuenstler-munich-motion")]
     (is (= "soundcloud" (:site info)))
