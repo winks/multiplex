@@ -4,6 +4,65 @@
    [multiplex.util :as util]
    [multiplex.db.core :as db]))
 
+(comment
+(defn store-image [params]
+  (let [ext (util/file-extension (:url params))
+        filename (str (util/hash-filename (:url params)) "." ext)
+        abs-filename (config/abs-file filename)
+        x (util/download-file (:url params) abs-filename)
+        img (gfx/read-image abs-filename)
+        sizes (gfx/image-size img)
+        resized (gfx/calc-resized img)
+        params (assoc params :id nil
+                             :meta {:size (str/join ":" sizes) :url (:url params)}
+                             :url (config/rel-file filename))]
+    (do
+      (println (str "DEBUG store-image: " (:url params) sizes resized))
+      (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
+        (let [r (gfx/resize img abs-filename (first resized) (second resized))
+              params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
+                                                               :thumbsize (str/join ":" resized)))]
+          (prep-new params))
+        (prep-new params)))))
+
+(defn store-video-thumb [params]
+  (let [vi       (util/video-info (:url params))
+        thumb    (util/thumbnail-url vi)
+        ext      (util/file-extension thumb)
+        filename (str (:thumb-id vi) "." ext)
+        abs-file (config/abs-file-thumb filename (:site vi))
+        x        (util/download-file thumb abs-file)
+        img      (gfx/read-image abs-file)
+        resized  (gfx/calc-resized img)
+        params   (assoc params :meta (assoc vi :thumbnail filename
+                                               :thumbsize (str/join ":" resized)))]
+    (do
+      (println (str "DEBUG store-video-thumb: " params))
+      (prep-new params))))
+)
+
+(defn store-rest [params]
+  (let [params (assoc params ; :id nil ???
+                             :meta "{}")]
+    (println (str "DEBUG store-rest: " params))
+    (db/create-post! params)))
+
+(defn store-dispatch [params]
+  (cond
+    ;(= "video" (:itemtype params)) (store-video-thumb params)
+    ;(= "audio" (:itemtype params)) (store-video-thumb params)
+    ;(= "image" (:itemtype params)) (store-image params)
+    (= "text" (:itemtype params))  (store-rest params)
+    :else                          (store-rest params)))
+
+(defn create-post! [params]
+  (println "dbp/create-post!" params)
+  (let [itemtype (if (empty? (:itemtype params)) (util/guess-type (:url params) (:txt params)) (:itemtype params))
+        params (assoc params :itemtype itemtype)
+        newid (store-dispatch params)]
+        (println "newid" newid)
+    newid))
+
 (defn get-some-posts [params crit]
   (println "get-some-posts" crit)
   (let [id       (util/int-or (get params :id) 0)

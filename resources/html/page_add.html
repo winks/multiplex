@@ -1,0 +1,18 @@
+{% extends "page_minimal.html" %}
+{% block content %}
+
+{% ifequal auth.loggedin "true" %}
+  {% if glob.flash  %}
+  Added: <a href="/post/{{ glob.flash }}">{{ glob.flash }}</a>.
+  {% endif %}
+<form action="/add" id="addform" method="post">
+    {% csrf-field %}
+    <p><label>URL:<br /> <input type="text" name="url" value="{{ form.url }}" /></label></p>
+    <p><label>Text:<br /> <textarea rows="5" cols="60" name="txt">{{ form.txt }}</textarea></label></p>
+    <p><label>Tags: <input type="text" name="tags" value="{{ form.tags }}" class="smaller" /></label> (separate with spaces)</p>
+    <input type="submit" value="post" />
+</form>
+{% else %}
+<a href="/login">Login</a> first.
+{% endifequal %}
+{% endblock %}

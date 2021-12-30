@@ -20,7 +20,6 @@
                       :page-url ""
                       :page-scheme "http"
                       :assets-scheme "http"
-                      :bookmark-text "Bookmark me"
                       :theme "default"})
 
 (defn phelper [type params]
@@ -66,15 +65,17 @@
 
         pcount        (util/int-or (get params :pcount) 0)
         pagina        (util/calculate-pagination limit page pcount)
-        user          (:user (:session request))
-        loggedin      (some? user)]
+        auth-user     (:user (:session request))
+        auth-uid      (:uid (:session request))
+        auth-loggedin (some? auth-user)]
   (content-type
     (ok
       (parser/render-file
         template
         (assoc params
-          :auth { :loggedin loggedin
-                  :user user}
+          :auth { :loggedin auth-loggedin
+                  :user auth-user
+                  :uid auth-uid}
           :glob { :page-header page-header
                   :page-title page-title
                   :theme theme

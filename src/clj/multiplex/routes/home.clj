@@ -11,15 +11,19 @@
    [ring.util.response :refer [response redirect]]
    [ring.util.http-response :as hresponse]))
 
+(defn logged-in? [request]
+  (let [uid (or (:uid (:session request)) 0)]
+    (> uid 0)))
+
 (defn set-login-flash! [msg {flash :flash}]
   (println "set-login-flash!" msg flash)
   (-> (redirect "/login")
       (assoc :flash msg)))
 
-(defn set-user! [id {session :session}]
-  (println "set-user!" id session)
+(defn set-user! [name uid {session :session}]
+  (println "set-user!" name uid session)
   (-> (redirect "/")
-      (assoc :session (assoc session :user id))))
+      (assoc :session (assoc session :user name :uid uid))))
 
 (defn clear-session! [{session :session}]
   (-> (redirect "/")
@@ -36,8 +40,18 @@
       (empty? (:username dbuser))  (set-login-flash! "db1" request)
       (empty? (:password dbuser))  (set-login-flash! "db2" request)
       (not= un (:username dbuser)) (set-login-flash! "db3" request)
-      (true? checked)              (set-user! un request)
+      (true? checked)              (set-user! (:username dbuser) (:uid dbuser) request)
       :else                        (set-login-flash! "ee" request))))
+
+(defn add-item! [request]
+  (if (not (logged-in? request))
+    (redirect "/")
+    (let [url (get (:form-params request) "url")
+          txt (get (:form-params request) "txt")
+          tags (get (:form-params request) "tags")
+          result (dbp/create-post! {:url url :txt txt :tag (or tags "") :author (:uid (:session request))})]
+      (-> (redirect "/add")
+          (assoc :flash (:id (first result)))))))
 
 ; simple pages
 (defn render-page
@@ -70,6 +84,12 @@
     (render-page-404 request)
     (render-page request :about)))
 
+(defn add-page [request]
+  (let [qp (merge (util/keywordize (:query-params request)) (:path-params request))
+        qp (if (and (empty? (:txt qp)) (seq (:title qp))) (assoc qp :txt (util/sanitize-title (:title qp))) qp)]
+  (println "add" qp)
+    (render-page request :add {:form qp})))
+
 (defn home-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
     (posts-page request)
@@ -77,6 +97,11 @@
 
 (defn login-page [request]
   (render-page request :login))
+
+(defn meta-page [request]
+  (let [uid (or (:uid (:session request)) 0)
+        profile (if (> uid 0) (dbu/get-profile {:uid uid} request) nil)]
+  (render-page request :meta {:profile profile})))
 
 (defn users-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
@@ -90,10 +115,13 @@
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/about"    {:get about-page}]
+   ["/add"      {:get add-page
+                 :post add-item!}]
    ["/everyone" {:get all-posts-page}]
    ["/login"    {:get login-page
                  :post login!}]
    ["/logout"   {:get clear-session!}]
+   ["/meta"     {:get meta-page}]
    ["/post/:id" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req))}]
    ["/posts"    {:get posts-page}]
    ["/users"    {:get users-page}]

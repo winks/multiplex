@@ -4,21 +4,10 @@
             [clojure.string :as cstr]
             [multiplex.config :as config]))
 
-;[clj-time.format :as tformat]
-;[markdown.core :as md]
-;[digest :as digest]
-
 (defn is-custom-host [hostname]
   (if (= (:page-url (config/env :multiplex)) hostname)
     false
     hostname))
-
-;(defn read-time
-;  [time]
-;  (tformat/parse (tformat/formatter "yyyy-MM-dd HH:mm:ss.S") time))
-;(defn put-time
-;  [time]
-;  (tformat/unparse (tformat/formatter "yyyy-MM-dd HH:mm") time))
 
 (defn valid-post-type?
   "determines if the given type of post is allowed"
@@ -172,3 +161,23 @@
         pl (when-not (= config/default-limit limit) (str "limit=" limit))
         parts [pt pl pp]]
     (str "?" (cstr/join "&" (filter not-empty parts)))))
+
+(defn sanitize-title [s]
+  (-> s
+      (cstr/replace #"^▶ " "")
+      (cstr/replace #" - YouTube$" "")
+      (cstr/replace #" - MyVideo$" "")
+      (cstr/replace #" on Vimeo$" "")))
+
+(defn guess-type
+  "if the post type is not given, try guessing from contents"
+  [url txt]
+  (if (empty? url)
+    "text"
+    (let [ext (file-extension url)
+          host (host-name url)]
+      (cond
+        (some #{host} config/sites-video) "video"
+        (some #{host} config/sites-audio) "audio"
+        (some #{ext} config/img-types) "image"
+        :else "link"))))

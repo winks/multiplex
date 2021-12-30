@@ -12,6 +12,10 @@
   (let [orig (db/get-user-by-hostname params)]
     (urlize orig request)))
 
+(defn get-profile [params & [request]]
+  (let [orig (db/get-profile params)]
+    (urlize orig request)))
+
 (defn get-public-users [request]
   (let [users (filter #(not (:is_private %)) (db/get-all-users))]
     (map #(urlize % request) users)))

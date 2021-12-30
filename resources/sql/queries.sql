@@ -18,6 +18,12 @@ SELECT uid, username, password
 FROM mpx_users
 WHERE is_active = true AND username = :username
 
+-- :name get-profile :? :1
+-- :doc retrieves a user record given the uid
+SELECT uid, username, hostname, title, avatar, theme, is_private, email, apikey, created
+FROM mpx_users
+WHERE is_active = true AND uid = :uid
+
 -- :name get-all-users :? :*
 -- :doc retrieves all users
 SELECT uid, username, hostname, title, avatar, theme, is_private
@@ -44,6 +50,14 @@ FROM mpx_users
 WHERE uid = :uid
 
 ------------------------------------------------------------------------------
+-- :name create-post! :<! :raw
+-- :doc creates a new post
+INSERT INTO mpx_posts
+(id, author, itemtype, url, txt, meta, tag, updated)
+VALUES (nextval('mpx_posts_id_seq'), :author, :itemtype, :url, :txt, :meta, :tag, now())
+RETURNING id
+
+-----------
 
 -- :name get-post :? :*
 -- :doc retrieves post given the id
