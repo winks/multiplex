@@ -27,11 +27,10 @@
       (dissoc :cookies)))
 
 (defn login! [request]
-  ;(println "PW" (hashers/derive "multiplex"))
   (let [un (get (:form-params request) "username")
         pw (get (:form-params request) "password")
-        dbuser (db/get-login {:username pw})
-        checked (hashers/check un (:password dbuser))]
+        dbuser (db/get-login {:username un})
+        checked (hashers/check pw (:password dbuser))]
     (cond
       (empty? dbuser)              (set-login-flash! "db0" request)
       (empty? (:username dbuser))  (set-login-flash! "db1" request)
