@@ -64,7 +64,7 @@
   (-> ((:middleware defaults) handler)
       wrap-auth
       wrap-flash
-      (wrap-session {:cookie-attrs {:http-only true}})
+      (wrap-session {:cookie-attrs {:http-only true :max-age 86400}})
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)

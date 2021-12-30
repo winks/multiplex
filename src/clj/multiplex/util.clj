@@ -1,13 +1,23 @@
 (ns multiplex.util
-  (:require [clojure.data.json :as json]
-            [clojure.java.io :as cjio]
-            [clojure.string :as cstr]
-            [multiplex.config :as config]))
+  (:require
+   [buddy.core.codecs :as codecs]
+   [buddy.core.hash :as hash]
+   [clojure.data.json :as json]
+   [clojure.java.io :as cjio]
+   [clojure.string :as cstr]
+   [multiplex.config :as config]))
 
 (defn is-custom-host [hostname]
   (if (= (:page-url (config/env :multiplex)) hostname)
     false
     hostname))
+
+(defn download-file
+  "copies an image from an URL to a local file"
+  [url filename]
+  (with-open [input (cjio/input-stream url)
+              output (cjio/output-stream filename)]
+    (cjio/copy input output)))
 
 (defn valid-post-type?
   "determines if the given type of post is allowed"
@@ -181,3 +191,6 @@
         (some #{host} config/sites-audio) "audio"
         (some #{ext} config/img-types) "image"
         :else "link"))))
+
+(defn hash-filename [arg]
+  (codecs/bytes->hex (hash/sha1 arg)))

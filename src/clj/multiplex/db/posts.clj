@@ -1,30 +1,33 @@
 (ns multiplex.db.posts
   (:require
+   [clojure.data.json :as json]
+   [clojure.string :as cstr]
    [multiplex.config :as config]
+   [multiplex.gfx :as gfx]
    [multiplex.util :as util]
    [multiplex.db.core :as db]))
 
-(comment
 (defn store-image [params]
-  (let [ext (util/file-extension (:url params))
-        filename (str (util/hash-filename (:url params)) "." ext)
+  (let [orig-url (:url params)
+        ext (util/file-extension orig-url)
+        filename (str (util/hash-filename orig-url) "." ext)
         abs-filename (config/abs-file filename)
-        x (util/download-file (:url params) abs-filename)
+        ximg (util/download-file orig-url abs-filename)
         img (gfx/read-image abs-filename)
         sizes (gfx/image-size img)
         resized (gfx/calc-resized img)
-        params (assoc params :id nil
-                             :meta {:size (str/join ":" sizes) :url (:url params)}
+        params (assoc params :meta {:size (cstr/join ":" sizes) :url orig-url}
                              :url (config/rel-file filename))]
-    (do
-      (println (str "DEBUG store-image: " (:url params) sizes resized))
+      (println "DEBUG store-image: " params)
       (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
         (let [r (gfx/resize img abs-filename (first resized) (second resized))
-              params (assoc params :meta (assoc (:meta params) :thumb (util/file-extension abs-filename)
-                                                               :thumbsize (str/join ":" resized)))]
-          (prep-new params))
-        (prep-new params)))))
+              meta (assoc [:params :meta] :thumb (util/file-extension abs-filename)
+                                          :thumbsize (cstr/join ":" resized))
+              params (assoc params :meta (json/write-str meta) )]
+          (db/create-post! params))
+        (db/create-post! params))))
 
+(comment
 (defn store-video-thumb [params]
   (let [vi       (util/video-info (:url params))
         thumb    (util/thumbnail-url vi)
@@ -42,8 +45,7 @@
 )
 
 (defn store-rest [params]
-  (let [params (assoc params ; :id nil ???
-                             :meta "{}")]
+  (let [params (assoc params :meta "{}")]
     (println (str "DEBUG store-rest: " params))
     (db/create-post! params)))
 
@@ -51,7 +53,7 @@
   (cond
     ;(= "video" (:itemtype params)) (store-video-thumb params)
     ;(= "audio" (:itemtype params)) (store-video-thumb params)
-    ;(= "image" (:itemtype params)) (store-image params)
+    (= "image" (:itemtype params)) (store-image params)
     (= "text" (:itemtype params))  (store-rest params)
     :else                          (store-rest params)))
 
