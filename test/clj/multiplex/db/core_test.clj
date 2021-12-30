@@ -17,22 +17,26 @@
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
+(comment
+
 (deftest test-users
+  (db/delete-user! {:uid 1})
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (is (= 1 (db/create-user!
+    (is (= [{:uid 1}] (db/create-user!
               t-conn
-              {:id         "1"
-               :first_name "Sam"
-               :last_name  "Smith"
-               :email      "sam.smith@example.com"
-               :pass       "pass"}
+              {:username "testman"
+               :hostname "test.example.org"
+               :email    "testman@example.org"
+               :password "my_password"
+               :title    "My Title"
+               :avatar   "/tmp/avatar.jpg"
+               :theme    "my_theme"
+               }
               {})))
-    (is (= {:id         "1"
-            :first_name "Sam"
-            :last_name  "Smith"
-            :email      "sam.smith@example.com"
-            :pass       "pass"
-            :admin      nil
-            :last_login nil
-            :is_active  nil}
-           (db/get-user t-conn {:id "1"} {})))))
+    (is (= {:uid      1
+            :username "testman"
+            :password "my_password"}
+           (db/get-login t-conn {:username "testman"} {})))
+           (.rollback t-conn)))
+
+)

@@ -17,6 +17,8 @@
                  #'multiplex.handler/app-routes)
     (f)))
 
+(comment
+
 (deftest test-app
   (testing "main route"
     (let [response ((app) (request :get "/"))]
@@ -50,3 +52,5 @@
                                 (header "accept" "application/transit+json")))]
         (is (= 200 (:status response)))
         (is (= {:total 16} (m/decode-response-body response)))))))
+
+)

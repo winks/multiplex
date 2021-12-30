@@ -1,8 +1,13 @@
--- :name create-user! :! :n
+-- :name create-user! :<! :raw
 -- :doc creates a new user record
-INSERT INTO users
-(id, first_name, last_name, email, pass)
-VALUES (:id, :first_name, :last_name, :email, :pass)
+INSERT INTO mpx_users
+(uid, username, hostname, email, password,
+  apikey, title, signupcode, avatar, theme,
+  is_active, is_private, updated, last_login)
+VALUES (nextval('mpx_posts_id_seq'), :username, :hostname, :email, :password,
+  '', :title, '', :avatar, :theme,
+  true, false, now(), now())
+RETURNING uid
 
 -- :name update-user! :! :n
 -- :doc updates an existing user record

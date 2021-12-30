@@ -32,7 +32,7 @@
   (if (empty? name)
     ""
     (let [parts (reverse (cstr/split name #"\."))
-          ext (re-find #"[a-z]+" (cstr/lower-case (first parts)))]
+          ext (re-find #"[a-z0-9]+" (cstr/lower-case (first parts)))]
       (if (= "jpeg" ext)
         "jpg"
         ext))))

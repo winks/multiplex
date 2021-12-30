@@ -46,7 +46,8 @@
   :target-path "target/%s/"
   :main ^:skip-aot multiplex.core
 
-  :plugins [[lein-kibit "0.1.2"]]
+  :plugins [[lein-kibit "0.1.2"]
+            [lein-cloverage "1.2.2"]]
 
   :profiles
   {:uberjar {:omit-source true
