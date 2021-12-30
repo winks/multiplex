@@ -27,32 +27,29 @@
           (db/create-post! params))
         (db/create-post! params))))
 
-(comment
 (defn store-video-thumb [params]
   (let [vi       (util/video-info (:url params))
         thumb    (util/thumbnail-url vi)
         ext      (util/file-extension thumb)
         filename (str (:thumb-id vi) "." ext)
         abs-file (config/abs-file-thumb filename (:site vi))
-        x        (util/download-file thumb abs-file)
+        ximg     (util/download-file thumb abs-file)
         img      (gfx/read-image abs-file)
         resized  (gfx/calc-resized img)
-        params   (assoc params :meta (assoc vi :thumbnail filename
-                                               :thumbsize (str/join ":" resized)))]
-    (do
-      (println (str "DEBUG store-video-thumb: " params))
-      (prep-new params))))
-)
+        meta     (assoc vi :thumbnail filename
+                           :thumbsize (cstr/join ":" resized))]
+    (println "DEBUG store-video-thumb: " params)
+    (db/create-post! (assoc params :meta meta))))
 
 (defn store-rest [params]
   (let [params (assoc params :meta "{}")]
-    (println (str "DEBUG store-rest: " params))
+    (println "DEBUG store-rest: " params)
     (db/create-post! params)))
 
 (defn store-dispatch [params]
   (cond
-    ;(= "video" (:itemtype params)) (store-video-thumb params)
-    ;(= "audio" (:itemtype params)) (store-video-thumb params)
+    (= "video" (:itemtype params)) (store-video-thumb params)
+    (= "audio" (:itemtype params)) (store-video-thumb params)
     (= "image" (:itemtype params)) (store-image params)
     (= "text" (:itemtype params))  (store-rest params)
     :else                          (store-rest params)))

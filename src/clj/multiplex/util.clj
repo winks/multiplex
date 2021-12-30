@@ -88,17 +88,14 @@
                 {:site "imgur-gifv" :code (second (re-find matcher))})
                 {:site "err" :code ""})))))))
 
-; TODO cond after post-new
 (defn thumbnail-url
   "get the thumbnail url for a video site"
   [m]
-  (if (= "youtube" (:site m))
-    (str "https://i.ytimg.com/vi/" (:code m) "/hqdefault.jpg")
-    (if (= "vimeo" (:site m))
-      (str "https://i.vimeocdn.com/video/" (:thumb-id m) ".jpg?mw=480"); (:thumb-width m))
-      (if (= "soundcloud" (:site m))
-        (str (:thumb-path m) (:thumb-id m) "." (:thumb-ext m))
-        ""))))
+  (cond
+    (= "youtube" (:site m))    (str "https://i.ytimg.com/vi/" (:code m) "/hqdefault.jpg")
+    (= "vimeo" (:site m))      (str "https://i.vimeocdn.com/video/" (:thumb-id m) ".jpg?mw=480")
+    (= "soundcloud" (:site m)) (str (:thumb-path m) (:thumb-id m) "." (:thumb-ext m))
+    :else ""))
 
 (defn string-or
   ([s]
