@@ -69,11 +69,10 @@
     (is (= "vimeo" (:site info)))
     (is (= "62518619" (:code info)))))
 
-; TODO FIXME
 (deftest test-video-info-mixcloud-1
   (let [info (video-info "https://www.mixcloud.com/ZorrinooohH/februar-2019-retrospective/")]
     (is (= "mixcloud" (:site info)))
-    (is (= nil (:code info)))))
+    (is (= "%2FZorrinooohH%2Ffebruar-2019-retrospective%2F" (:code info)))))
 
 ; TODO not a unit test, IO
 (deftest test-video-info-soundcloud-1

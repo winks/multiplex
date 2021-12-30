@@ -5,7 +5,8 @@
    [clojure.data.json :as json]
    [clojure.java.io :as cjio]
    [clojure.string :as cstr]
-   [multiplex.config :as config]))
+   [multiplex.config :as config]
+   [ring.util.codec :as rcodec]))
 
 (defn is-custom-host [hostname]
   (if (= (:page-url (config/env :multiplex)) hostname)
@@ -82,7 +83,8 @@
               {:site "soundcloud" :code code :thumb-id (cstr/replace (last parts) (str "." ext) "") :thumb-path (cstr/replace img (last parts) "") :thumb-ext ext}
               {:site "soundcloud" :code nil}))
           (if (some #{host} config/sites-mixcloud)
-            {:site "mixcloud" :code nil}
+            (let [path (.getRawPath (java.net.URI. s))]
+              {:site "mixcloud" :code (rcodec/url-encode path)})
             (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
               (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
                 {:site "imgur-gifv" :code (second (re-find matcher))})
