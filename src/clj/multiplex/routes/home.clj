@@ -49,9 +49,29 @@
     (let [url (get (:form-params request) "url")
           txt (get (:form-params request) "txt")
           tags (get (:form-params request) "tags")
-          result (dbp/create-post! {:url url :txt txt :tag (or tags "") :author (:uid (:session request))})]
+          editor (:uid (:session request))
+          result (dbp/create-post! {:url url :txt txt :tag (or tags "") :author editor})]
       (-> (redirect "/add")
           (assoc :flash (:id (first result)))))))
+
+(defn edit-item! [request]
+  (let [id (:id (:path-params request))
+        my-url (str "/post/" id)]
+    (if-not (logged-in? request)
+      (redirect my-url)
+      (let [url (get (:form-params request) "url")
+            txt (get (:form-params request) "txt")
+            tags (get (:form-params request) "tags")
+            editor (:uid (:session request))
+            mreq (select-keys request [:server-port :scheme])
+            posts (dbp/get-posts :some {:id id :author editor} mreq)]
+        (if-not (pos? (first posts))
+          (do
+            (println "Failed updating [" id "], post not found")
+            (redirect my-url))
+          (let [result (dbp/update-post! {:url url :txt txt :tag (or tags "") :id id})]
+            (-> (redirect my-url)
+                (assoc :flash id))))))))
 
 ; simple pages
 (defn render-page
@@ -63,13 +83,15 @@
   ([request] (render-page-404 request "The page could not be found."))
   ([request content] (layout/error-page {:status 404 :headers {"Content-Type" "text/html"} :message content})))
 
-(defn posts-page [request]
+(defn posts-page [request & [modus]]
   (let [qp (merge (util/keywordize (:query-params request)) (:path-params request))
         mreq (select-keys request [:server-port :scheme])
         author (dbu/get-user-by-hostname {:hostname (:server-name request)} mreq)
         posts (dbp/get-posts :some (assoc qp :author (:uid author)) mreq)
         author2 (util/set-author author request)]
-    (render-page request :posts (merge qp {:posts (second posts) :pcount (first posts) :post {:author (:author author2)}})))) ;:subsite author2
+    (if (= :edit modus)
+      (render-page request :edit_post (merge qp {:form (first (second posts)) :pcount (first posts) :post {:author (:author author2)}}))
+      (render-page request :posts (merge qp {:posts (second posts) :pcount (first posts) :post {:author (:author author2)}})))))
 
 (defn all-posts-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
@@ -122,7 +144,10 @@
                  :post login!}]
    ["/logout"   {:get clear-session!}]
    ["/meta"     {:get meta-page}]
-   ["/post/:id" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req))}]
+   ["/post/:id/edit" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req :edit))}]
+   ["/post/:id" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req))
+                 ;:post (fn [{:keys [path-params query-params] :as req}] (edit-item! req))}]
+                 :post edit-item!}]
    ["/posts"    {:get posts-page}]
    ["/users"    {:get users-page}]
    ["/"         {:get home-page}]])

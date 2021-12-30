@@ -62,10 +62,15 @@
         (println "newid" newid)
     newid))
 
+(defn update-post! [params]
+  (let [params (assoc params :id (util/int-or (get params :id) 0))]
+    (println "dbp/update-post!" params)
+    (db/update-post! params)))
+
 (defn get-some-posts [params crit]
-  (println "get-some-posts" crit)
   (let [id       (util/int-or (get params :id) 0)
         crit     (assoc crit :author (:author params) :id id)]
+    (println "get-some-posts" crit)
     (cond
       (pos? id)                 [1 (db/get-post crit)]
       (empty? (:itemtype crit)) [(:count (db/get-posts-count crit)) (db/get-posts crit)]

@@ -13,7 +13,7 @@
     <li>apikey: {{ profile.apikey }}</li>
     <li>is_private: {{ profile.is_private }}</li>
     <li>created: {{ profile.created }}</li>
-    <li>avatar: {{ profile.avatar }} <img src="{{ glob.assets-prefix }}/{{ profile.avatar }}"/> </li>
+    <li>avatar: {{ profile.avatar }} <img src="{{ glob.assets-prefix }}{{ profile.avatar }}"/> </li>
 </ul>
 
 <p>Use this bookmark (and add your API key): <br/>

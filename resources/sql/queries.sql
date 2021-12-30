@@ -62,6 +62,12 @@ INSERT INTO mpx_posts
 VALUES (nextval('mpx_posts_id_seq'), :author, :itemtype, :url, :txt, :meta, :tag, now())
 RETURNING id
 
+-- :name update-post! :! :n
+-- :doc updates an existing post
+UPDATE mpx_posts
+SET url = :url, txt = :txt, tag = :tag, updated = now()
+WHERE id = :id
+
 -----------
 
 -- :name get-post :? :*

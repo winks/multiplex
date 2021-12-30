@@ -1,1 +1,3 @@
-    <div class="perma">&nbsp;&middot;&nbsp;<a href="{{ post.author.url }}/post/{{ post.id }}">{{ post.updated }}</a>&nbsp;&middot;&nbsp;<br /></div>
+    <div class="perma">&nbsp;&middot;&nbsp;<a href="{{ post.author.url }}/post/{{ post.id }}">{{ post.updated }}</a>&nbsp;&middot;&nbsp;{% ifequal auth.loggedin "true" %}
+{% ifequal auth.uid post.author.uid %}<a href="{{ post.author.url }}/post/{{ post.id }}/edit">[edit]</a>{% endifequal%}
+{% endifequal%}<br /></div>
