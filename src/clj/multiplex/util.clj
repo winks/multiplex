@@ -193,3 +193,6 @@
 
 (defn hash-filename [arg]
   (codecs/bytes->hex (hash/sha1 arg)))
+
+(defn join-params [kv]
+  (apply str (apply concat (zipmap (map #(str "&" (name %) "=") (keys kv)) (map rcodec/url-encode (vals kv)))))
