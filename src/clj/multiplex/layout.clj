@@ -54,6 +54,7 @@
         ;authr         (:author (:post params))
         authr aux
         theme         (first (remove empty? [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
+        favicon       (first (remove empty? [(:uid authr) "default"]))
         cfg           (assoc (first (remove empty? [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
         page-title    (if-let [x (:title authr)] x (:page-title cfg))
@@ -79,6 +80,7 @@
           :glob { :page-header page-header
                   :page-title page-title
                   :theme theme
+                  :favicon favicon
                   :assets-prefix assets-prefix
                   :base-url (util/make-url (:page-scheme cfg) (:page-url cfg) request)
                   :flash (:flash request)}

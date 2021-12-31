@@ -1,0 +1,46 @@
+body {
+  background-color: #eee;
+  color: #330000;
+  font-size: 12px;
+  font-family: "Verdana", "Arial", "sans-serif";
+}
+#header {
+  background-color: #ffcc66;
+  border-bottom: 1px dotted #330000;
+}
+.footer {
+  border-top: 1px dotted #330000;
+  padding-top: 5px;
+}
+h1, h2, h3  {
+  font-family:      "Verdana", "Arial", "sans-serif";
+}
+a {
+  color: #bb0000;
+}
+a:link {
+  color:#bb0000;
+}
+a:hover {
+  color: #ff0000;
+}
+.perma {
+  font-size: small;
+}
+.user-header {
+  background-color: #ffcc66;
+}
+.main>li {
+    clear: both;
+}
+.main li a {
+   text-decoration: none;
+}
+.pagination {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+hr {
+  margin: 20px 0;
+}
