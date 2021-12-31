@@ -73,7 +73,7 @@
     (ok
       (parser/render-file
         template
-        (assoc params
+        (assoc (select-keys params [:form :posts :profile :users])
           :auth { :loggedin auth-loggedin
                   :user auth-user
                   :uid auth-uid}
@@ -81,6 +81,7 @@
                   :page-title page-title
                   :theme theme
                   :favicon favicon
+                  :modus (name (or (:modus params) ""))
                   :assets-prefix assets-prefix
                   :base-url (util/make-url (:page-scheme cfg) (:page-url cfg) request)
                   :flash (:flash request)}

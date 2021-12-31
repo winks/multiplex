@@ -107,7 +107,7 @@
         author2 (util/set-author author request)]
     (if (= :edit modus)
       (render-page request :edit_post (merge qp {:form (first (second posts)) :pcount (first posts) :post {:author (:author author2)}}))
-      (render-page request :posts (merge qp {:posts (second posts) :pcount (first posts) :post {:author (:author author2)}})))))
+      (render-page request :posts (merge qp {:modus modus :posts (second posts) :pcount (first posts) :post {:author (:author author2)}})))))
 
 (defn all-posts-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
@@ -162,7 +162,7 @@
    ["/meta"     {:get meta-page}]
    ["/post/:id/edit" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req :edit))}]
    ["/post/:id/del"  {:post delete-item!}]
-   ["/post/:id"      {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req))
+   ["/post/:id"      {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req :single))
                       :post edit-item!}]
    ["/posts"    {:get posts-page}]
    ["/users"    {:get users-page}]

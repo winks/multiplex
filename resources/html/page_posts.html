@@ -5,7 +5,7 @@
   {% ifequal auth.loggedin "true" %}
   {% if glob.flash  %}Updated: <a href="/post/{{ glob.flash }}">{{ glob.flash }}</a>.{% endif %}
   {% endifequal %}
-{% if post.author.uid %}{% ifequal pcount 1 %}{% else %}
+{% if post.author.uid %}{% ifequal glob.modus "single" %}{% else %}
     <div class="user-header">
     {% include "snippet_avatar.html" %}
     <div class="user-header-text"><h2>{{ glob.page-header }}</h2></div>
