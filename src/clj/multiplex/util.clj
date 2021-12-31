@@ -146,7 +146,7 @@
   (let [request (or request {})
         fields  [:username :hostname :title :avatar :theme :is_private :uid]
         author  (select-keys coll fields)
-        author  (assoc author :uid (:author coll) :url (make-url (:page-scheme (config/env :multiplex)) (:hostname author) request))]
+        author  (assoc author :uid (or (:author coll) (:uid coll)) :url (make-url (:page-scheme (config/env :multiplex)) (:hostname author) request))]
     (assoc (apply (partial dissoc coll) fields) :author author)))
 
 (defn keywordize [m]

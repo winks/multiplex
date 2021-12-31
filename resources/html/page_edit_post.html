@@ -2,7 +2,7 @@
 {% block content %}
 
 {% ifequal auth.loggedin "true" %}
-<h1>Edit: Post #{{ form.id }}</h1>
+<h1>Edit: Post #{{ form.id }} &middot; <a href="/post/{{ form.id }}">cancel</a></h1>
 
 <ul>
     <li>Created: {{ form.created }}</li>
