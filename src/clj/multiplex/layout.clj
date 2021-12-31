@@ -73,7 +73,7 @@
     (ok
       (parser/render-file
         template
-        (assoc (select-keys params [:form :posts :profile :users])
+        (assoc (select-keys params [:form :post :posts :profile :users])
           :auth { :loggedin auth-loggedin
                   :user auth-user
                   :uid auth-uid}

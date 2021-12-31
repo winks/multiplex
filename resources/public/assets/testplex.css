@@ -29,7 +29,7 @@ a:hover {
 .user-header {
   background-color: #69f;
 }
-.main>li {
+.post-list>li {
     clear: both;
 }
 .pagination {

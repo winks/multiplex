@@ -19,13 +19,13 @@ body {
 }
 #body {
   width: 100%;
-  align: center;
 }
 #content {
   width: 70%;
   margin: 0 auto;
 }
 #footer {
+  clear: both;
   margin-top: 30px;
   width: 100%;
   text-align: center;
@@ -90,21 +90,22 @@ img {
 .avatar img {
   margin-top: 1px;
 }
-ul.main {
+ul {
+  margin-left: 20px;
+}
+.post-list {
   list-style-type: none;
   margin-left: 10px;
   width: 70%;
-  align: center;
 }
-.main>li {
-    background-image: url(/img/ico/chat.png);
+.post-list>li {
     background-repeat: no-repeat;
     background-position: 0 .4em;
-    padding: 3px 0 3px 34px;
+    padding: 4px 0 3px 34px;
     margin: .4em 0;
-    line-height: 35px;
+    line-height: 32px;
 }
-.main li a {
+.post-list li a {
    text-decoration: none;
 }
 li.type-link {
@@ -121,13 +122,6 @@ li.type-text {
 }
 li.type-image {
     background-image: url(/img/map2/photo.png);
-}
-li.fav p a {
-    font-size: 200%;
-    line-height: 250%;
-}
-li.alert {
-    background-image: url(/img/ico/alert.png);
 }
 li.video .video-content {
     margin-left: 32px;
@@ -159,7 +153,7 @@ li.audio .audio-content {
     background-size: cover;
 }
 .video-thumb-youtube img {
-   margin-left: 0px;
+   margin-left: 0;
 }
 .video-thumb-vimeo img {
    margin-left: 0;
@@ -177,17 +171,34 @@ li.audio .audio-content {
     cursor: pointer;
 }
 form {
-  margin-top: 50px;
-  margin-left: -80px;
+  margin-top: 10px;
+}
+form textarea {
+  width: 75%;
 }
 form input[type="text"] {
-  width: 90%;
+  width: 75%;
 }
 form input[type="text"].smaller {
   width:55%
 }
 form input[type="submit"] {
+  margin-top: 10px;
   width: 100px;
+}
+form input.delete-button {
+  color: #eeeeee;
+  background-color: #922c2c;
+  margin-right: -47px;
+  width: 100px;
+  float: right;
+}
+#form_edit {
+  margin-bottom: 70px;
+}
+#form_post_delete {
+  width: 70%;
+  margin-top: -30px;
 }
 .pagination {
     font-size: large;

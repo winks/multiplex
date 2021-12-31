@@ -30,10 +30,10 @@ a:hover {
 .user-header {
   background-color: #ffcc66;
 }
-.main>li {
+.post-list>li {
     clear: both;
 }
-.main li a {
+.post-list li a {
    text-decoration: none;
 }
 .pagination {

@@ -11,18 +11,19 @@
     <li>Type: {{ form.itemtype }}</li>
     <li>Meta: {{ form.meta }}</li>
 </ul>
-
+<div id="form_edit">
 <form action="/post/{{ form.id }}" id="form_post_edit" method="post">
     {% csrf-field %}
     <p><label>URL:<br /> <input type="text" name="url" value="{{ form.url }}" /></label></p>
     <p><label>Text:<br /> <textarea rows="5" cols="60" name="txt">{{ form.txt }}</textarea></label></p>
-    <p><label>Tags: <input type="text" name="tags" value="{{ form.tags }}" class="smaller" /></label> (separate with spaces)</p>
+    <p><label>Tags: (separate with spaces)<br /> <input type="text" name="tags" value="{{ form.tags }}" /></label></p>
     <input type="submit" value="update" />
 </form>
 <form action="/post/{{ form.id }}/del" id="form_post_delete" method="post">
     {% csrf-field %}
-    <input type="submit" value="delete post {{ form.id }}" />
+    <input type="submit" class="delete-button" value="delete post {{ form.id }}" />
 </form>
+</div>
 {% else %}
 <a href="/login">Login</a> first.
 {% endifequal %}
