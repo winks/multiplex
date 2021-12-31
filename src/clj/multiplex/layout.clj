@@ -54,7 +54,7 @@
         ;authr         (:author (:post params))
         authr aux
         theme         (first (remove empty? [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
-        favicon       (first (remove empty? [(:uid authr) "default"]))
+        favicon       (first (remove empty? [(str (:uid authr)) "default"]))
         cfg           (assoc (first (remove empty? [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
         page-title    (if-let [x (:title authr)] x (:page-title cfg))

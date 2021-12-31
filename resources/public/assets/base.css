@@ -107,19 +107,19 @@ ul.main {
 .main li a {
    text-decoration: none;
 }
-li.fav {
+li.type-link {
     background-image: url(/img/map2/star-3.png);
 }
-li.video {
+li.type-video {
     background-image: url(/img/map2/video.png);
 }
-li.audio {
+li.type-audio {
     background-image: url(/img/map2/audio.png);
 }
-li.txt {
+li.type-text {
     background-image: url(/img/map2/text.png);
 }
-li.pic {
+li.type-image {
     background-image: url(/img/map2/photo.png);
 }
 li.fav p a {
