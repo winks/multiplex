@@ -20,7 +20,6 @@
 (def config-fallback {:page-title "multiplex"
                       :page-url ""
                       :page-scheme "http"
-                      :assets-scheme "http"
                       :theme "default"})
 
 (defn phelper [type params]
@@ -57,7 +56,7 @@
         theme         (first (remove empty? [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
         favicon       (first (remove empty? [(str (:uid authr)) "default"]))
         cfg           (assoc (first (remove empty? [(config/env :multiplex) config-fallback])) :theme theme)
-        assets-prefix (if-let [site (:assets-url cfg)] (util/make-url (:assets-scheme cfg) site) "")
+        assets-prefix (if-let [site (:assets-url cfg)] site "")
         page-title    (if-let [x (:title authr)] x (:page-title cfg))
         page-header   (if-let [x (:title authr)] x (str (:username authr) "'s multiplex" ))
         ; TODO refactor? done in get-posts already

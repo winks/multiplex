@@ -128,7 +128,7 @@
         meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)
         ;updated (:updated coll);(put-time (read-time (str (:updated coll))))
-        prefix (make-url (:static-scheme (config/env :multiplex)) (:static-url (config/env :multiplex)))
+        prefix (if-let [site (:assets-url (config/env :multiplex))] site "")
         url (if (< (count (:url coll)) (count (config/env :rel-path)))
                 ""
                 (if (= (config/env :rel-path) (subs (:url coll) 0 (count (config/env :rel-path))))
@@ -195,4 +195,4 @@
   (codecs/bytes->hex (hash/sha1 arg)))
 
 (defn join-params [kv]
-  (apply str (apply concat (zipmap (map #(str "&" (name %) "=") (keys kv)) (map rcodec/url-encode (vals kv)))))
+  (apply str (apply concat (zipmap (map #(str "&" (name %) "=") (keys kv)) (map rcodec/url-encode (vals kv))))))

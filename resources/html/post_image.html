@@ -3,7 +3,7 @@
 {% include "snippet_perma.html" %}
 <div id="media-{{ post.id }}">
 {% if post.meta.thumb %}
-<a href="{{ post.url }}"><img src="{{ post.static-url }}{{ post.url }}.thumb.{{ post.meta.thumb }}" alt="{{ post.id }}.thumb" /></a>
+<a href="{{ post.url }}"><img src="{{ post.url }}.thumb.{{ post.meta.thumb }}" alt="{{ post.id }}.thumb" /></a>
 {% else %}
 <img src="{{ post.url }}" alt="image-{{ post.id }}" />
 {% endif %}

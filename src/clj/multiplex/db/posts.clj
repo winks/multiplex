@@ -17,13 +17,13 @@
         sizes (gfx/image-size img)
         resized (gfx/calc-resized img)
         params (assoc params :meta {:size (cstr/join ":" sizes) :url orig-url}
-                             :url (config/rel-file filename))]
+                             :url (config/rel-file filename)
+                             :author (util/int-or (:author params) 0))]
       (println "DEBUG store-image: " params)
       (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
-        (let [r (gfx/resize img abs-filename (first resized) (second resized))
-              meta (assoc [:params :meta] :thumb (util/file-extension abs-filename)
-                                          :thumbsize (cstr/join ":" resized))
-              params (assoc params :meta (json/write-str meta) )]
+        (let [rv (gfx/resize img abs-filename (first resized) (second resized))
+              meta (assoc (:meta params) :thumb (util/file-extension abs-filename) :thumbsize (cstr/join ":" resized))
+              params (assoc params :meta (json/write-str meta))]
           (db/create-post! params))
         (db/create-post! params))))
 
