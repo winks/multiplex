@@ -146,10 +146,10 @@
   (println "login-page" (:session request))
   (render-page request :login))
 
-(defn meta-page [request]
+(defn profile-page [request]
   (let [uid (or (:uid (:session request)) 0)
         profile (when (pos? uid) (dbu/get-profile {:uid uid} request))]
-  (render-page request :meta {:profile profile})))
+  (render-page request :profile {:profile profile})))
 
 (defn users-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
@@ -169,11 +169,11 @@
    ["/login"    {:get login-page
                  :post login!}]
    ["/logout"   {:get clear-session!}]
-   ["/meta"     {:get meta-page}]
    ["/post/:id/edit" {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req :edit))}]
    ["/post/:id/del"  {:post delete-item!}]
    ["/post/:id"      {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req :single))
                       :post edit-item!}]
    ["/posts"    {:get posts-page}]
+   ["/profile"  {:get profile-page}]
    ["/users"    {:get users-page}]
    ["/"         {:get home-page}]])

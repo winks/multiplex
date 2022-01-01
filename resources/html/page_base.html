@@ -20,7 +20,7 @@
       an <a href="{{ glob.base-url }}/about">art-core</a> project &middot; <a href="/">back to the start</a> &middot;
       <!--<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0</a><br />-->
       {% ifequal auth.loggedin "true" %}
-      <a href="/meta">meta</a>&nbsp;&middot;&nbsp;
+      <a href="/profile">profile</a>&nbsp;&middot;&nbsp;
       <a href="/logout">logout ({{ auth.user }})</a>
       {%else%}
       <a href="/login">login</a>
