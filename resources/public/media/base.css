@@ -123,13 +123,13 @@ li.type-text {
 li.type-image {
     background-image: url(/img/map2/photo.png);
 }
-li.video .video-content {
+li.type-video .video-content {
     margin-left: 32px;
-    padding-top: 20px;
+    padding-top: 15px;
 }
-li.audio .audio-content {
+li.type-audio .audio-content {
     margin-left: 32px;
-    padding-top: 20px;
+    padding-top: 15px;
 }
 .video-thumb-youtube {
     width: 560px;

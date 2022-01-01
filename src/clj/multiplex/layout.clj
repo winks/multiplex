@@ -20,6 +20,7 @@
 (def config-fallback {:page-title "multiplex"
                       :page-url ""
                       :page-scheme "http"
+                      :page-port 80
                       :theme "default"})
 
 (defn phelper [type params]

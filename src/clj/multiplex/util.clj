@@ -4,6 +4,7 @@
    [buddy.core.hash :as hash]
    [clojure.data.json :as json]
    [clojure.java.io :as cjio]
+   [java-time :as jtime]
    [clojure.string :as cstr]
    [multiplex.config :as config]
    [ring.util.codec :as rcodec]))
@@ -127,7 +128,7 @@
   (let [info (video-info (:url coll))
         meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)
-        ;updated (:updated coll);(put-time (read-time (str (:updated coll))))
+        updated (jtime/format "yyyy-MM-dd HH:mm" (:updated coll))
         prefix (if-let [site (:assets-url (config/env :multiplex))] site "")
         url (if (< (count (:url coll)) (count (config/env :rel-path)))
                 ""
@@ -138,7 +139,7 @@
                 :site (or (:site meta) (:site info))
                 :url url
                 :thumb-path (str prefix (config/env :rel-path))
-                ;:updated (or updated (:updated coll))
+                :updated (or updated (:updated coll))
                 :thumbnail (:thumbnail meta)
                 :meta meta)))
 
