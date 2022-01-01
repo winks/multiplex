@@ -19,7 +19,7 @@
 
 (def config-fallback {:page-title "multiplex"
                       :page-url ""
-                      :page-scheme "http"
+                      :page-scheme :http
                       :page-port 80
                       :theme "default"})
 
@@ -84,7 +84,7 @@
                   :favicon favicon
                   :modus (name (or (:modus params) ""))
                   :assets-prefix assets-prefix
-                  :base-url (util/make-url (:page-scheme cfg) (:page-url cfg) request)
+                  :base-url (util/make-url (:page-url cfg) cfg)
                   :flash (:flash request)}
           :navi { :type-link (phelper "link" params)
                   :type-text (phelper "text" params)

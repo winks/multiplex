@@ -5,7 +5,7 @@
    [multiplex.util :as util]))
 
 (defn urlize [coll request]
-  (let [url (util/make-url (:page-scheme (config/env :multiplex)) (:hostname coll) request)]
+  (let [url (util/make-url (:hostname coll) (config/env :multiplex))]
     (assoc coll :url url)))
 
 (defn get-user-by-hostname [params & [request]]

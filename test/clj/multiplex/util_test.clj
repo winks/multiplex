@@ -31,9 +31,10 @@
   (is (= "jpg" (file-extension "test.jpeg"))))
 
 (deftest test-make-url-1
-  (is (= "https://example.org" (make-url "https" "example.org")))
-  (is (= "https://example.org" (make-url "https" "example.org" {:server-port 0})))
-  (is (= "https://example.org:3000" (make-url "https" "example.org" {:server-port 3000}))))
+  (is (= "http://example.org" (make-url "example.org" {})))
+  (is (= "https://example.org" (make-url "example.org" {:page-scheme :https})))
+  (is (= "http://example.org:81" (make-url "example.org" {:page-port 81})))
+  (is (= "https://example.org:444" (make-url "example.org" {:page-scheme :https :page-port 444}))))
 
 (deftest test-host-name-1
   (is (= "example.org" (host-name "http://example.org")))

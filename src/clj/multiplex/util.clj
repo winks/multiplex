@@ -39,10 +39,14 @@
         "jpg"
         ext))))
 
-(defn make-url [scheme host & [params]]
-  (let [port (:server-port (or params {:server-port 0}))
-        port (if (pos? port) (str ":" port) "")]
-    (str scheme "://" host port)))
+(defn make-url [host config]
+  (let [scheme (or (:page-scheme config) :http)
+        port (or (:page-port config) (if (= :https scheme) 443 80))
+        suffix (if (pos? port) (str ":" port) "")]
+    (cond
+      (and (= :http scheme) (= 80 port)) (str (name scheme) "://" host)
+      (and (= :https scheme) (= 443 port)) (str (name scheme) "://" host)
+      :else (str (name scheme) "://" host suffix))))
 
 (defn host-name
   "gets the host name part from an url"
@@ -147,7 +151,7 @@
   (let [request (or request {})
         fields  [:username :hostname :title :avatar :theme :is_private :uid]
         author  (select-keys coll fields)
-        author  (assoc author :uid (or (:author coll) (:uid coll)) :url (make-url (:page-scheme (config/env :multiplex)) (:hostname author) request))]
+        author  (assoc author :uid (or (:author coll) (:uid coll)) :url (make-url (:hostname author) (config/env :multiplex)))]
     (assoc (apply (partial dissoc coll) fields) :author author)))
 
 (defn keywordize [m]
