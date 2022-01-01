@@ -152,6 +152,13 @@ li.type-audio .audio-content {
     background-position: center;
     background-size: cover;
 }
+.audio-thumb-mixcloud {
+  width: 462px;
+  height: 120px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
 .video-thumb-youtube img {
    margin-left: 0;
 }
