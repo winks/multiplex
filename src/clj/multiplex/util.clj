@@ -133,6 +133,7 @@
         info (video-info (:url coll))
         meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)
+        created (jtime/format "yyyy-MM-dd HH:mm" (:created coll))
         updated (jtime/format "yyyy-MM-dd HH:mm" (:updated coll))
         prefix (if-let [site (:assets-url config)] site "")
         rel-path (:content-rel-path config)
@@ -145,6 +146,9 @@
                 :site (or (:site meta) (:site info))
                 :url url
                 :thumb-path (str prefix rel-path)
+                :created-ts (jtime/format (jtime/formatter :iso-instant) (jtime/zoned-date-time (:created coll) "UTC"))
+                :created (or updated (:updated coll))
+                :updated-ts (jtime/format (jtime/formatter :iso-instant) (jtime/zoned-date-time (:updated coll) "UTC"))
                 :updated (or updated (:updated coll))
                 :thumbnail (:thumbnail meta)
                 :meta meta)))
