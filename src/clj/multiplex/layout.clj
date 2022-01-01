@@ -17,11 +17,11 @@
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 
-(def config-fallback {:page-title "multiplex"
-                      :page-url ""
-                      :page-scheme :http
-                      :page-port 80
-                      :theme "default"})
+(def config-fallback {:site-title "multiplex"
+                      :site-url ""
+                      :site-scheme :http
+                      :site-port 80
+                      :site-theme "default"})
 
 (defn phelper [type params]
   (let [p (util/int-or (:page params) 1)
@@ -54,11 +54,11 @@
 
         ;authr         (:author (:post params))
         authr aux
-        theme         (first (remove empty? [(:theme authr) (:theme (config/env :multiplex)) (:theme config-fallback)]))
+        theme         (first (remove empty? [(:theme authr) (:site-theme (config/env :multiplex)) (:site-theme config-fallback)]))
         favicon       (first (remove empty? [(str (:uid authr)) "default"]))
         cfg           (assoc (first (remove empty? [(config/env :multiplex) config-fallback])) :theme theme)
         assets-prefix (if-let [site (:assets-url cfg)] site "")
-        page-title    (if-let [x (:title authr)] x (:page-title cfg))
+        site-title    (if-let [x (:title authr)] x (:site-title cfg))
         page-header   (if-let [x (:title authr)] x (str (:username authr) "'s multiplex" ))
         ; TODO refactor? done in get-posts already
         itemtype      (util/string-or (get params :type))
@@ -79,12 +79,12 @@
                   :user auth-user
                   :uid auth-uid}
           :glob { :page-header page-header
-                  :page-title page-title
+                  :site-title site-title
                   :theme theme
                   :favicon favicon
                   :modus (name (or (:modus params) ""))
                   :assets-prefix assets-prefix
-                  :base-url (util/make-url (:page-url cfg) cfg)
+                  :base-url (util/make-url (:site-url cfg) cfg)
                   :flash (:flash request)}
           :navi { :type-link (phelper "link" params)
                   :type-text (phelper "text" params)

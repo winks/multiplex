@@ -10,7 +10,7 @@
    [ring.util.codec :as rcodec]))
 
 (defn is-custom-host [hostname]
-  (if (= (:page-url (config/env :multiplex)) hostname)
+  (if (= (:site-url (config/env :multiplex)) hostname)
     false
     hostname))
 
@@ -40,8 +40,8 @@
         ext))))
 
 (defn make-url [host config]
-  (let [scheme (or (:page-scheme config) :http)
-        port (or (:page-port config) (if (= :https scheme) 443 80))
+  (let [scheme (or (:site-scheme config) :http)
+        port (or (:site-port config) (if (= :https scheme) 443 80))
         suffix (if (pos? port) (str ":" port) "")]
     (cond
       (and (= :http scheme) (= 80 port)) (str (name scheme) "://" host)
@@ -129,20 +129,22 @@
       default))))
 
 (defn add-fields [coll]
-  (let [info (video-info (:url coll))
+  (let [config (config/env :multiplex)
+        info (video-info (:url coll))
         meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)
         updated (jtime/format "yyyy-MM-dd HH:mm" (:updated coll))
-        prefix (if-let [site (:assets-url (config/env :multiplex))] site "")
-        url (if (< (count (:url coll)) (count (config/env :rel-path)))
+        prefix (if-let [site (:assets-url config)] site "")
+        rel-path (:content-rel-path config)
+        url (if (< (count (:url coll)) (count rel-path))
                 ""
-                (if (= (config/env :rel-path) (subs (:url coll) 0 (count (config/env :rel-path))))
+                (if (= rel-path (subs (:url coll) 0 (count rel-path)))
                     (str prefix (:url coll))
                     (:url coll)))]
     (assoc coll :code (or (:code meta) (:code info))
                 :site (or (:site meta) (:site info))
                 :url url
-                :thumb-path (str prefix (config/env :rel-path))
+                :thumb-path (str prefix rel-path)
                 :updated (or updated (:updated coll))
                 :thumbnail (:thumbnail meta)
                 :meta meta)))

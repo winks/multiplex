@@ -6,16 +6,16 @@
 
 ; these are actually in multiplex.config
 (deftest test-config-rel-file-1
-  (is (= (str (config/env :rel-path) "/foo2.jpg") (config/rel-file "foo2.jpg"))))
+  (is (= (str (:content-rel-path (config/env :multiplex)) "/foo2.jpg") (config/rel-file "foo2.jpg"))))
 (deftest test-config-abs-file-1
-  (is (= (str (config/env :abs-path) "/foo1.jpg") (config/abs-file "foo1.jpg"))))
+  (is (= (str (:content-abs-path (config/env :multiplex)) "/foo1.jpg") (config/abs-file "foo1.jpg"))))
 (deftest test-config-abs-file-thumb-1
-  (is (= (str (config/env :abs-path) "/testsite/foo0.jpg") (config/abs-file-thumb "foo0.jpg" "testsite"))))
+  (is (= (str (:content-abs-path (config/env :multiplex)) "/testsite/foo0.jpg") (config/abs-file-thumb "foo0.jpg" "testsite"))))
 
 ; now multiplex.util
 (deftest test-is-custom-host-1
   (is (= "example.f5n.de" (is-custom-host "example.f5n.de")))
-  (is (= false (is-custom-host (:page-url (config/env :multiplex))))))
+  (is (= false (is-custom-host (:site-url (config/env :multiplex))))))
 
 ; download-file
 
@@ -32,9 +32,9 @@
 
 (deftest test-make-url-1
   (is (= "http://example.org" (make-url "example.org" {})))
-  (is (= "https://example.org" (make-url "example.org" {:page-scheme :https})))
-  (is (= "http://example.org:81" (make-url "example.org" {:page-port 81})))
-  (is (= "https://example.org:444" (make-url "example.org" {:page-scheme :https :page-port 444}))))
+  (is (= "https://example.org" (make-url "example.org" {:site-scheme :https})))
+  (is (= "http://example.org:81" (make-url "example.org" {:site-port 81})))
+  (is (= "https://example.org:444" (make-url "example.org" {:site-scheme :https :site-port 444}))))
 
 (deftest test-host-name-1
   (is (= "example.org" (host-name "http://example.org")))
