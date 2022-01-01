@@ -4,7 +4,7 @@
 {% ifequal post.site "soundcloud" %}
     <div class="audio-content">
 {% if post.code %}
-        <div class="audio-thumb-soundcloud" id="audio-thumb-{{ post.id }}" style="background-image: url({{ glob.assets-prefix }}/media/img/soundcloud_embed_dummy.png);">
+        <div class="audio-thumb-soundcloud" id="audio-thumb-{{ post.id }}" style="background-image: url({{ glob.assets-prefix }}/media/img/soundcloud_embed_dummy.png);background-repeat:no-repeat;">
         <img src="{{ glob.assets-prefix }}/media/img/playbutton_big.png" alt="img-{{ post.id }}" width="560" height="166" />
         </div>
 <script>
@@ -23,7 +23,7 @@ document.getElementById('audio-thumb-{{ post.id }}').onclick = function (ev) {
   {% ifequal post.site "mixcloud" %}
     <div class="audio-content">
     {% if post.code %}
-        <div class="audio-thumb-mixcloud" id="audio-thumb-{{ post.id }}" style="background-image: url({{ glob.assets-prefix }}/media/img/mixcloud_embed_dummy.png);">
+        <div class="audio-thumb-mixcloud" id="audio-thumb-{{ post.id }}" style="background-image: url({{ glob.assets-prefix }}/media/img/mixcloud_embed_dummy.png);background-repeat:no-repeat;">
         <img src="{{ glob.assets-prefix }}/media/img/playbutton_big.png" alt="img-{{ post.id }}" width="462" height="120" />
         </div>
 <script>

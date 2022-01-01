@@ -3,9 +3,7 @@
 
 <h3>Add Post</h3>
 {% ifequal auth.loggedin "true" %}
-  {% if glob.flash  %}
-  Added: <a href="/post/{{ glob.flash }}">{{ glob.flash }}</a>.
-  {% endif %}
+  {% if glob.flash  %}<div class="flash">Added: <a href="/post/{{ glob.flash }}">{{ glob.flash }}</a>.</div>{% endif %}
 <form action="/add" id="form_post_create" method="post">
     {% csrf-field %}
     <p><label>URL:<br /> <input type="text" name="url" value="{{ form.url }}" /></label></p>

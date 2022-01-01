@@ -186,8 +186,11 @@ form textarea {
 form input[type="text"] {
   width: 75%;
 }
-form input[type="text"].smaller {
-  width:55%
+form input[type="password"] {
+  width: 75%;
+}
+form input.login-form {
+  width: 200px;
 }
 form input[type="submit"] {
   margin-top: 10px;
@@ -226,4 +229,10 @@ hr {
     border-top: medium double #ad80a5;
     color: #ad80a5;
     text-align: center;
+}
+.flash {
+  font-weight: bold;
+  border: 2px dotted #333333;
+  padding: 5px;
+  width: 70%;
 }

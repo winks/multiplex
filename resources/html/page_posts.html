@@ -3,7 +3,7 @@
 
 <div class="center">
   {% ifequal auth.loggedin "true" %}
-  {% if glob.flash  %}Updated: <a href="/post/{{ glob.flash }}">{{ glob.flash }}</a>.{% endif %}
+  {% if glob.flash %}<div class="flash">Updated: <a href="/post/{{ glob.flash }}">{{ glob.flash }}</a>.</div>{% endif %}
   {% endifequal %}
 {% if post.author.uid %}{% ifequal glob.modus "single" %}{% else %}
     <div class="user-header">

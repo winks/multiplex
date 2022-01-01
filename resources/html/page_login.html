@@ -1,17 +1,17 @@
 {% extends "page_base.html" %}
 {% block content %}
 
-<h2>Login</h2>
+<h3>Login</h3>
 
-<div><span class="has-text-danger">{{ glob.flash }}</span></div>
+{% if glob.flash %}<div class="flash">{{ glob.flash }}</div>{% endif %}
 
 {% ifequal auth.loggedin "true" %}
 You are already logged in. <a href="/logout">Click to log out.</a>
 {% else %}
-<form action="/login" id="loginform" method="post">
+<form action="/login" id="form_login" method="post">
     {% csrf-field %}
-    <p><label>Username:<br /> <input type="text" name="username" /></label></p>
-    <p><label>Password:<br /> <input type="password" name="password" /></label></p>
+    <p><label>Username:<br /> <input type="text" name="username" class="login-form" /></label></p>
+    <p><label>Password:<br /> <input type="password" name="password" class="login-form" /></label></p>
     <input type="submit" value="post" />
 </form>
 {% endifequal %}
