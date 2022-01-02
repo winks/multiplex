@@ -19,8 +19,8 @@
   :start
   (ring/ring-handler
     (ring/router
-      [(home-routes)
-       (service-routes)])
+      [(home-routes)])
+       ;(service-routes)])
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
         {:path   "/swagger-ui"

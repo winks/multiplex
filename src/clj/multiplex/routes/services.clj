@@ -85,6 +85,6 @@
             :handler (fn [_]
                        {:status 200
                         :headers {"Content-Type" "image/png"}
-                        :body (-> "public/img/warning_clojure.png"
+                        :body (-> "public/media/img/map2/default-avatar.png"
                                   (io/resource)
                                   (io/input-stream))})}}]]])
