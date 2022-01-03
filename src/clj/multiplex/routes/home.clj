@@ -97,8 +97,8 @@
 
 ; simple pages
 (defn render-page
-  ([request page-name]              (layout/render2 request (str "page_" (name page-name) ".html")))
-  ([request page-name data]         (layout/render2 request (str "page_" (name page-name) ".html") data)))
+  ([request page-name]              (layout/render request (str "page_" (name page-name) ".html")))
+  ([request page-name data]         (layout/render request (str "page_" (name page-name) ".html") data)))
 
 (defn render-page-404
   ([request] (render-page-404 request "The page could not be found."))

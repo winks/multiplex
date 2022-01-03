@@ -19,10 +19,10 @@
       (.load pom-properties-reader))))
 
 (defn get-version [^java.util.Properties prop]
-  (if (empty? pom-config)
+  (if (empty? prop)
     ""
-    (let [ver (.getProperty pom-config "version")
-          rev (.getProperty pom-config "revision")]
+    (let [ver (.getProperty prop "version")
+          rev (.getProperty prop "revision")]
           (if (cstr/ends-with? ver "-SNAPSHOT")
             (str (cstr/replace ver "-SNAPSHOT" "") "-dev " (subs rev 0 7))
             ver))))
@@ -42,21 +42,7 @@
         l (util/int-or (:limit params) config/default-limit)]
     (util/type-pagination type p l)))
 
-(defn render
-  "renders the HTML template located relative to resources/html"
-  [request template & [params]]
-  (content-type
-    (ok
-      (parser/render-file
-        template
-        (assoc params
-          :page template
-          :csrf-token *anti-forgery-token*)))
-    "text/html; charset=utf-8"))
-
-(defn render2
-  "renders the HTML template located relative to resources/html"
-  [request template & [params]]
+(defn prepare-params [request & [params]]
   (let [
         ; :post {:author (:author author2)}
         aux (if (empty? (:author (:post params)))
@@ -84,11 +70,7 @@
         auth-user     (:user (:session request))
         auth-uid      (:uid (:session request))
         auth-loggedin (some? auth-user)]
-  (content-type
-    (ok
-      (parser/render-file
-        template
-        (assoc (select-keys params [:form :post :posts :profile :users])
+    (assoc (select-keys params [:form :post :posts :profile :users])
           :auth { :loggedin auth-loggedin
                   :user auth-user
                   :uid auth-uid}
@@ -106,9 +88,29 @@
                   :type-image (phelper "image" params)
                   :type-audio (phelper "audio" params)
                   :type-video (phelper "video" params)}
-          :pagi (assoc pagina :limit limit :page page :type itemtype)
+          :pagi (assoc pagina :limit limit :page page :type itemtype))))
+
+(defn render-orig
+  "renders the HTML template located relative to resources/html"
+  [request template & [params]]
+  (content-type
+    (ok
+      (parser/render-file
+        template
+        (assoc params
           :page template
           :csrf-token *anti-forgery-token*)))
+    "text/html; charset=utf-8"))
+
+(defn render
+  "renders the HTML template located relative to resources/html"
+  [request template & [params]]
+  (let [p2 (prepare-params request params)]
+  (content-type
+    (ok
+      (parser/render-file
+        template
+        (assoc p2 :page template :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8")))
 
 (defn error-page
