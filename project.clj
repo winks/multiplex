@@ -1,4 +1,4 @@
-(defproject multiplex "2.0.1"
+(defproject multiplex "2.0.2-SNAPSHOT"
 
   :description "multiplex - a small tumblelog"
   :url "http://github.com/winks/multiplex"
@@ -18,7 +18,7 @@
                  [luminus-transit "0.1.3"]
                  [luminus-undertow "0.1.14"]
                  [luminus/ring-ttl-session "0.3.3"]
-                 [markdown-clj "1.10.7"]
+                 [markdown-clj "1.10.8"]
                  [metosin/muuntaja "0.6.8"]
                  [metosin/reitit "0.5.15"]
                  [metosin/ring-http-response "0.9.3"]
@@ -36,7 +36,7 @@
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.9.4"]
                  [ring/ring-defaults "0.3.3"]
-                 [selmer "1.12.45"]]
+                 [selmer "1.12.48"]]
 
   :min-lein-version "2.0.0"
 
@@ -46,7 +46,7 @@
   :target-path "target/%s/"
   :main ^:skip-aot multiplex.core
 
-  :plugins [[lein-kibit "0.1.2"]
+  :plugins [[lein-kibit "0.1.8"]
             [lein-cloverage "1.2.2"]]
 
   :profiles
@@ -66,7 +66,7 @@
                                  [ring/ring-devel "1.9.4"]
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
-                                 [jonase/eastwood "0.3.5"]
+                                 [jonase/eastwood "1.0.0"]
                                  [cider/cider-nrepl "0.26.0"]]
 
                   :source-paths ["env/dev/clj" ]
