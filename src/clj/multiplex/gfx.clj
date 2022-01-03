@@ -4,13 +4,13 @@
 
 (defn read-image
   "returns a BufferedImage from a filename"
-  [filename]
+  [^String filename]
     (with-open [r (java.io.FileInputStream. filename)]
         (javax.imageio.ImageIO/read r)))
 
 (defn image-size
   "returns width and height of a local BufferedImage as a vector"
-  [image]
+  [^java.awt.image.BufferedImage image]
   (try
     [(.getWidth image) (.getHeight image)]
   (catch Exception e
@@ -26,7 +26,7 @@
     (java.nio.file.Files/probeContentType src)))
 
 (defn num-frames
-  [gif-path]
+  [^String gif-path]
   (let [file (java.io.File. gif-path)
         irs (com.sun.imageio.plugins.gif.GIFImageReaderSpi.)
         ir (com.sun.imageio.plugins.gif.GIFImageReader. irs)
@@ -58,7 +58,7 @@
   (let [new-img (java.awt.image.BufferedImage. width-new height-new java.awt.image.BufferedImage/TYPE_INT_RGB)
         g (.createGraphics new-img)
         resized (.drawImage g image 0 0 width-new height-new nil)
-        ext  (util/file-extension filename)
+        ext ^String (util/file-extension filename)
         new-name (str filename ".thumb." ext)]
     (javax.imageio.ImageIO/write new-img ext (java.io.File. new-name))
     filename))

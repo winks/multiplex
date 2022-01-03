@@ -8,6 +8,7 @@ test-config.edn
 *.jar
 *.class
 /.lein-*
+/.eastwood
 profiles.clj
 /.env
 .nrepl-port

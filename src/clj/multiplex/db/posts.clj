@@ -63,12 +63,12 @@
     newid))
 
 (defn update-post! [params]
-  (let [params (assoc params :id (util/int-or (get params :id) 0))]
+  (let [params (update-in params [:id] (util/int-or (get params :id) 0))]
     (println "dbp/update-post!" params)
     (db/update-post! params)))
 
 (defn delete-post! [params]
-  (let [params (assoc params :id (util/int-or (get params :id) 0))]
+  (let [params (update-in params [:id] (util/int-or (get params :id) 0))]
     (println "dbp/delete-post!" params)
     (db/delete-post! params)))
 

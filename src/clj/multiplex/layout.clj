@@ -3,7 +3,7 @@
     [multiplex.config :as config]
     [multiplex.util :as util]
     [multiplex.db.users :as dbu]
-    [clojure.java.io]
+    [clojure.java.io :as io]
     [clojure.string :as cstr]
     [selmer.parser :as parser]
     [selmer.filters :as filters]
@@ -13,7 +13,21 @@
     [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
     [ring.util.response]))
 
-(parser/set-resource-path!  (clojure.java.io/resource "html"))
+(def pom-config
+  (with-open [pom-properties-reader (io/reader (io/resource "META-INF/maven/multiplex/multiplex/pom.properties"))]
+    (doto (java.util.Properties.)
+      (.load pom-properties-reader))))
+
+(defn get-version [^java.util.Properties prop]
+  (if (empty? pom-config)
+    ""
+    (let [ver (.getProperty pom-config "version")
+          rev (.getProperty pom-config "revision")]
+          (if (cstr/ends-with? ver "-SNAPSHOT")
+            (str (cstr/replace ver "-SNAPSHOT" "") "-dev " (subs rev 0 7))
+            ver))))
+
+(parser/set-resource-path!  (io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 
@@ -85,6 +99,7 @@
                   :modus (name (or (:modus params) ""))
                   :assets-prefix assets-prefix
                   :base-url (util/make-url (:site-url cfg) cfg)
+                  :version-string (get-version pom-config)
                   :flash (:flash request)}
           :navi { :type-link (phelper "link" params)
                   :type-text (phelper "text" params)

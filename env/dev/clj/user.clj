@@ -1,13 +1,15 @@
 (ns user
   "Userspace functions you can run by default in your local REPL."
   (:require
-   [multiplex.config :refer [env]]
+    [buddy.hashers :as hashers]
     [clojure.pprint]
     [clojure.spec.alpha :as s]
     [expound.alpha :as expound]
     [mount.core :as mount]
+    [multiplex.config :refer [env]]
     [multiplex.core :refer [start-app]]
     [multiplex.db.core]
+    [multiplex.util :as util]
     [conman.core :as conman]
     [luminus-migrations.core :as migrations]))
 
@@ -60,4 +62,45 @@
   [name]
   (migrations/create name (select-keys env [:database-url])))
 
+(defn create-user
+  "Create a new user via multiplex.db.core/create-user!, optional: apikey signupcode theme avatar is_active is_private"
+  [params]
+  (let [apikey     (or (:apikey params) "")
+        signupcode (or (:signupcode params) "")
+        theme      (or (:theme params) "default")
+        avatar     (or (:avatar params) "/img/map2/default-avatar.png")
+        is_active  (or (:is_active params) true)
+        is_private (or (:is_private params) false)
+        password   (hashers/derive (:password params))
+        p2 (assoc params :apikey apikey
+                         :signupcode signupcode
+                         :theme theme
+                         :password password
+                         :is_active is_active
+                         :is_private is_private)]
+    (multiplex.db.core/create-user! p2)))
 
+(defn create-post
+  "Create a new post via multiplex.db.core/create-post!, optional: itemtype url txt meta tag"
+  [params]
+  (let [itemtype (or (:itemtype params) "link")
+        url      (or (:url params) "")
+        txt      (or (:txt params) "")
+        meta     (or (:meta params) "{}")
+        tag      (or (:tag params) "")
+        p2 (assoc params :itemtype itemtype
+                         :url url
+                         :txt txt
+                         :meta meta
+                         :tag tag)]
+    (multiplex.db.core/create-post! p2)))
+
+(defn change-password!
+  "Change a user's password, {:uid :password}"
+  [params]
+  (let [uid (util/int-or (:uid params) 0)]
+    (cond
+      (empty? (:password params)) "Password too short"
+      (< (str (:password params)) 4) "Password too short"
+      (not (pos? uid)) (str "Wrong uid: " (:uid params))
+      :else (multiplex.db.core/change-password! (assoc params :uid uid)))))

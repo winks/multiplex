@@ -90,7 +90,7 @@
           (if (some #{host} config/sites-mixcloud)
             (let [path (.getRawPath (java.net.URI. s))]
               {:site "mixcloud" :code (rcodec/url-encode path)})
-            (if (and (some #{host} config/sites-imgur-gifv) (.endsWith s ".gifv"))
+            (if (and (some #{host} config/sites-imgur-gifv) (cstr/ends-with? s ".gifv"))
               (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
                 {:site "imgur-gifv" :code (second (re-find matcher))})
                 {:site "err" :code ""})))))))
@@ -121,7 +121,7 @@
     (let [n (cond
               (instance? java.lang.Integer s) (long s)
               (instance? java.lang.Long s) s
-              (instance? java.lang.String s) (Long/valueOf s)
+              (instance? java.lang.String s) (Long/parseLong s)
               (instance? java.lang.Double s) (long s)
               :else default)]
       (if (pos? n) n default))
@@ -206,4 +206,7 @@
   (codecs/bytes->hex (hash/sha1 arg)))
 
 (defn join-params [kv]
-  (apply str (apply concat (zipmap (map #(str "&" (name %) "=") (keys kv)) (map rcodec/url-encode (vals kv))))))
+  (cstr/join (apply concat
+    (zipmap
+      (map #(str "&" (name %) "=") (keys kv))
+      (map rcodec/url-encode (vals kv))))))
