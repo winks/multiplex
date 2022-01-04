@@ -203,7 +203,7 @@ form input.delete-button {
   width: 100px;
   float: right;
 }
-#form_edit {
+#form_post_edit_container {
   margin-bottom: 70px;
 }
 #form_post_delete {

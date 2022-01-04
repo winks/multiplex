@@ -34,6 +34,7 @@
   (is (= "http://example.org" (make-url "example.org" {})))
   (is (= "https://example.org" (make-url "example.org" {:site-scheme :https})))
   (is (= "http://example.org:81" (make-url "example.org" {:site-port 81})))
+  (is (= "http://example.org" (make-url "example.org" {:site-port 0})))
   (is (= "https://example.org:444" (make-url "example.org" {:site-scheme :https :site-port 444}))))
 
 (deftest test-host-name-1
