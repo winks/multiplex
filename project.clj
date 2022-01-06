@@ -1,4 +1,4 @@
-(defproject multiplex "2.0.2-SNAPSHOT"
+(defproject multiplex "2.0.2"
 
   :description "multiplex - a small tumblelog"
   :url "http://github.com/winks/multiplex"
