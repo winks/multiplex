@@ -103,7 +103,7 @@
       (empty? (:password params)) "Password too short"
       (< (count (str (:password params))) 4) "Password too short"
       (not (pos? uid)) (str "Wrong uid: " (:uid params))
-      :else (multiplex.db.core/change-password! (assoc params :uid uid)))))
+      :else (multiplex.db.core/change-password! {:uid uid :password (hashers/derive (:password params))}))))
 
 (defn list-users
   []

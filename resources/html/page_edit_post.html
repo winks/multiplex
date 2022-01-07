@@ -16,7 +16,7 @@
     {% csrf-field %}
     <p><label>URL:<br /> <input type="text" name="url" value="{{ form.url }}" /></label></p>
     <p><label>Text:<br /> <textarea rows="5" cols="60" name="txt">{{ form.txt }}</textarea></label></p>
-    <p><label>Tags: (separate with spaces)<br /> <input type="text" name="tags" value="{{ form.tags }}" /></label></p>
+    <p><label>Tags: (separate with spaces)<br /> <input type="text" name="tags" value="{{ form.tag }}" /></label></p>
     <input type="submit" value="update" />
 </form>
 <form action="/post/{{ form.id }}/del" id="form_post_delete" method="post" onsubmit="return window.confirm('Really delete post #{{ form.id }}?');" >
