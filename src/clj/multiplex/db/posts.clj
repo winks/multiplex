@@ -92,9 +92,11 @@
         itemtype (util/string-or (get params :type))
         limit    (util/int-or (get params :limit) config/default-limit)
         page     (util/int-or (get params :page) 1)
+        tag      (util/string-or (get params :tag))
         offset   (* limit (dec page))
         crit     {:limit limit :offset offset}
         crit     (if (util/valid-post-type? itemtype) (assoc crit :itemtype itemtype) crit)
+        crit     (if (util/valid-tag? tag) (assoc crit :tag tag) crit)
         orig     (cond
                    (= :some what) (get-some-posts params crit)
                    :else          (get-all-posts params crit))]

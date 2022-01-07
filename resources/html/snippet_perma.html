@@ -1,5 +1,4 @@
-    <div class="perma">&nbsp;&middot;&nbsp;<a href="{{ post.author.url }}/post/{{ post.id }}">{{ post.updated }}</a>
-        {% if post.tag %}&nbsp;&middot;&nbsp;<span class="tags">{{ post.tag }}</div>{% endif %}
-        {% ifequal auth.loggedin "true" %}
-{% ifequal auth.uid post.author.uid %}&nbsp;&middot;&nbsp;<a href="{{ post.author.url }}/post/{{ post.id }}/edit">[edit]</a>{% endifequal%}
-{% endifequal%}&nbsp;&middot;&nbsp;<br /></div>
+    <div class="perma"><a href="{{ post.author.url }}/post/{{ post.id }}" class="post-date">{{ post.updated }}</a>{% include "snippet_tags.html" %}
+{% ifequal auth.loggedin "true" %}
+{% ifequal auth.uid post.author.uid %} &middot; <a href="{{ post.author.url }}/post/{{ post.id }}/edit">[edit]</a>{% endifequal%}
+{% endifequal%}</div>

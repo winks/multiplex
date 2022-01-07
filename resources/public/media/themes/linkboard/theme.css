@@ -34,6 +34,9 @@ a:hover {
 .perma>a:visited {
   color: #171b5a;
 }
+.post-date {
+  margin-left: 0;
+}
 .user-header {
   background-color: #fff;
 }
@@ -72,5 +75,17 @@ hr {
   padding-left: 7px;
 }
 .tags {
+  color:#a51;
+}
+.tags a {
+  color:#a51;
+}
+.tags a:link {
+  color:#a51;
+}
+.tags a:hover {
+  color:#a51;
+}
+.tags a:visited {
   color:#a51;
 }

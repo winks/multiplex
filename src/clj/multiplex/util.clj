@@ -28,6 +28,11 @@
     false
     (some #(= arg %) config/itemtypes)))
 
+(defn valid-tag?
+  "determines if the given tag is allowed"
+  [arg]
+  (not (empty? arg)))
+
 (defn file-extension
   "gets the lower-cased file extension from a string"
   [name]
@@ -151,6 +156,7 @@
                 :updated-ts (jtime/format (jtime/formatter :iso-instant) (jtime/zoned-date-time (:updated coll) "UTC"))
                 :updated (or updated (:updated coll))
                 :thumbnail (:thumbnail meta)
+                :tags (if (empty? (:tag coll)) nil (cstr/split (:tag coll) #" "))
                 :meta meta)))
 
 (defn set-author [coll & [request]]

@@ -69,6 +69,9 @@ img {
 .perma {
   vertical-align: top;
 }
+.post-date {
+  margin-left: 5px;
+}
 .user-header {
   background-color: #d164be;
   height: 34px;
