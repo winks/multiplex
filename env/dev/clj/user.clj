@@ -101,6 +101,25 @@
   (let [uid (util/int-or (:uid params) 0)]
     (cond
       (empty? (:password params)) "Password too short"
-      (< (str (:password params)) 4) "Password too short"
+      (< (count (str (:password params))) 4) "Password too short"
       (not (pos? uid)) (str "Wrong uid: " (:uid params))
       :else (multiplex.db.core/change-password! (assoc params :uid uid)))))
+
+(defn list-users
+  []
+  (println (str (format "%3s"  "uid")      " | "
+                (format "%20s" "username") " | "
+                (format "%20s" "hostname") " | "
+                (format "%10s" "theme")    " | "
+                (format "%10s" "active?")  " | "
+                (format "%10s" "private?")))
+  (println (apply str (repeat 80 "-")))
+  (let [users (multiplex.db.core/get-all-users-internal)]
+    (for [usr users]
+      (println (str (format "%3d"  (:uid usr))       " | "
+                    (format "%20s" (:username usr))  " | "
+                    (format "%20s" (:hostname usr))  " | "
+                    (format "%10s" (:theme usr))     " | "
+                    (format "%10s" (:is_active usr)) " | "
+                    (format "%10s" (:is_private usr)
+                    ))))))

@@ -151,3 +151,18 @@ FROM mpx_posts p
 SELECT count(p.id)
 FROM mpx_posts p
 WHERE p.itemtype = :itemtype
+
+
+--------------------
+
+-- :name get-all-users-internal :? :*
+-- :doc retrieves all users
+SELECT *
+FROM mpx_users
+ORDER BY uid ASC
+
+-- :name get-all-posts-internal :? :*
+-- :doc retrieves all posts
+SELECT *
+FROM mpx_posts
+ORDER BY uid ASC
