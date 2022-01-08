@@ -31,7 +31,7 @@
 (defn valid-tag?
   "determines if the given tag is allowed"
   [arg]
-  (not (empty? arg)))
+  (re-matches #"^[a-z]+$" (cstr/lower-case arg)))
 
 (defn file-extension
   "gets the lower-cased file extension from a string"

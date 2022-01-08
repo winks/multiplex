@@ -24,6 +24,13 @@
   (is (= nil (valid-post-type? "foobar")))
   (is (= true (valid-post-type? "video"))))
 
+(deftest test-valid-tag-1
+  (is (= "asd" (valid-tag? "asd")))
+  (is (= "asd" (valid-tag? "ASD")))
+  (is (= nil (valid-tag? "asd+")))
+  (is (= nil (valid-tag? "asd\"asd")))
+  (is (= nil (valid-tag? ""))))
+
 (deftest test-file-extension-1
   (is (= "" (file-extension "")))
   (is (= "gif" (file-extension "test.gif")))
