@@ -148,3 +148,11 @@
   (is (= "audio" (guess-type "https://soundcloud.com/foo" "asdf")))
   (is (= "image" (guess-type "https://example.org/foo.png" "asdf")))
   (is (= "link" (guess-type "https://example.org/foo" "asdf"))))
+
+(deftest test-sanitize-tags-1
+  (is (= [] (sanitize-tags "")))
+  (is (= ["foo"] (sanitize-tags "foo")))
+  (is (= ["foo","bar"] (sanitize-tags "foo,bar")))
+  (is (= ["foo","bar"] (sanitize-tags "Foo,BAR")))
+  (is (= ["_fx","b12"] (sanitize-tags "_fx,B12")))
+  (is (= ["fo_","b-r"] (sanitize-tags "fo_,b-r,fa;il"))))

@@ -57,13 +57,18 @@
 (defn create-post! [params]
   (println "dbp/create-post!" params)
   (let [itemtype (if (empty? (:itemtype params)) (util/guess-type (:url params) (:txt params)) (:itemtype params))
-        params (assoc params :itemtype itemtype)
+        tags (util/sanitize-tags (:tags params))
+        jtags (str "'" (json/write-str tags) "'::json")
+        jtags2 (str "to_json(string_to_array('" (cstr/join "," tags) "',','))")
+        xx (println "dbp/create-post!" jtags)
+        params (assoc params :itemtype itemtype :tags_raw jtags2 :tag (cstr/join "," tags))
         newid (store-dispatch params)]
         (println "newid" newid)
     newid))
 
 (defn update-post! [params]
-  (let [params (assoc params :id (util/int-or (:id params) 0))]
+  (let [tags (util/sanitize-tags (:tags params))
+        params (assoc params :id (util/int-or (:id params) 0) :tags_raw (json/write-str tags) :tag (cstr/join ","))]
     (println "dbp/update-post!" params)
     (db/update-post! params)))
 
@@ -78,8 +83,8 @@
     (println "get-some-posts" crit)
     (cond
       (pos? id)                 [1 (db/get-post crit)]
-      (empty? (:itemtype crit)) [(:count (db/get-posts-count crit)) (db/get-posts crit)]
-      :else                     [(:count (db/get-posts-filtered-count crit)) (db/get-posts-filtered crit)])))
+      (empty? (:posts_crit_raw crit)) [(:count (db/get-posts-count crit)) (db/get-posts crit)]
+      :else                           [(:count (db/get-posts-filtered-count crit)) (db/get-posts-filtered crit)])))
 
 (defn get-all-posts [params crit]
   (println "get-all-posts" crit)
@@ -94,7 +99,9 @@
         page     (util/int-or (get params :page) 1)
         tag      (util/string-or (get params :tag))
         offset   (* limit (dec page))
-        crit     {:limit limit :offset offset}
+        filter   (if (util/valid-post-type? itemtype) (str " AND p.itemtype = '" itemtype "'") "")
+        filter   (if (util/valid-tag? tag)     (str filter " AND p.tags @> '\"" tag "\"'") filter)
+        crit     {:limit limit :offset offset :posts_crit_raw filter}
         crit     (if (util/valid-post-type? itemtype) (assoc crit :itemtype itemtype) crit)
         crit     (if (util/valid-tag? tag) (assoc crit :tag tag) crit)
         orig     (cond

@@ -9,6 +9,8 @@
    [multiplex.config :as config]
    [ring.util.codec :as rcodec]))
 
+(def tag-regex #"^[a-z_]+[a-z0-9_-]+$")
+
 (defn is-custom-host [hostname]
   (if (= (:site-url (config/env :multiplex)) hostname)
     false
@@ -31,7 +33,7 @@
 (defn valid-tag?
   "determines if the given tag is allowed"
   [arg]
-  (re-matches #"^[a-z]+$" (cstr/lower-case arg)))
+  (re-matches tag-regex (cstr/lower-case arg)))
 
 (defn file-extension
   "gets the lower-cased file extension from a string"
@@ -156,7 +158,7 @@
                 :updated-ts (jtime/format (jtime/formatter :iso-instant) (jtime/zoned-date-time (:updated coll) "UTC"))
                 :updated (or updated (:updated coll))
                 :thumbnail (:thumbnail meta)
-                :tags (if (empty? (:tag coll)) nil (cstr/split (:tag coll) #" "))
+                :tags (if (empty? (:tags coll)) nil (:tags coll))
                 :meta meta)))
 
 (defn set-author [coll & [request]]
@@ -216,3 +218,9 @@
     (zipmap
       (map #(str "&" (name %) "=") (keys kv))
       (map rcodec/url-encode (vals kv))))))
+
+(defn sanitize-tags [s]
+  (->> (cstr/split s #",")
+       (map cstr/lower-case)
+       (map #(re-matches tag-regex %))
+       (remove empty?)))

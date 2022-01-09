@@ -63,16 +63,16 @@ WHERE is_active = true AND hostname = :hostname
 ------------------------------------------------------------------------------
 
 -- :name create-post! :<! :raw
--- :doc creates a new post {:author :itemtype :url :txt :meta :tag}
+-- :doc creates a new post {:author :itemtype :url :txt :meta :tag :tags}
 INSERT INTO mpx_posts
-(id, author, itemtype, url, txt, meta, tag, updated)
-VALUES (nextval('mpx_posts_id_seq'), :author, :itemtype, :url, :txt, :meta, :tag, now())
+(id, author, itemtype, url, txt, meta, tag, updated, tags)
+VALUES (nextval('mpx_posts_id_seq'), :author, :itemtype, :url, :txt, :meta, :tag, now(), :sql:tags_raw)
 RETURNING id
 
 -- :name update-post! :! :n
 -- :doc updates an existing post
 UPDATE mpx_posts
-SET url = :url, txt = :txt, tag = :tag, updated = now()
+SET url = :url, txt = :txt, tag = :tag, tags = :sql:tags_raw, updated = now()
 WHERE id = :id
 
 -- :name delete-post! :! :n
@@ -100,10 +100,10 @@ ORDER BY p.created DESC
 LIMIT :limit OFFSET :offset
 
 -- :name get-posts-filtered :? :*
--- :doc retrieves posts given the uid and itemtype
+-- :doc retrieves posts given the uid and optional itemtype/tag
 SELECT p.*, u.username, u.hostname, u.title, u.avatar, u.theme, u.is_private
 FROM mpx_posts p, mpx_users u
-WHERE p.author = u.uid AND p.author = :author AND p.itemtype = :itemtype
+WHERE p.author = u.uid AND p.author = :author :sql:posts_crit_raw
 ORDER BY p.created DESC
 LIMIT :limit OFFSET :offset
 
@@ -116,10 +116,10 @@ FROM mpx_posts p
 WHERE p.author = :author
 
 -- :name get-posts-filtered-count :? :1
--- :doc retrieves posts given the uid and itemtype
+-- :doc retrieves posts given the uid and optional itemtype/tag
 SELECT count(p.id)
 FROM mpx_posts p
-WHERE p.author = :author AND p.itemtype = :itemtype
+WHERE p.author = :author :sql:posts_crit_raw
 
 -----------
 

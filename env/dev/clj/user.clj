@@ -88,11 +88,13 @@
         txt      (or (:txt params) "")
         meta     (or (:meta params) "{}")
         tag      (or (:tag params) "")
+        tags     (or (:tags params) "")
         p2 (assoc params :itemtype itemtype
                          :url url
                          :txt txt
                          :meta meta
-                         :tag tag)]
+                         :tag tag
+                         :tags tags)]
     (multiplex.db.core/create-post! p2)))
 
 (defn change-password!
