@@ -149,6 +149,8 @@
   (is (= "image" (guess-type "https://example.org/foo.png" "asdf")))
   (is (= "link" (guess-type "https://example.org/foo" "asdf"))))
 
+; unwrap-tags
+
 (deftest test-sanitize-tags-1
   (is (= [] (sanitize-tags "")))
   (is (= ["foo"] (sanitize-tags "foo")))

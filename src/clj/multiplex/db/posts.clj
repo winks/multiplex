@@ -53,7 +53,7 @@
     (= "video" (:itemtype params)) (store-video-thumb params)
     (= "audio" (:itemtype params)) (store-video-thumb params)
     (= "image" (:itemtype params)) (store-image params)
-    (= "text" (:itemtype params))  (store-rest params)
+    (= "text"  (:itemtype params)) (store-rest params)
     :else                          (store-rest params)))
 
 (defn create-post! [params]
@@ -71,7 +71,7 @@
         (println "newid" newid)
     newid))
 
-(defn update-post! [params]
+(defn update-post! [params orig]
   (let [params (select-keys (or params {}) post-fields)
         id (util/int-or (:id params) 0)
         author (util/int-or (:author params) 0)
@@ -91,10 +91,13 @@
 
 (defn get-some-posts [crit]
   (println "get-some-posts" crit)
-  (let [posts (db/get-post-by-id crit)]
-    (cond
-      (pos? (:id crit)) [(count posts) posts]
-      :else             [(:count (db/get-posts-filtered-count crit)) (db/get-posts-filtered crit)])))
+  (cond
+    (pos? (:id crit))
+      (let [posts (db/get-post-by-id crit)]
+        [(count posts) posts])
+    :else (let [num (db/get-posts-filtered-count crit)
+                posts (db/get-posts-filtered crit)]
+            [(:count num) posts])))
 
 (defn get-posts [what params & [request]]
   (let [params   (or params {})

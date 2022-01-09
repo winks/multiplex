@@ -223,6 +223,9 @@
       (map #(str "&" (name %) "=") (keys kv))
       (map rcodec/url-encode (vals kv))))))
 
+(defn unwrap-tags [coll]
+  (assoc coll :tags (cstr/join "," (:tags coll))))
+
 (defn sanitize-tags [s]
   (->> (cstr/split s #",")
        (map cstr/lower-case)

@@ -87,32 +87,34 @@
             editor (:uid (:session request))
             mreq (select-keys request [:server-port :scheme])
             posts (dbp/get-posts :some {:id id :author editor} mreq)]
-        (if-not (pos? (first posts))
+        (if-not (= 1 (first posts))
           (do
             (println "Failed updating [" id "], post not found")
             (redirect my-url))
-          (let [result (dbp/update-post! {:url url :txt txt :tags tags :author editor :id id})]
+          (let [result (dbp/update-post! {:url url :txt txt :tags tags :author editor :id id} (first posts))]
             (-> (redirect my-url)
                 (assoc :flash id))))))))
 
 ; simple pages
 (defn render-page
-  ([request page-name]              (layout/render request (str "page_" (name page-name) ".html")))
-  ([request page-name data]         (layout/render request (str "page_" (name page-name) ".html") data)))
+  ([request page-name]      (layout/render request (str "page_" (name page-name) ".html")))
+  ([request page-name data] (layout/render request (str "page_" (name page-name) ".html") data)))
 
 (defn render-page-404
-  ([request] (render-page-404 request "The page could not be found."))
+  ([request]         (render-page-404 request "The page could not be found."))
   ([request content] (layout/error-page {:status 404 :headers {"Content-Type" "text/html"} :message content})))
 
 (defn posts-page [request & [modus]]
   (let [qp (merge (util/keywordize (:query-params request)) (:path-params request))
         mreq (select-keys request [:server-port :scheme])
         author (dbu/get-user-by-hostname {:hostname (:server-name request)} mreq)
-        posts (dbp/get-posts :some (assoc qp :author (:uid author)) mreq)
-        author2 (util/set-author author request)]
+        author2 (util/set-author author request)
+        posts (dbp/get-posts :some (assoc qp :author (:uid author)) mreq)]
     (if (= :edit modus)
-      (render-page request :edit_post (merge qp {:form (first (second posts)) :pcount (first posts) :post {:author (:author author2)}}))
-      (render-page request :posts (merge qp {:modus modus :posts (second posts) :pcount (first posts) :post {:author (:author author2)}})))))
+      (render-page request :edit_post (merge qp {:form (first (map util/unwrap-tags (second posts)))
+                                                 :pcount (first posts) :post {:author (:author author2)}}))
+      (render-page request :posts     (merge qp {:modus modus :posts (second posts)
+                                                 :pcount (first posts) :post {:author (:author author2)}})))))
 
 (defn all-posts-page [request]
   (if-let [hostname (util/is-custom-host (:server-name request))]
