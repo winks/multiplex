@@ -73,40 +73,36 @@
     (db/update-post! params)))
 
 (defn delete-post! [params]
-  (let [params (assoc params :id (util/int-or (:id params) 0))]
-    (println "dbp/delete-post!" params)
-    (db/delete-post! params)))
+  (let [crit {:id (util/int-or (:id params) 0)}]
+    (println "dbp/delete-post!" crit)
+    (db/delete-post! crit)))
 
-(defn get-some-posts [params crit]
-  (let [id       (util/int-or (get params :id) 0)
-        crit     (assoc crit :author (:author params) :id id)]
-    (println "get-some-posts" crit)
+(defn get-some-posts [crit]
+  (println "get-some-posts" crit)
+  (let [posts (db/get-post-by-id crit)]
     (cond
-      (pos? id)                 [1 (db/get-post crit)]
-      (empty? (:posts_crit_raw crit)) [(:count (db/get-posts-count crit)) (db/get-posts crit)]
-      :else                           [(:count (db/get-posts-filtered-count crit)) (db/get-posts-filtered crit)])))
-
-(defn get-all-posts [params crit]
-  (println "get-all-posts" crit)
-  (cond
-    (empty? (:itemtype crit)) [(:count (db/get-all-posts-count crit)) (db/get-all-posts crit)]
-    :else                     [(:count (db/get-all-posts-filtered-count crit)) (db/get-all-posts-filtered crit)]))
+      (pos? (:id crit)) [(count posts) posts]
+      :else             [(:count (db/get-posts-filtered-count crit)) (db/get-posts-filtered crit)])))
 
 (defn get-posts [what params & [request]]
   (let [params   (or params {})
+        ; sanitize user input
         itemtype (util/string-or (get params :type))
+        tag      (util/string-or (get params :tag))
         limit    (util/int-or (get params :limit) config/default-limit)
         page     (util/int-or (get params :page) 1)
-        tag      (util/string-or (get params :tag))
+        author   (util/int-or (get params :author) 0)
+        id       (util/int-or (get params :id) 0)
         offset   (* limit (dec page))
-        filter   (if (util/valid-post-type? itemtype) (str " AND p.itemtype = '" itemtype "'") "")
+        ; check user input to disallow sql injection
+        filter   (if (= :some what)            (str filter " AND p.author = " author) "")
+        filter   (if (util/valid-post-type? itemtype) (str " AND p.itemtype = '" itemtype "'") filter)
         filter   (if (util/valid-tag? tag)     (str filter " AND p.tags @> '\"" tag "\"'") filter)
-        crit     {:limit limit :offset offset :posts_crit_raw filter}
+        ; build WHERE criteria
+        crit     {:limit limit :offset offset :author author :id id :posts_crit_raw filter}
         crit     (if (util/valid-post-type? itemtype) (assoc crit :itemtype itemtype) crit)
         crit     (if (util/valid-tag? tag) (assoc crit :tag tag) crit)
-        orig     (cond
-                   (= :some what) (get-some-posts params crit)
-                   :else          (get-all-posts params crit))]
+        orig     (get-some-posts crit)]
     [(first orig) (->> (second orig)
          (map #(util/add-fields %))
          (map #(util/set-author % request)))]))

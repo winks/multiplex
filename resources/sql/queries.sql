@@ -83,7 +83,7 @@ WHERE id = :id
 
 --------------------
 
--- :name get-post :? :*
+-- :name get-post-by-id :? :*
 -- :doc retrieves post given the id
 SELECT p.*, u.username, u.hostname, u.title, u.avatar, u.theme, u.is_private
 FROM mpx_posts p, mpx_users u
@@ -91,67 +91,19 @@ WHERE p.author = u.uid AND p.id = :id
 
 -----------
 
--- :name get-posts :? :*
--- :doc retrieves posts given the uid
-SELECT p.*, u.username, u.hostname, u.title, u.avatar, u.theme, u.is_private
-FROM mpx_posts p, mpx_users u
-WHERE p.author = u.uid AND p.author = :author
-ORDER BY p.created DESC
-LIMIT :limit OFFSET :offset
-
 -- :name get-posts-filtered :? :*
 -- :doc retrieves posts given the uid and optional itemtype/tag
 SELECT p.*, u.username, u.hostname, u.title, u.avatar, u.theme, u.is_private
 FROM mpx_posts p, mpx_users u
-WHERE p.author = u.uid AND p.author = :author :sql:posts_crit_raw
+WHERE p.author = u.uid :sql:posts_crit_raw
 ORDER BY p.created DESC
 LIMIT :limit OFFSET :offset
-
------
-
--- :name get-posts-count :? :1
--- :doc retrieves posts count
-SELECT count(p.id)
-FROM mpx_posts p
-WHERE p.author = :author
 
 -- :name get-posts-filtered-count :? :1
 -- :doc retrieves posts given the uid and optional itemtype/tag
 SELECT count(p.id)
 FROM mpx_posts p
 WHERE p.author = :author :sql:posts_crit_raw
-
------------
-
--- :name get-all-posts :? :*
--- :doc retrieves posts, filtered by itemtype
-SELECT p.*, u.username, u.hostname, u.title, u.avatar, u.theme, u.is_private
-FROM mpx_posts p, mpx_users u
-WHERE p.author = u.uid
-ORDER BY p.created DESC
-LIMIT :limit OFFSET :offset
-
--- :name get-all-posts-filtered :? :*
--- :doc retrieves posts, filtered by itemtype
-SELECT p.*, u.username, u.hostname, u.title, u.avatar, u.theme, u.is_private
-FROM mpx_posts p, mpx_users u
-WHERE p.author = u.uid AND itemtype = :itemtype
-ORDER BY p.created DESC
-LIMIT :limit OFFSET :offset
-
------
-
--- :name get-all-posts-count :? :1
--- :doc retrieves posts count
-SELECT count(p.id)
-FROM mpx_posts p
-
--- :name get-all-posts-filtered-count :? :1
--- :doc retrieves posts given the uid and itemtype
-SELECT count(p.id)
-FROM mpx_posts p
-WHERE p.itemtype = :itemtype
-
 
 --------------------
 
