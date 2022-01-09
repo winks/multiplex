@@ -1,0 +1,1 @@
+ALTER TABLE mpx_posts DROP COLUMN tags;
