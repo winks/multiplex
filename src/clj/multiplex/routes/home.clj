@@ -54,7 +54,7 @@
           txt (get (:form-params request) "txt")
           tags (get (:form-params request) "tags")
           editor (:uid (:session request))
-          result (dbp/create-post! {:url url :txt txt :tag (or tags "") :tags (or tags "") :author editor})]
+          result (dbp/create-post! {:url url :txt txt :tags tags :author editor})]
           (println "add-item!" result (:session request))
       (-> (redirect "/add")
           (assoc :session (dissoc (:session request) :return))
@@ -91,7 +91,7 @@
           (do
             (println "Failed updating [" id "], post not found")
             (redirect my-url))
-          (let [result (dbp/update-post! {:url url :txt txt :tag (or tags "") :tags (or tags "") :id id})]
+          (let [result (dbp/update-post! {:url url :txt txt :tags tags :author editor :id id})]
             (-> (redirect my-url)
                 (assoc :flash id))))))))
 

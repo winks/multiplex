@@ -9,7 +9,11 @@
    [multiplex.config :as config]
    [ring.util.codec :as rcodec]))
 
-(def tag-regex #"^[a-z_]+[a-z0-9_-]+$")
+; format of tags:
+; allow either a single alphanumeric char,
+; or allow alphanumeric chars with
+; _ at the start and _ - after the first char
+(def tag-regex #"^[a-z0-9]+|[a-z0-9_]+[a-z0-9_-]+$")
 
 (defn is-custom-host [hostname]
   (if (= (:site-url (config/env :multiplex)) hostname)
@@ -222,5 +226,5 @@
 (defn sanitize-tags [s]
   (->> (cstr/split s #",")
        (map cstr/lower-case)
-       (map #(re-matches tag-regex %))
+       (filter #(re-matches tag-regex %))
        (remove empty?)))

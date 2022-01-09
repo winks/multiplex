@@ -7,6 +7,8 @@
    [multiplex.util :as util]
    [multiplex.db.core :as db]))
 
+(def post-fields [:url :txt :tags :author :id])
+
 (defn store-image [params]
   (let [orig-url (:url params)
         ext (util/file-extension orig-url)
@@ -56,21 +58,31 @@
 
 (defn create-post! [params]
   (println "dbp/create-post!" params)
-  (let [itemtype (if (empty? (:itemtype params)) (util/guess-type (:url params) (:txt params)) (:itemtype params))
-        tags (util/sanitize-tags (:tags params))
-        jtags (str "'" (json/write-str tags) "'::json")
-        jtags2 (str "to_json(string_to_array('" (cstr/join "," tags) "',','))")
-        xx (println "dbp/create-post!" jtags)
-        params (assoc params :itemtype itemtype :tags_raw jtags2 :tag (cstr/join "," tags))
-        newid (store-dispatch params)]
+  (let [params (select-keys (or params {}) post-fields)
+        author (util/int-or (:author params) 0)
+        url (:url params)
+        txt (:txt params)
+        tags (util/sanitize-tags (util/string-or (:tags params)))
+        tagstring (cstr/join "," tags)
+        jtags (str "to_json(string_to_array('" tagstring "', ','))")
+        itemtype (util/guess-type url txt)
+        crit {:itemtype itemtype :author author :tag tagstring :tags_raw jtags :url url :txt txt}
+        newid (store-dispatch crit)]
         (println "newid" newid)
     newid))
 
 (defn update-post! [params]
-  (let [tags (util/sanitize-tags (:tags params))
-        params (assoc params :id (util/int-or (:id params) 0) :tags_raw (json/write-str tags) :tag (cstr/join ","))]
-    (println "dbp/update-post!" params)
-    (db/update-post! params)))
+  (let [params (select-keys (or params {}) post-fields)
+        id (util/int-or (:id params) 0)
+        author (util/int-or (:author params) 0)
+        url (:url params)
+        txt (:txt params)
+        tags (util/sanitize-tags (util/string-or (:tags params)))
+        tagstring (cstr/join "," tags)
+        jtags (str "to_json(string_to_array('" tagstring "', ','))")
+        crit {:id id :author author :tag tagstring :tags_raw jtags :url url :txt txt}]
+    (println "dbp/update-post!" crit)
+    (db/update-post! crit)))
 
 (defn delete-post! [params]
   (let [crit {:id (util/int-or (:id params) 0)}]
@@ -95,9 +107,9 @@
         id       (util/int-or (get params :id) 0)
         offset   (* limit (dec page))
         ; check user input to disallow sql injection
-        filter   (if (= :some what)            (str filter " AND p.author = " author) "")
-        filter   (if (util/valid-post-type? itemtype) (str " AND p.itemtype = '" itemtype "'") filter)
-        filter   (if (util/valid-tag? tag)     (str filter " AND p.tags @> '\"" tag "\"'") filter)
+        filter   (if (= :some what)                          (str " AND p.author = " author) "")
+        filter   (if (util/valid-post-type? itemtype) (str filter " AND p.itemtype = '" itemtype "'") filter)
+        filter   (if (util/valid-tag? tag)            (str filter " AND p.tags @> '\"" tag "\"'") filter)
         ; build WHERE criteria
         crit     {:limit limit :offset offset :author author :id id :posts_crit_raw filter}
         crit     (if (util/valid-post-type? itemtype) (assoc crit :itemtype itemtype) crit)
