@@ -120,11 +120,58 @@
   (is (= 42 (int-or (double 42) 23)))
   (is (= 23 (int-or -42 23))))
 
-;(deftest test-add-fields)
-; set-author
+(deftest test-add-fields-1
+  (let [input {:url "http://www.youtube.com/watch?v=asdf" :meta ""}
+        result (add-fields input)]
+    (is (= "asdf" (:code result)))
+    (is (= "youtube" (:site result)))
+    (is (= "http://static.mpx1.f5n.de/dump-test" (:thumb-path result)))
+    (is (= nil (:thumbnail result)))
+    (is (= {} (:meta result)))
+    (is (= nil (:tags result))))
+  (let [input {:url "http://www.youtube.com/watch?v=asdf"
+               :meta "{\"code\":\"foo\",\"site\":\"bar\"}"
+               :tags "asdf"}
+        result (add-fields input)]
+    (is (= "foo" (:code result)))
+    (is (= "bar" (:site result)))
+    (is (= "asdf" (:tags result)))))
+
+(deftest test-fix-time-fields-1
+  (let [crea1   (java.time.LocalDateTime/of 2022 1 2 11 22 33)
+        exp-s1  "2022-01-02 11:22"
+        exp-ts1 "2022-01-02T11:22:33Z"]
+    (is (= [exp-s1 exp-ts1] (convert-time crea1)))
+    (is (= {:created exp-s1 :created-ts exp-ts1
+            :updated exp-s1 :updated-ts exp-ts1}
+           (fix-time-fields {:created crea1 :updated crea1})))))
+
+(deftest test-fix-url-field-1
+  (is (= {:url ""} (fix-url-field {})))
+  (is (= {:url ""} (fix-url-field {:url ""})))
+  (is (= {:url "http://static.mpx1.f5n.de/dump-test/foo.png"} (fix-url-field {:url "/dump-test/foo.png"})))
+  (is (= {:url "https://example.org/foo.png"} (fix-url-field {:url "https://example.org/foo.png"}))))
+
+(deftest test-set-author-1
+  (let [input {}
+        result (set-author input)]
+    (is (= {:author {:uid nil :url "http://:3030"}} result)))
+  (let [input {:author 23 :uid 24 :hostname "asd1.mpx1.f5n.de"}
+        result (set-author input)]
+    (is (= {:author {:uid 23 :hostname "asd1.mpx1.f5n.de"
+                     :url "http://asd1.mpx1.f5n.de:3030"}} result)))
+  (let [input {:author 23 :hostname "asd1.mpx1.f5n.de"
+               :foo 42 :bar "asd"
+               :title "xTitle" :avatar "a.png" :theme "t3" :is_private true}
+        result (set-author input)]
+    (is (= {:foo 42 :bar "asd"
+            :author {:uid 23 :hostname "asd1.mpx1.f5n.de"
+                     :title "xTitle" :avatar "a.png" :theme "t3" :is_private true
+                     :url "http://asd1.mpx1.f5n.de:3030"}} result))))
 
 (deftest test-keywordize-1
   (is (= {} (keywordize {})))
+  (is (= {:foo1 "bar1"} (keywordize {"foo1" "bar1"})))
   (is (= {:foo1 "bar1" :foo2 "bar2"} (keywordize {"foo1" "bar1" "foo2" "bar2"}))))
 
 ; calculate-pagination

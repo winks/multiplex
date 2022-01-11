@@ -141,29 +141,41 @@
 
 (defn add-fields [coll]
   (let [config (config/env :multiplex)
+        prefix (:assets-url config)
         info (video-info (:url coll))
         meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
-        meta (json/read-str meta-foo :key-fn keyword)
-        created (jtime/format "yyyy-MM-dd HH:mm" (:created coll))
-        updated (jtime/format "yyyy-MM-dd HH:mm" (:updated coll))
-        prefix (if-let [site (:assets-url config)] site "")
-        rel-path (:content-rel-path config)
-        url (if (< (count (:url coll)) (count rel-path))
-                ""
-                (if (= rel-path (subs (:url coll) 0 (count rel-path)))
-                    (str prefix (:url coll))
-                    (:url coll)))]
+        meta (json/read-str meta-foo :key-fn keyword)]
     (assoc coll :code (or (:code meta) (:code info))
                 :site (or (:site meta) (:site info))
-                :url url
-                :thumb-path (str prefix rel-path)
-                :created-ts (jtime/format (jtime/formatter :iso-instant) (jtime/zoned-date-time (:created coll) "UTC"))
-                :created (or updated (:updated coll))
-                :updated-ts (jtime/format (jtime/formatter :iso-instant) (jtime/zoned-date-time (:updated coll) "UTC"))
-                :updated (or updated (:updated coll))
+                :thumb-path (str prefix (:content-rel-path config))
                 :thumbnail (:thumbnail meta)
                 :tags (if (empty? (:tags coll)) nil (:tags coll))
                 :meta meta)))
+
+(defn convert-time [d]
+  (let [d2 (jtime/format "yyyy-MM-dd HH:mm" d)
+        d3 (jtime/format (jtime/formatter :iso-instant) (jtime/zoned-date-time d "UTC"))]
+    [(or d2 d) d3]))
+
+(defn fix-time-fields
+  "formats java.time.LocalDateTime to strings"
+  [coll]
+  (let [created (convert-time (:created coll))
+        updated (convert-time (:updated coll))]
+    (assoc coll :created-ts (second created)
+                :created (first created)
+                :updated-ts (second updated)
+                :updated (first updated))))
+
+(defn fix-url-field [coll]
+  (let [config (config/env :multiplex)
+        prefix (:assets-url config)
+        rel-path (:content-rel-path config)
+        url (or (:url coll) "")
+        url (if (cstr/starts-with? url rel-path)
+                (str prefix url)
+                url)]
+    (assoc coll :url url)))
 
 (defn set-author [coll & [request]]
   (let [request (or request {})

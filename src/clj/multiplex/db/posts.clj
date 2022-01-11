@@ -120,4 +120,6 @@
         orig     (get-some-posts crit)]
     [(first orig) (->> (second orig)
          (map #(util/add-fields %))
+         (map #(util/fix-time-fields %))
+         (map #(util/fix-url-field %))
          (map #(util/set-author % request)))]))
