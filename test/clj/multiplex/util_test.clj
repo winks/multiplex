@@ -196,7 +196,21 @@
   (is (= "image" (guess-type "https://example.org/foo.png" "asdf")))
   (is (= "link" (guess-type "https://example.org/foo" "asdf"))))
 
-; unwrap-tags
+(deftest test-hash-filename-1
+  (is (= "e226e44d039e18ebc5e3bc10311e96d0fe9bc737" (hash-filename "/tmp/foo.html"))))
+
+(deftest test-join-params-1
+  (is (= "" (join-params {})))
+  (is (= "&a=b" (join-params {:a "b"})))
+  (is (= "&a=b%20c" (join-params {:a "b c"})))
+  (is (= "&a=b&c=3" (join-params {:a "b" :c 3}))))
+
+(deftest test-unwrap-tags-1
+  (is (= {:tags ""} (unwrap-tags {})))
+  (is (= {:tags ""} (unwrap-tags {:tags nil})))
+  (is (= {:tags ""} (unwrap-tags {:tags []})))
+  (is (= {:tags "foo"} (unwrap-tags {:tags ["foo"]})))
+  (is (= {:tags "foo,bar"} (unwrap-tags {:tags ["foo", "bar"]}))))
 
 (deftest test-sanitize-tags-1
   (is (= [] (sanitize-tags "")))
