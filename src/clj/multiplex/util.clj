@@ -3,7 +3,6 @@
    [buddy.core.codecs :as codecs]
    [buddy.core.hash :as hash]
    [clojure.data.json :as json]
-   [clojure.java.io :as cjio]
    [java-time :as jtime]
    [clojure.string :as cstr]
    [multiplex.config :as config]
@@ -19,13 +18,6 @@
   (if (= (:site-url (config/env :multiplex)) hostname)
     false
     hostname))
-
-(defn download-file
-  "copies an image from an URL to a local file"
-  [url filename]
-  (with-open [input (cjio/input-stream url)
-              output (cjio/output-stream filename)]
-    (cjio/copy input output)))
 
 (defn valid-post-type?
   "determines if the given type of post is allowed"
@@ -64,13 +56,6 @@
   [url]
   (let [x (cstr/replace (cstr/lower-case url) #"http(s)?://(www\.)?" "")]
     (first (cstr/split x #"/"))))
-
-(defn read-remote
-  "read from remote url"
-  [url default]
-  (try
-    (slurp url)
-    (catch Exception ex default)))
 
 (defn video-info
   "extract the unique part of a video url, e.g. from youtube.com/watch?v=FOO"

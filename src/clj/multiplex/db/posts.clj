@@ -4,6 +4,7 @@
    [clojure.string :as cstr]
    [multiplex.config :as config]
    [multiplex.gfx :as gfx]
+   [multiplex.network :as net]
    [multiplex.util :as util]
    [multiplex.db.core :as db]))
 
@@ -14,7 +15,7 @@
         ext (util/file-extension orig-url)
         filename (str (util/hash-filename orig-url) "." ext)
         abs-filename (config/abs-file filename)
-        ximg (util/download-file orig-url abs-filename)
+        ximg (net/download-file orig-url abs-filename)
         img (gfx/read-image abs-filename)
         sizes (gfx/image-size img)
         resized (gfx/calc-resized img)
@@ -35,7 +36,7 @@
         ext      (util/file-extension thumb)
         filename (str (:thumb-id vi) "." ext)
         abs-file (config/abs-file-thumb filename (:site vi))
-        ximg     (util/download-file thumb abs-file)
+        ximg     (net/download-file thumb abs-file)
         img      (gfx/read-image abs-file)
         resized  (gfx/calc-resized img)
         meta     (assoc vi :thumbnail filename
