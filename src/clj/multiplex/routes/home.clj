@@ -133,8 +133,9 @@
   (let [qp (merge (util/keywordize (:query-params request)) (:path-params request))
         qp (if (and (empty? (:txt qp)) (seq (:title qp))) (assoc qp :txt (util/sanitize-title (:title qp))) qp)
         cur-url (str (:uri request) "?" (:query-string request))]
-  (println "add-page ror " (:session request) (:flash request))
+  ;(println "add-page ror " (:session request) (:flash request))
   (println "add-page" (= :get (:request-method request)) (not (logged-in? request)) (empty? (:return (:session request))))
+  ;(println qp)
   (if (and (= :get (:request-method request)) (not (logged-in? request)) (empty? (:return (:session request))))
     (-> (redirect cur-url) (assoc-in [:session :return] cur-url))
     (render-page request :add {:form qp}))))

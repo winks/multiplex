@@ -36,11 +36,13 @@
   [name]
   (if (empty? name)
     ""
-    (let [parts (reverse (cstr/split name #"\."))
-          ext (re-find #"[a-z0-9]+" (cstr/lower-case (first parts)))]
-      (if (= "jpeg" ext)
-        "jpg"
-        ext))))
+    (let [parts (cstr/split name #"\.")
+          ext (re-find #"[a-z0-9]+" (cstr/lower-case (last parts)))]
+      (cond
+        (< (count parts) 2) "" ; "foo"
+        (and (= 2 (count parts)) (= "" (first parts))) "" ; ".foo"
+        (= "jpeg" ext) "jpg"
+        :else ext))))
 
 (defn make-url [host config]
   (let [scheme (or (:site-scheme config) :http)
@@ -60,43 +62,34 @@
 (defn video-info
   "extract the unique part of a video url, e.g. from youtube.com/watch?v=FOO"
   [s]
-  (let [host (host-name s)]
-    (if (some #{host} config/sites-youtube)
-      (let [matcher (re-matcher #"[\?&]v=([a-zA-Z0-9_-]+)" s)
-            code (second (re-find matcher))]
-        {:site "youtube" :code code :thumb-id code})
-      (if (some #{host} config/sites-vimeo)
+  (let [host (host-name s)
+        rv {:url s}]
+    (cond
+      (some #{host} config/sites-youtube)
+        (let [matcher (re-matcher #"[\?&]v=([a-zA-Z0-9_-]+)" s)
+              code (second (re-find matcher))]
+          (assoc rv :site "youtube" :code code))
+      (some #{host} config/sites-vimeo)
         (let [matcher (re-matcher #"/([0-9]+)" s)
-              code (second (re-find matcher))
-              json-data (read-remote (str "https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/" code) "{\"thumbnail_url\":\"\"}")
-              asd (json/read-str json-data :key-fn keyword)
-              matcher2 (re-matcher #"/video/([0-9]+)" (:thumbnail_url asd))
-              thumb-id (second (re-find matcher2))]
-          {:site "vimeo" :code code :thumb-id thumb-id :thumb-width (:thumbnail_width asd) :duration (:duration asd)})
-        (if (some #{host} config/sites-soundcloud)
-          (let [html (read-remote s "")
-                matcher (re-matcher #"content=\"soundcloud://sounds:([0-9]+)\"" html)
-                matcher2 (re-matcher #"og:image\" content=\"([^\"]+)\"" html)
-                img (or (second (re-find matcher2)) "")
-                ext (file-extension img)
-                parts (cstr/split img #"/")]
-            (if-let [code (second (re-find matcher))]
-              {:site "soundcloud" :code code :thumb-id (cstr/replace (last parts) (str "." ext) "") :thumb-path (cstr/replace img (last parts) "") :thumb-ext ext}
-              {:site "soundcloud" :code nil}))
-          (if (some #{host} config/sites-mixcloud)
-            (let [path (.getRawPath (java.net.URI. s))]
-              {:site "mixcloud" :code (rcodec/url-encode path)})
-            (if (and (some #{host} config/sites-imgur-gifv) (cstr/ends-with? s ".gifv"))
-              (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
-                {:site "imgur-gifv" :code (second (re-find matcher))})
-                {:site "err" :code ""})))))))
+              code (second (re-find matcher))]
+          (assoc rv :site "vimeo" :code code))
+      (some #{host} config/sites-soundcloud)
+        (let [path (.getRawPath (java.net.URI. s))]
+          (assoc rv :site "soundcloud" :code (rcodec/url-encode path)))
+      (some #{host} config/sites-mixcloud)
+        (let [path (.getRawPath (java.net.URI. s))]
+          (assoc rv :site "mixcloud" :code (rcodec/url-encode path)))
+      (and (some #{host} config/sites-imgur-gifv) (cstr/ends-with? s ".gifv"))
+        (let [matcher (re-matcher #"https?://[^/]+/(.+)\.gifv$" s)]
+          (assoc rv :site "imgur-gifv" :code (second (re-find matcher))))
+      :else (assoc rv :site "err" :code ""))))
 
 (defn thumbnail-url
   "get the thumbnail url for a video site"
   [m]
   (cond
-    (= "youtube" (:site m))    (str "https://i.ytimg.com/vi/" (:code m) "/hqdefault.jpg")
-    (= "vimeo" (:site m))      (str "https://i.vimeocdn.com/video/" (:thumb-id m) ".jpg?mw=480")
+    (= "youtube"    (:site m)) (str "https://i.ytimg.com/vi/" (:code m) "/hqdefault.jpg")
+    (= "vimeo"      (:site m)) (str "https://i.vimeocdn.com/video/" (:thumb-id m) ".jpg?mw=480")
     (= "soundcloud" (:site m)) (str (:thumb-path m) (:thumb-id m) "." (:thumb-ext m))
     :else ""))
 
@@ -127,11 +120,12 @@
 (defn add-fields [coll]
   (let [config (config/env :multiplex)
         prefix (:assets-url config)
-        info (video-info (:url coll))
+        ;info (video-info (:url coll))
         meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)]
-    (assoc coll :code (or (:code meta) (:code info))
-                :site (or (:site meta) (:site info))
+        ;(println info)
+    (assoc coll :code (:code meta) ;(or (:code info) (:code meta))
+                :site (:site meta) ;(or (:site info) (:site meta))
                 :thumb-path (str prefix (:content-rel-path config))
                 :thumbnail (:thumbnail meta)
                 :tags (if (empty? (:tags coll)) nil (:tags coll))
@@ -196,6 +190,7 @@
       (cstr/replace #"^▶ " "")
       (cstr/replace #" - YouTube$" "")
       (cstr/replace #" - MyVideo$" "")
+      (cstr/replace #" \| Mixcloud$" "")
       (cstr/replace #" on Vimeo$" "")))
 
 (defn guess-type
@@ -228,3 +223,8 @@
        (map cstr/lower-case)
        (filter #(re-matches tag-regex %))
        (remove empty?)))
+
+(defn get-filename [url]
+  (let [path (.getRawPath (java.net.URI. url))
+        parts (cstr/split path #"/")]
+    (or (last parts) nil)))

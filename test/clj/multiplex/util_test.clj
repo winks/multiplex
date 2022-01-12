@@ -10,14 +10,12 @@
 (deftest test-config-abs-file-1
   (is (= (str (:content-abs-path (config/env :multiplex)) "/foo1.jpg") (config/abs-file "foo1.jpg"))))
 (deftest test-config-abs-file-thumb-1
-  (is (= (str (:content-abs-path (config/env :multiplex)) "/testsite/foo0.jpg") (config/abs-file-thumb "foo0.jpg" "testsite"))))
+  (is (= (str (:content-abs-path (config/env :multiplex)) "/testsite.foo0.jpg") (config/abs-file-thumb "foo0.jpg" "testsite"))))
 
 ; now multiplex.util
 (deftest test-is-custom-host-1
   (is (= "example.f5n.de" (is-custom-host "example.f5n.de")))
   (is (= false (is-custom-host (:site-url (config/env :multiplex))))))
-
-; download-file
 
 (deftest test-valid-post-type-1
   (is (= false (valid-post-type? "")))
@@ -87,7 +85,7 @@
 (deftest test-video-info-soundcloud-1
   (let [info (video-info "https://soundcloud.com/zuckerton-records/klangkuenstler-munich-motion")]
     (is (= "soundcloud" (:site info)))
-    (is (= "70598455" (:code info)))))
+    (is (= "%2Fzuckerton-records%2Fklangkuenstler-munich-motion" (:code info)))))
 
 (deftest test-thumbnail-url-1
   (is (= "" (thumbnail-url nil)))
@@ -123,8 +121,6 @@
 (deftest test-add-fields-1
   (let [input {:url "http://www.youtube.com/watch?v=asdf" :meta ""}
         result (add-fields input)]
-    (is (= "asdf" (:code result)))
-    (is (= "youtube" (:site result)))
     (is (= "http://static.mpx1.f5n.de/dump-test" (:thumb-path result)))
     (is (= nil (:thumbnail result)))
     (is (= {} (:meta result)))

@@ -29,7 +29,6 @@
 
 (def sites-imgur-gifv ["imgur.com" "i.imgur.com"])
 
-(defn abs-file-thumb [file site] (str (:content-abs-path (env :multiplex)) "/" site "/" file))
-
-(defn abs-file [file] (str (:content-abs-path (env :multiplex)) "/" file))
-(defn rel-file [file] (str (:content-rel-path (env :multiplex)) "/" file))
+(defn abs-file-thumb [file site] (str (:content-abs-path (env :multiplex)) "/" site "." file))
+(defn abs-file       [file]      (str (:content-abs-path (env :multiplex)) "/" file))
+(defn rel-file       [file]      (str (:content-rel-path (env :multiplex)) "/" file))

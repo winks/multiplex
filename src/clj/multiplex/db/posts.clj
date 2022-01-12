@@ -12,37 +12,48 @@
 
 (defn store-image [params]
   (let [orig-url (:url params)
-        ext (util/file-extension orig-url)
+        ext      (or (util/file-extension orig-url) "png")
         filename (str (util/hash-filename orig-url) "." ext)
         abs-filename (config/abs-file filename)
-        ximg (net/download-file orig-url abs-filename)
-        img (gfx/read-image abs-filename)
-        sizes (gfx/image-size img)
-        resized (gfx/calc-resized img)
-        params (assoc params :meta {:size (cstr/join ":" sizes) :url orig-url}
-                             :url (config/rel-file filename)
-                             :author (util/int-or (:author params) 0))]
+        ximg     (net/download-file orig-url abs-filename)
+        img      (gfx/read-image abs-filename)
+        sizes    (gfx/image-size img)
+        resized  (gfx/calc-resized img)
+        params   (assoc params :meta {:size (cstr/join ":" sizes) :url orig-url}
+                               :url (config/rel-file filename)
+                               :author (util/int-or (:author params) 0))]
       (println "DEBUG store-image: " params)
       (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
         (let [rv (gfx/resize img abs-filename (first resized) (second resized))
-              meta (assoc (:meta params) :thumb (util/file-extension abs-filename) :thumbsize (cstr/join ":" resized))
+              meta (assoc (:meta params) :thumb ext :thumbsize (cstr/join ":" resized))
               params (assoc params :meta (json/write-str meta))]
           (db/create-post! params))
         (db/create-post! params))))
 
 (defn store-video-thumb [params]
-  (let [vi       (util/video-info (:url params))
-        thumb    (util/thumbnail-url vi)
-        ext      (util/file-extension thumb)
-        filename (str (:thumb-id vi) "." ext)
-        abs-file (config/abs-file-thumb filename (:site vi))
-        ximg     (net/download-file thumb abs-file)
-        img      (gfx/read-image abs-file)
-        resized  (gfx/calc-resized img)
-        meta     (assoc vi :thumbnail filename
-                           :thumbsize (cstr/join ":" resized))]
-    (println "DEBUG store-video-thumb: " params)
-    (db/create-post! (assoc params :meta meta))))
+  (let [vi (util/video-info (:url params))
+        vi (net/video-details vi)
+        tu (or (:thumbnail-url vi) (util/thumbnail-url vi))
+        vi (assoc vi :thumbnail-url tu)]
+        (println "stor " params)
+        (println "stor " vi)
+    (if-let [filename (util/get-filename (:thumbnail-url vi))]
+      (let [ext      (util/file-extension filename)
+            ext      (if (and (empty? ext) (= "vimeo" (:site vi))) "jpg" ext)
+            ext      (if (and (empty? ext) (= "mixcloud" (:site vi))) "jpg" ext)
+            ext      (or ext "png")
+            new-name (str (:code vi) "." ext)
+            abs-file (config/abs-file-thumb new-name (:site vi))
+            ximg     (net/download-file (:thumbnail-url vi) abs-file)
+            img      (gfx/read-image abs-file)
+            resized  (gfx/calc-resized img)
+            ;title    (if (= "soundcloud" (:site vi)) (:title vi) nil)
+            ;title    (or title (:title params))
+            meta     (assoc vi :thumbnail (util/get-filename abs-file)
+                               :thumbsize (cstr/join ":" resized))]
+        (println "DEBUG store-video-thumb: " params)
+        (db/create-post! (assoc params :meta meta)))
+      (println "store-video-thumb failed: " params))))
 
 (defn store-rest [params]
   (let [params (assoc params :meta "{}")]
