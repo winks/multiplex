@@ -15,7 +15,7 @@
     [(.getWidth image) (.getHeight image)]
   (catch Exception e
     (do
-      (println (str "ERR: Reading size failed: " (str image)))
+      (log/debug (str "ERR: Reading size failed: " (str image)))
       [0 0]))))
 
 (defn image-mime

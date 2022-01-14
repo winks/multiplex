@@ -2,6 +2,7 @@
   (:require
    [clojure.data.json :as json]
    [clojure.string :as cstr]
+   [clojure.tools.logging :as log]
    [multiplex.config :as config]
    [multiplex.gfx :as gfx]
    [multiplex.network :as net]
@@ -22,7 +23,7 @@
         params   (assoc params :meta {:size (cstr/join ":" sizes) :url orig-url}
                                :url (config/rel-file filename)
                                :author (util/int-or (:author params) 0))]
-      (println "DEBUG store-image: " params)
+      (log/debug "store-image: " params)
       (if-let [need (gfx/needs-resize? sizes resized abs-filename)]
         (let [rv (gfx/resize img abs-filename (first resized) (second resized))
               meta (assoc (:meta params) :thumb ext :thumbsize (cstr/join ":" resized))
@@ -35,8 +36,6 @@
         vi (net/video-details vi)
         tu (or (:thumbnail-url vi) (util/thumbnail-url vi))
         vi (assoc vi :thumbnail-url tu)]
-        (println "stor " params)
-        (println "stor " vi)
     (if-let [filename (util/get-filename (:thumbnail-url vi))]
       (let [ext      (util/file-extension filename)
             ext      (if (and (empty? ext) (= "vimeo" (:site vi))) "jpg" ext)
@@ -51,13 +50,13 @@
             ;title    (or title (:title params))
             meta     (assoc vi :thumbnail (util/get-filename abs-file)
                                :thumbsize (cstr/join ":" resized))]
-        (println "DEBUG store-video-thumb: " params)
+        (log/debug "store-video-thumb: " params)
         (db/create-post! (assoc params :meta meta)))
-      (println "store-video-thumb failed: " params))))
+      (log/info "store-video-thumb failed: " params))))
 
 (defn store-rest [params]
   (let [params (assoc params :meta "{}")]
-    (println "DEBUG store-rest: " params)
+    (log/debug "store-rest: " params)
     (db/create-post! params)))
 
 (defn store-dispatch [params]
@@ -69,7 +68,7 @@
     :else                          (store-rest params)))
 
 (defn create-post! [params]
-  (println "dbp/create-post!" params)
+  (log/debug "dbp/create-post!" params)
   (let [params (select-keys (or params {}) post-fields)
         author (util/int-or (:author params) 0)
         url (:url params)
@@ -80,7 +79,7 @@
         itemtype (util/guess-type url txt)
         crit {:itemtype itemtype :author author :tag tagstring :tags_raw jtags :url url :txt txt}
         newid (store-dispatch crit)]
-        (println "newid" newid)
+        (log/debug "newid" newid)
     newid))
 
 (defn update-post! [params orig]
@@ -93,16 +92,17 @@
         tagstring (cstr/join "," tags)
         jtags (str "to_json(string_to_array('" tagstring "', ','))")
         crit {:id id :author author :tag tagstring :tags_raw jtags :url url :txt txt}]
-    (println "dbp/update-post!" crit)
+    (log/debug "dbp/update-post!" crit)
     (db/update-post! crit)))
 
 (defn delete-post! [params]
   (let [crit {:id (util/int-or (:id params) 0)}]
-    (println "dbp/delete-post!" crit)
+    (log/debug "dbp/delete-post!" crit)
     (db/delete-post! crit)))
 
 (defn get-some-posts [crit]
-  (println "get-some-posts" crit)
+  (log/debug "get-some-posts" crit)
+  (log/debug "get-some-posts" crit)
   (cond
     (pos? (:id crit))
       (let [posts (db/get-post-by-id crit)]

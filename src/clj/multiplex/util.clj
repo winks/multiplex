@@ -120,12 +120,10 @@
 (defn add-fields [coll]
   (let [config (config/env :multiplex)
         prefix (:assets-url config)
-        ;info (video-info (:url coll))
         meta-foo (if (= "" (cstr/trim (:meta coll))) "{}" (:meta coll))
         meta (json/read-str meta-foo :key-fn keyword)]
-        ;(println info)
-    (assoc coll :code (:code meta) ;(or (:code info) (:code meta))
-                :site (:site meta) ;(or (:site info) (:site meta))
+    (assoc coll :code (:code meta)
+                :site (:site meta)
                 :thumb-path (str prefix (:content-rel-path config))
                 :thumbnail (:thumbnail meta)
                 :tags (if (empty? (:tags coll)) nil (:tags coll))
