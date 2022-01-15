@@ -1,16 +1,16 @@
 (ns multiplex.routes.home
   (:require
-   [multiplex.db.core :as db]
-   [multiplex.db.posts :as dbp]
-   [multiplex.db.users :as dbu]
-   [multiplex.layout :as layout]
-   [multiplex.middleware :as middleware]
-   [multiplex.util :as util]
-   [buddy.hashers :as hashers]
-   [clojure.java.io :as io]
-   [clojure.tools.logging :as log]
-   [ring.util.response :refer [response redirect]]
-   [ring.util.http-response :as hresponse]))
+    [buddy.hashers :as hashers]
+    [clojure.java.io :as io]
+    [clojure.tools.logging :as log]
+    [multiplex.db.core :as db]
+    [multiplex.db.posts :as dbp]
+    [multiplex.db.users :as dbu]
+    [multiplex.layout :as layout]
+    [multiplex.middleware :as middleware]
+    [multiplex.util :as util]
+    [multiplex.util :refer [audit]]
+    [ring.util.response :refer [response redirect]]))
 
 (defn logged-in? [request]
   (let [uid (or (:uid (:session request)) 0)]

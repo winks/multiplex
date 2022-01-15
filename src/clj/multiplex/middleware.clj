@@ -1,21 +1,20 @@
 (ns multiplex.middleware
   (:require
-    [multiplex.env :refer [defaults]]
+    [buddy.auth :refer [authenticated?]]
+    [buddy.auth.accessrules :refer [restrict]]
+    [buddy.auth.backends.session :refer [session-backend]]
+    [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
     [clojure.tools.logging :as log]
+    [multiplex.config :refer [env]]
+    [multiplex.env :refer [defaults]]
     [multiplex.layout :refer [error-page]]
-    [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
     [multiplex.middleware.formats :as formats]
     [muuntaja.middleware :refer [wrap-format wrap-params]]
-    [multiplex.config :refer [env]]
-    [ring.middleware.flash :refer [wrap-flash]]
     [ring.adapter.undertow.middleware.session :refer [wrap-session]]
+    [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+    [ring.middleware.flash :refer [wrap-flash]]
     [ring.middleware.session.cookie :refer [cookie-store]]
-    [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-    [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
-            [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth :refer [authenticated?]]
-    [buddy.auth.backends.session :refer [session-backend]])
-  )
+    [ring.middleware.defaults :refer [site-defaults wrap-defaults]]))
 
 (def cookie-bytes (byte-array (map byte [62 5 83 101 25 58 115 55 5 23 89 89 46 110 29 13])))
 

@@ -1,12 +1,13 @@
 (ns multiplex.util
   (:require
-   [buddy.core.codecs :as codecs]
-   [buddy.core.hash :as hash]
-   [clojure.data.json :as json]
-   [java-time :as jtime]
-   [clojure.string :as cstr]
-   [multiplex.config :as config]
-   [ring.util.codec :as rcodec]))
+    [buddy.core.codecs :as codecs]
+    [buddy.core.hash :as hash]
+    [clojure.data.json :as json]
+    [clojure.string :as cstr]
+    [clojure.tools.logging :as log]
+    [java-time :as jtime]
+    [multiplex.config :as config]
+    [ring.util.codec :as rcodec]))
 
 ; format of tags:
 ; allow either a single alphanumeric char,

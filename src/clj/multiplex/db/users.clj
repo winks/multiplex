@@ -1,8 +1,9 @@
 (ns multiplex.db.users
   (:require
-   [multiplex.config :as config]
-   [multiplex.db.core :as db]
-   [multiplex.util :as util]))
+    [clojure.tools.logging :as log]
+    [multiplex.config :as config]
+    [multiplex.db.core :as db]
+    [multiplex.util :as util]))
 
 (defn urlize [coll request]
   (let [url (util/make-url (:hostname coll) (config/env :multiplex))]

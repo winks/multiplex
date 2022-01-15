@@ -1,17 +1,17 @@
 (ns multiplex.layout
   (:require
-    [multiplex.config :as config]
-    [multiplex.util :as util]
-    [multiplex.db.users :as dbu]
     [clojure.java.io :as io]
     [clojure.string :as cstr]
-    [selmer.parser :as parser]
-    [selmer.filters :as filters]
     [markdown.core :refer [md-to-html-string]]
-    [ring.util.http-response :refer [content-type ok]]
-    [ring.util.anti-forgery :refer [anti-forgery-field]]
+    [multiplex.config :as config]
+    [multiplex.db.users :as dbu]
+    [multiplex.util :as util]
     [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-    [ring.util.response]))
+    [ring.util.anti-forgery :refer [anti-forgery-field]]
+    [ring.util.http-response :refer [content-type ok]]
+    [ring.util.response]
+    [selmer.parser :as parser]
+    [selmer.filters :as filters]))
 
 (def ^:dynamic pom-config
   (with-open [pom-properties-reader (io/reader (io/resource "META-INF/maven/multiplex/multiplex/pom.properties"))]

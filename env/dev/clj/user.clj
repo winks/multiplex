@@ -4,14 +4,14 @@
     [buddy.hashers :as hashers]
     [clojure.pprint]
     [clojure.spec.alpha :as s]
+    [conman.core :as conman]
     [expound.alpha :as expound]
     [mount.core :as mount]
+    [luminus-migrations.core :as migrations]
     [multiplex.config :refer [env]]
     [multiplex.core :refer [start-app]]
     [multiplex.db.core]
-    [multiplex.util :as util]
-    [conman.core :as conman]
-    [luminus-migrations.core :as migrations]))
+    [multiplex.util :as util]))
 
 (alter-var-root #'s/*explain-out* (constantly expound/printer))
 

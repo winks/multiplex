@@ -1,6 +1,8 @@
 (ns multiplex.gfx
-  (:require [multiplex.config :as config]
-            [multiplex.util :as util]))
+  (:require
+    [clojure.tools.logging :as log]
+    [multiplex.config :as config]
+    [multiplex.util :as util]))
 
 (defn read-image
   "returns a BufferedImage from a filename"

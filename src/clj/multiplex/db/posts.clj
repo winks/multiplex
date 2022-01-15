@@ -1,13 +1,13 @@
 (ns multiplex.db.posts
   (:require
-   [clojure.data.json :as json]
-   [clojure.string :as cstr]
-   [clojure.tools.logging :as log]
-   [multiplex.config :as config]
-   [multiplex.gfx :as gfx]
-   [multiplex.network :as net]
-   [multiplex.util :as util]
-   [multiplex.db.core :as db]))
+    [clojure.data.json :as json]
+    [clojure.string :as cstr]
+    [clojure.tools.logging :as log]
+    [multiplex.config :as config]
+    [multiplex.db.core :as db]
+    [multiplex.gfx :as gfx]
+    [multiplex.network :as net]
+    [multiplex.util :as util]))
 
 (def post-fields [:url :txt :tags :author :id])
 

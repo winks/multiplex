@@ -1,15 +1,15 @@
 (ns multiplex.handler
   (:require
-    [multiplex.middleware :as middleware]
+    [mount.core :as mount]
+    [multiplex.env :refer [defaults]]
     [multiplex.layout :refer [error-page]]
+    [multiplex.middleware :as middleware]
     [multiplex.routes.home :refer [home-routes]]
     [multiplex.routes.services :refer [service-routes]]
-    [reitit.swagger-ui :as swagger-ui]
     [reitit.ring :as ring]
+    [reitit.swagger-ui :as swagger-ui]
     [ring.middleware.content-type :refer [wrap-content-type]]
-    [ring.middleware.webjars :refer [wrap-webjars]]
-    [multiplex.env :refer [defaults]]
-    [mount.core :as mount]))
+    [ring.middleware.webjars :refer [wrap-webjars]]))
 
 (mount/defstate init-app
   :start ((or (:init defaults) (fn [])))
