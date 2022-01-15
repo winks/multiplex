@@ -15,6 +15,9 @@
 ; _ at the start and _ - after the first char
 (def tag-regex #"^[a-z0-9]+|[a-z0-9_]+[a-z0-9_-]+$")
 
+; format of searches
+(def search-regex #"^[a-z0-9_-]{3,}$")
+
 (defn is-custom-host [hostname]
   (if (= (:site-url (config/env :multiplex)) hostname)
     false
@@ -31,6 +34,11 @@
   "determines if the given tag is allowed"
   [arg]
   (re-matches tag-regex (cstr/lower-case arg)))
+
+(defn valid-search?
+  "determines if the given search is allowed"
+  [arg]
+  (re-matches search-regex (cstr/lower-case (cstr/replace arg #"\*" ""))))
 
 (defn file-extension
   "gets the lower-cased file extension from a string"

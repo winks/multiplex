@@ -102,7 +102,6 @@
 
 (defn get-some-posts [crit]
   (log/debug "get-some-posts" crit)
-  (log/debug "get-some-posts" crit)
   (cond
     (pos? (:id crit))
       (let [posts (db/get-post-by-id crit)]
@@ -114,6 +113,7 @@
 (defn get-posts [what params & [request]]
   (let [params   (or params {})
         ; sanitize user input
+        search   (util/string-or (get params :search))
         itemtype (util/string-or (get params :type))
         tag      (util/string-or (get params :tag))
         limit    (util/int-or (get params :limit) config/default-limit)
@@ -125,6 +125,7 @@
         filter   (if (= :some what)                          (str " AND p.author = " author) "")
         filter   (if (util/valid-post-type? itemtype) (str filter " AND p.itemtype = '" itemtype "'") filter)
         filter   (if (util/valid-tag? tag)            (str filter " AND p.tags @> '\"" tag "\"'") filter)
+        filter   (if (util/valid-search? search)      (str filter " AND p.txt ILIKE '%" search "%'") filter)
         ; build WHERE criteria
         crit     {:limit limit :offset offset :author author :id id :posts_crit_raw filter}
         crit     (if (util/valid-post-type? itemtype) (assoc crit :itemtype itemtype) crit)

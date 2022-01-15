@@ -29,6 +29,14 @@
   (is (= nil (valid-tag? "asd\"asd")))
   (is (= nil (valid-tag? ""))))
 
+(deftest test-valid-search-1
+  (is (= nil (valid-search? "")))
+  (is (= nil (valid-search? "A?")))
+  (is (= nil (valid-search? "A%")))
+  (is (= "asd" (valid-search? "ASD*")))
+  (is (= "asd" (valid-search? "asd")))
+  (is (= "asd" (valid-search? "ASD"))))
+
 (deftest test-file-extension-1
   (is (= ""    (file-extension "")))
   (is (= ""    (file-extension "foo")))
