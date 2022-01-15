@@ -23,9 +23,9 @@
     ""
     (let [ver (.getProperty prop "version")
           rev (.getProperty prop "revision")]
-          (if (cstr/ends-with? ver "-SNAPSHOT")
-            (str (cstr/replace ver "-SNAPSHOT" "") "-dev " (subs rev 0 7))
-            ver))))
+      (if (cstr/ends-with? ver "-SNAPSHOT")
+        (str (cstr/replace ver "-SNAPSHOT" "") "-dev " (subs rev 0 7))
+        ver))))
 
 (parser/set-resource-path!  (io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))

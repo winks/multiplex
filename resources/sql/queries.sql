@@ -10,15 +10,22 @@ VALUES (nextval('mpx_users_id_seq'), :username, :hostname, :email, :password,
 RETURNING uid
 
 -- :name update-user! :! :n
--- :doc updates an existing user
-UPDATE users
-SET first_name = :first_name, last_name = :last_name, email = :email
-WHERE id = :id
+-- :doc updates an existing user {:uid :username :hostname :email :avatar :title :theme :is_private}
+UPDATE mpx_users
+SET username = :username, hostname = :hostname, email = :email, avatar = :avatar,
+    title = :title, theme = :theme, is_private = :is_private
+WHERE uid = :uid
 
 -- :name change-password! :! :n
 -- :doc updates an existing user {:uid :password}
 UPDATE mpx_users
 SET password = :password
+WHERE uid = :uid
+
+-- :name change-last-login! :! :n
+-- :doc updates an existing user {:uid}
+UPDATE mpx_users
+SET last_login = now()
 WHERE uid = :uid
 
 -- :name delete-user! :! :n

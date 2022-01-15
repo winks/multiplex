@@ -26,6 +26,8 @@
   (let [new-url (or (:return session) "/")
         new-session (-> session (dissoc :return) (assoc :user name) (assoc :uid uid))]
     (log/debug "set-user!" new-url new-session)
+    (audit :login {:uid uid :name name})
+    (db/change-last-login! {:uid uid})
     (-> (redirect new-url)
         (assoc :session new-session))))
 
@@ -56,7 +58,8 @@
           tags (get (:form-params request) "tags")
           editor (:uid (:session request))
           result (dbp/create-post! {:url url :txt txt :tags tags :author editor})]
-          (log/debug "add-item!" result (:session request))
+      (log/debug "add-item!" result (:session request))
+      (audit :post-create result)
       (-> (redirect "/add")
           (assoc :session (dissoc (:session request) :return))
           (assoc :flash (:id (first result)))))))
@@ -74,6 +77,7 @@
             (log/info "Failed deleting [" id "], post not found")
             (redirect my-url))
           (let [result (dbp/delete-post! {:id id})]
+            (audit :post-delete {:id id :uid editor})
             (-> (redirect my-url)
                 (assoc :flash id))))))))
 
@@ -92,9 +96,36 @@
           (do
             (log/info "Failed updating [" id "], post not found")
             (redirect my-url))
-          (let [result (dbp/update-post! {:url url :txt txt :tags tags :author editor :id id} (first posts))]
+          (let [crit {:url url :txt txt :tags tags :author editor :id id}
+                result (dbp/update-post! crit (first posts))]
+            (audit :post-update {:old (first posts) :new crit})
             (-> (redirect my-url)
                 (assoc :flash id))))))))
+
+(defn edit-profile! [request]
+  (let [my-url "/profile"]
+    (if-not (logged-in? request)
+      (redirect my-url)
+      (let [username   (get (:form-params request) "username")
+            email      (get (:form-params request) "email")
+            avatar     (get (:form-params request) "avatar")
+            title      (get (:form-params request) "title")
+            theme      (get (:form-params request) "theme")
+            is_private (get (:form-params request) "is_private")
+            editor     (:uid (:session request))
+            mreq       (select-keys request [:server-port :scheme])
+            orig       (dbu/get-profile {:uid editor} mreq)]
+        (if (empty? (:username orig))
+          (do
+            (log/info "Failed getting profile [" editor "] to edit, not found")
+            (redirect my-url))
+          (let [crit {:uid editor :username username :email email :avatar avatar
+                      :title title :theme theme :is_private is_private}
+                result (dbu/update-profile! crit orig)]
+            (audit :user-update {:old orig :new crit})
+            (-> (redirect my-url)
+                (assoc :flash true))))))))
+
 
 ; simple pages
 (defn render-page
@@ -176,6 +207,7 @@
    ["/post/:id"      {:get (fn [{:keys [path-params query-params] :as req}] (posts-page req :single))
                       :post edit-item!}]
    ["/posts"    {:get posts-page}]
-   ["/profile"  {:get profile-page}]
+   ["/profile"  {:get profile-page
+                 :post edit-profile!}]
    ["/users"    {:get users-page}]
    ["/"         {:get home-page}]])

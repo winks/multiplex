@@ -227,3 +227,7 @@
   (let [path (.getRawPath (java.net.URI. url))
         parts (cstr/split path #"/")]
     (or (last parts) nil)))
+
+(defn audit [x & [xs]]
+  (let [msg (str "event." (cstr/replace (name x) #"-" "."))]
+    (log/info msg xs)))

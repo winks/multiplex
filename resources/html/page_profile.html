@@ -4,18 +4,30 @@
 {% ifequal auth.loggedin "true" %}
 <h1>Profile</h1>
 
+{% if glob.flash  %}<div class="flash">Profile updated.</a>.</div>{% endif %}
+
 <ul>
-    <li>username: {{ profile.username }}</li>
     <li>hostname: {{ profile.hostname }}</li>
-    <li>email: {{ profile.email }}</li>
-    <li>site title: {{ profile.title }}</li>
-    <li>site theme: {{ profile.theme }}</li>
     <li>apikey: {{ profile.apikey }}</li>
-    <li>is_private: {{ profile.is_private }}</li>
     <li>created: {{ profile.created }}</li>
     <li>avatar: {{ profile.avatar }} <br/><img src="{{ glob.assets-prefix }}{{ profile.avatar }}"/> </li>
 </ul>
 
+<h2>Edit Profile</h2>
+<div id="form_profile_edit_container">
+    <form action="/profile" id="form_profile_edit" method="post">
+        {% csrf-field %}
+        <p><label>Site Title:<br /> <input type="text" name="title" value="{{ profile.title }}" /></label></p>
+        <p><label>Site Theme:<br /> <input type="text" name="theme" value="{{ profile.theme }}" /></label></p>
+        <p><label>Set to Private?:<br /> <input type="checkbox" name="is_private" {% if profile.is_private %}value="on" checked{% endif %} /></label></p>
+        <p>&nbsp;</p>
+        <p><label>Username:<br /> <input type="text" name="username" value="{{ profile.username }}" /></label></p>
+        <p><label>E-Mail:<br /> <input type="text" name="email" value="{{ profile.email }}" /></label></p>
+        <p><label>Avatar:<br /> <input type="text" name="avatar" value="{{ profile.avatar }}" /></label></p>
+        <input type="submit" value="update" />
+    </form>
+</div>
+<p>&nbsp;</p>
 <p>Use this bookmark to post: <br/>
     <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('{{ profile.url }}/add?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'{{ profile.title }}/add','toolbar=no,width=700,height=350'));">multiplex me</a><br />
 </p>
