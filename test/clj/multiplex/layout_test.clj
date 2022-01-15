@@ -79,8 +79,8 @@
     (is (= "MyTitle" (:page-header (:glob p2))))))
 
 (deftest test-prepare-glob-0-1 ; empty title | username |theme | uid | modus | flash
-  (binding [layout/pom-config (doto (java.util.Properties.)
-                                    (.setProperty "version" "foo"))]
+  (binding [layout/*pom-config* (doto (java.util.Properties.)
+                                      (.setProperty "version" "foo"))]
     (let [session {}
           request {:scheme :https
                    :server-name "sub.example.org"
@@ -100,8 +100,8 @@
       (is (= "foo" (:version-string glob))))))
 
 (deftest test-prepare-glob-0-2 ; empty title
-  (binding [layout/pom-config (doto (java.util.Properties.)
-                                    (.setProperty "version" "foo"))]
+  (binding [layout/*pom-config* (doto (java.util.Properties.)
+                                      (.setProperty "version" "foo"))]
     (let [session {}
           request {:scheme :https
                    :server-name "sub.example.org"
@@ -118,8 +118,8 @@
 (comment
 
 (deftest test-prepare-glob-author-1
-  (binding [layout/pom-config (doto (java.util.Properties.)
-                                    (.setProperty "version" "foo"))]
+  (binding [layout/*pom-config* (doto (java.util.Properties.)
+                                      (.setProperty "version" "foo"))]
 ;            db/get-user-by-hostname2
 ;      (fn [crit] {:uid 123 :username "u123" :hostname "u123.example.org"
 ;                  :title "u123_title" :avatar "u123.png"

@@ -4,6 +4,7 @@
     [buddy.hashers :as hashers]
     [clojure.pprint]
     [clojure.spec.alpha :as s]
+    [clojure.string]
     [conman.core :as conman]
     [expound.alpha :as expound]
     [mount.core :as mount]
@@ -115,7 +116,7 @@
                 (format "%10s" "theme")    " | "
                 (format "%10s" "active?")  " | "
                 (format "%10s" "private?")))
-  (println (apply str (repeat 80 "-")))
+  (println (clojure.string/join (repeat 80 "-")))
   (let [users (multiplex.db.core/get-all-users-internal)]
     (for [usr users]
       (println (str (format "%3d"  (:uid usr))       " | "

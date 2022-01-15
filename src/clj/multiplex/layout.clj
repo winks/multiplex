@@ -13,7 +13,7 @@
     [selmer.parser :as parser]
     [selmer.filters :as filters]))
 
-(def ^:dynamic pom-config
+(def ^:dynamic *pom-config*
   (with-open [pom-properties-reader (io/reader (io/resource "META-INF/maven/multiplex/multiplex/pom.properties"))]
     (doto (java.util.Properties.)
       (.load pom-properties-reader))))
@@ -65,7 +65,7 @@
      :modus (name (or (:modus params) ""))
      :assets-prefix assets-prefix
      :base-url (util/make-url (:site-url cfg) cfg)
-     :version-string (get-version pom-config)
+     :version-string (get-version *pom-config*)
      :flash (:flash request)}))
 
 (defn prepare-params [request & [params]]

@@ -127,7 +127,7 @@
                 :site (:site meta)
                 :thumb-path (str prefix (:content-rel-path config))
                 :thumbnail (:thumbnail meta)
-                :tags (if (empty? (:tags coll)) nil (:tags coll))
+                :tags (when-not (empty? (:tags coll)) (:tags coll))
                 :meta meta)))
 
 (defn convert-time [d]
