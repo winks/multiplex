@@ -89,7 +89,7 @@
                   :type-image (phelper "image" params)
                   :type-audio (phelper "audio" params)
                   :type-video (phelper "video" params)}
-          :pagi (assoc pagina :limit limit :page page :type itemtype))))
+          :pagi (assoc pagina :type itemtype))))
 
 (defn render-orig
   "renders the HTML template located relative to resources/html"

@@ -166,23 +166,25 @@
   (zipmap (map keyword (keys m)) (vals m)))
 
 (defn calculate-pagination
-  [num page post-count]
-  (let [page-count (int (Math/ceil (/ post-count num)))
+  [limit page post-count]
+  (let [page-count (int (Math/ceil (/ post-count limit)))
         page-newer (when-not (< page 2) (dec page))
         page-older (when-not (>= page page-count) (inc page))
         pages (range 1 (inc page-count))]
     {:page-newer page-newer
+     :page page
      :page-older page-older
      :pages pages
+     :limit limit
      :page-count page-count
      :post-count post-count}))
 
 (defn type-pagination [type page limit]
   (let [pt (str "type=" type)
-        pp (when-not (> 1 (int-or page 1)) (str "page=" page))
+        pp (when     (< 1 (int-or page 1)) (str "page=" page))
         pl (when-not (= config/default-limit limit) (str "limit=" limit))
         parts [pt pl pp]]
-    (str "?" (cstr/join "&" (filter not-empty parts)))))
+    (str "?" (cstr/join "&" (remove empty? parts)))))
 
 (defn sanitize-title [s]
   (-> s
@@ -226,8 +228,9 @@
 (defn get-filename [url]
   (let [path (.getRawPath (java.net.URI. url))
         parts (cstr/split path #"/")]
-    (or (last parts) nil)))
+    (or (last parts) "")))
 
 (defn audit [x & [xs]]
   (let [msg (str "event." (cstr/replace (name x) #"-" "."))]
-    (log/info msg xs)))
+    (log/info msg xs)
+    [msg xs]))

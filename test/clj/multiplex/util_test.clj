@@ -30,9 +30,12 @@
   (is (= nil (valid-tag? ""))))
 
 (deftest test-file-extension-1
-  (is (= "" (file-extension "")))
-  (is (= "gif" (file-extension "test.gif")))
-  (is (= "m3u" (file-extension "test.m3u")))
+  (is (= ""    (file-extension "")))
+  (is (= ""    (file-extension "foo")))
+  (is (= ""    (file-extension ".foo")))
+  (is (= "c"   (file-extension "test.c")))
+  (is (= "m3u" (file-extension "test.foo.m3u")))
+  (is (= "jpg" (file-extension "/test.jpg")))
   (is (= "jpg" (file-extension "test.jpeg"))))
 
 (deftest test-make-url-1
@@ -47,8 +50,6 @@
   (is (= "example.org" (host-name "https://example.org")))
   (is (= "example.org" (host-name "https://www.example.org")))
   (is (= "sub.example.org" (host-name "https://sub.example.org/path"))))
-
-; read-remote
 
 (deftest test-video-info-err
   (let [info (video-info "http://example.com/foo.gif")]
@@ -70,7 +71,6 @@
     (is (= "youtube" (:site info)))
     (is (= "_hbEM9Sr9fi4" (:code info)))))
 
-; TODO not a unit test, IO
 (deftest test-video-info-vimeo-1
   (let [info (video-info "https://vimeo.com/62518619")]
     (is (= "vimeo" (:site info)))
@@ -81,7 +81,6 @@
     (is (= "mixcloud" (:site info)))
     (is (= "%2FZorrinooohH%2Ffebruar-2019-retrospective%2F" (:code info)))))
 
-; TODO not a unit test, IO
 (deftest test-video-info-soundcloud-1
   (let [info (video-info "https://soundcloud.com/zuckerton-records/klangkuenstler-munich-motion")]
     (is (= "soundcloud" (:site info)))
@@ -170,9 +169,27 @@
   (is (= {:foo1 "bar1"} (keywordize {"foo1" "bar1"})))
   (is (= {:foo1 "bar1" :foo2 "bar2"} (keywordize {"foo1" "bar1" "foo2" "bar2"}))))
 
-; calculate-pagination
+(deftest test-calculate-pagination-1
+  (is (= {:page-newer nil :page 1 :page-older nil
+          :pages [1] :limit 10
+          :page-count 1 :post-count 9} (calculate-pagination 10 1 9)))
+  (is (= {:page-newer nil :page 1 :page-older 2
+          :pages [1 2] :limit 10
+          :page-count 2 :post-count 20} (calculate-pagination 10 1 20)))
+  (is (= {:page-newer 1 :page 2 :page-older nil
+          :pages [1 2] :limit 10
+          :page-count 2 :post-count 20} (calculate-pagination 10 2 20)))
+  (is (= {:page-newer 2 :page 3 :page-older 4
+          :pages [1 2 3 4 5] :limit 5
+          :page-count 5 :post-count 21} (calculate-pagination 5 3 21)))
+)
 
-; type-pagination
+(deftest test-type-pagination-1
+  (is (= "?type=video" (type-pagination "video" 0 10)))
+  (is (= "?type=video" (type-pagination "video" 1 10)))
+  (is (= "?type=video&page=2" (type-pagination "video" 2 10)))
+  (is (= "?type=video&limit=11" (type-pagination "video" 1 11)))
+  (is (= "?type=video&limit=11&page=2" (type-pagination "video" 2 11))))
 
 (deftest test-sanitize-title-1
   (is (= "" (sanitize-title "")))
@@ -215,3 +232,14 @@
   (is (= ["foo","bar"] (sanitize-tags "Foo,BAR")))
   (is (= ["_fx","b12"] (sanitize-tags "_fx,B12")))
   (is (= ["fo_","b-r"] (sanitize-tags "fo_,b-r,fa;il"))))
+
+(deftest test-get-filename-1
+  (is (= "" (get-filename "")))
+  (is (= "" (get-filename "http://example.org")))
+  (is (= "" (get-filename "http://example.org/")))
+  (is (= "foo.jpg" (get-filename "http://example.org/foo.jpg")))
+  (is (= "foo.jpg" (get-filename "http://example.org/bar/foo.jpg"))))
+
+(deftest test-audit-1
+  (is (= ["event.foo" 3] (audit :foo 3)))
+  (is (= ["event.foo.bar" {:x 3}] (audit :foo-bar {:x 3}))))
