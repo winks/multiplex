@@ -9,6 +9,14 @@
     [multiplex.config :as config]
     [ring.util.codec :as rcodec]))
 
+
+(def config-fallback {:site-title "multiplex"
+                      :site-scheme :http
+                      :site-url ""
+                      :site-port 80
+                      :site-theme "default"
+                      :assets-url ""})
+
 ; format of tags:
 ; allow either a single alphanumeric char,
 ; or allow alphanumeric chars with

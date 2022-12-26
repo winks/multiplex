@@ -31,12 +31,6 @@
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 
-(def config-fallback {:site-title "multiplex"
-                      :site-url ""
-                      :site-scheme :http
-                      :site-port 80
-                      :site-theme "default"
-                      :assets-url ""})
 
 (defn phelper [type params]
   (let [p (util/int-or (:page params) 1)
@@ -53,7 +47,7 @@
                 (prepare-params-author request params)
                 (:author (:post params)))
         favicon       (first (remove empty? [(str (:uid authr)) "0"]))
-        cfg           (first (remove empty? [(config/env :multiplex) config-fallback]))
+        cfg           (first (remove empty? [(config/env :multiplex) util/config-fallback]))
         theme         (first (remove empty? [(:theme authr) (:site-theme cfg)]))
         assets-prefix (:assets-url cfg)
         site-title    (if-let [title (:title authr)] title (:site-title cfg))
@@ -65,6 +59,7 @@
      :modus (name (or (:modus params) ""))
      :assets-prefix assets-prefix
      :base-url (util/make-url (:site-url cfg) cfg)
+     :user-url (util/make-url (or (:hostname authr) (:site-url cfg)) cfg)
      :version-string (get-version *pom-config*)
      :flash (:flash request)}))
 

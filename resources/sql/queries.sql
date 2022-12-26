@@ -112,6 +112,15 @@ SELECT count(p.id)
 FROM mpx_posts p
 WHERE p.author = :author :sql:posts_crit_raw
 
+--- :name get-posts-search :? :1
+--- :doc search posts
+--- SELECT p.*, u.username, u.hostname, u.title, u.avatar, u.theme, u.is_private
+--- FROM mpx_posts p, mpx_users u
+--- WHERE p.author = u.uid AND p.author = :uid AND txt LIKE :like
+--- ORDER BY p.created DESC
+--- LIMIT :limit OFFSET :offset
+-- -: sql:posts_like_raw
+
 --------------------
 
 -- :name get-all-users-internal :? :*

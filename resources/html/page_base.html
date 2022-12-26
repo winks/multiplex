@@ -19,13 +19,13 @@
       <span class="footer">
       an <a href="{{ glob.base-url }}/about">art-core</a> project &middot;
       {% if glob.version-string %} {{ glob.version-string }} &middot;{% endif %}
-      <a href="/">back to the start</a> &middot;
+      <a href="{{ glob.user-url }}">back to the start</a> &middot;
       <!--<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0</a><br />-->
       {% ifequal auth.loggedin "true" %}
-      <a href="/profile">profile</a>&nbsp;&middot;&nbsp;
-      <a href="/logout">logout ({{ auth.user }})</a>
+      <a href="{{ glob.user-url }}/profile">profile</a>&nbsp;&middot;&nbsp;
+      <a href="{{ glob.user-url }}/logout">logout ({{ auth.user }})</a>
       {% else %}
-      <a href="/login">login</a>
+      <a href="{{ glob.user-url }}/login">login</a>
       {% endifequal %}
       </span>
     </div>

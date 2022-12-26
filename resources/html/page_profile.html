@@ -15,7 +15,7 @@
 
 <h2>Edit Profile</h2>
 <div id="form_profile_edit_container">
-    <form action="/profile" id="form_profile_edit" method="post">
+    <form action="{{ glob.user-url }}/profile" id="form_profile_edit" method="post">
         {% csrf-field %}
         <p><label>Site Title:<br /> <input type="text" name="title" value="{{ profile.title }}" /></label></p>
         <p><label>Site Theme:<br /> <input type="text" name="theme" value="{{ profile.theme }}" /></label></p>
@@ -32,6 +32,6 @@
     <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('{{ profile.url }}/add?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'{{ profile.title }}/add','toolbar=no,width=700,height=350'));">multiplex me</a><br />
 </p>
 {% else %}
-<a href="/login">Login</a> first.
+<a href="{{ glob.user-url }}/login">Login</a> first.
 {% endifequal %}
 {% endblock %}

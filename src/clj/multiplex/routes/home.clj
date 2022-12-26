@@ -3,6 +3,7 @@
     [buddy.hashers :as hashers]
     [clojure.java.io :as io]
     [clojure.tools.logging :as log]
+    [multiplex.config :as config]
     [multiplex.db.core :as db]
     [multiplex.db.posts :as dbp]
     [multiplex.db.users :as dbu]
@@ -12,13 +13,18 @@
     [multiplex.util :refer [audit]]
     [ring.util.response :refer [response redirect]]))
 
+(defn redir [url]
+  (let [cfg (first (remove empty? [(config/env :multiplex) util/config-fallback]))
+        host (util/make-url (:site-url cfg) cfg)]
+    (redirect (str host url))))
+
 (defn logged-in? [request]
   (let [uid (or (:uid (:session request)) 0)]
     (pos? uid)))
 
 (defn set-login-flash! [msg {flash :flash}]
   (log/debug "set-login-flash!" msg flash)
-  (-> (redirect "/login")
+  (-> (redir "/login")
       (assoc :flash msg)))
 
 (defn set-user! [name uid {session :session}]
@@ -28,11 +34,11 @@
     (log/debug "set-user!" new-url new-session)
     (audit :login {:uid uid :name name})
     (db/change-last-login! {:uid uid})
-    (-> (redirect new-url)
+    (-> (redir new-url)
         (assoc :session new-session))))
 
 (defn clear-session! [{session :session}]
-  (-> (redirect "/")
+  (-> (redir "/")
       (assoc :session nil)
       (dissoc :cookies)))
 
@@ -41,7 +47,7 @@
         pw (get (:form-params request) "password")
         dbuser (db/get-login {:username un})
         checked (hashers/check pw (:password dbuser))]
-        (log/debug "login!")
+        (log/debug (str "login!" (:uri request)))
     (cond
       (empty? dbuser)              (set-login-flash! "db0" request)
       (empty? (:username dbuser))  (set-login-flash! "db1" request)
@@ -52,7 +58,7 @@
 
 (defn add-item! [request]
   (if-not (logged-in? request)
-    (redirect "/")
+    (redir "/")
     (let [url (get (:form-params request) "url")
           txt (get (:form-params request) "txt")
           tags (get (:form-params request) "tags")
@@ -60,7 +66,7 @@
           result (dbp/create-post! {:url url :txt txt :tags tags :author editor})]
       (log/debug "add-item!" result (:session request))
       (audit :post-create result)
-      (-> (redirect "/add")
+      (-> (redir "/add")
           (assoc :session (dissoc (:session request) :return))
           (assoc :flash (:id (first result)))))))
 
@@ -68,24 +74,24 @@
   (let [id (:id (:path-params request))
         my-url "/"]
     (if-not (logged-in? request)
-      (redirect my-url)
-       (let [editor (:uid (:session request))
+      (redir my-url)
+      (let [editor (:uid (:session request))
             mreq (select-keys request [:server-port :scheme])
             posts (dbp/get-posts :some {:id id :author editor} mreq)]
         (if-not (pos? (first posts))
           (do
             (log/info "Failed deleting [" id "], post not found")
-            (redirect my-url))
+            (redir my-url))
           (let [result (dbp/delete-post! {:id id})]
             (audit :post-delete {:id id :uid editor})
-            (-> (redirect my-url)
+            (-> (redir my-url)
                 (assoc :flash id))))))))
 
 (defn edit-item! [request]
   (let [id (:id (:path-params request))
         my-url (str "/post/" id)]
     (if-not (logged-in? request)
-      (redirect my-url)
+      (redir my-url)
       (let [url (get (:form-params request) "url")
             txt (get (:form-params request) "txt")
             tags (get (:form-params request) "tags")
@@ -95,17 +101,17 @@
         (if-not (= 1 (first posts))
           (do
             (log/info "Failed updating [" id "], post not found")
-            (redirect my-url))
+            (redir my-url))
           (let [crit {:url url :txt txt :tags tags :author editor :id id}
                 result (dbp/update-post! crit (first posts))]
             (audit :post-update {:old (first posts) :new crit})
-            (-> (redirect my-url)
+            (-> (redir my-url)
                 (assoc :flash id))))))))
 
 (defn edit-profile! [request]
   (let [my-url "/profile"]
     (if-not (logged-in? request)
-      (redirect my-url)
+      (redir my-url)
       (let [username   (get (:form-params request) "username")
             email      (get (:form-params request) "email")
             avatar     (get (:form-params request) "avatar")
@@ -118,12 +124,12 @@
         (if (empty? (:username orig))
           (do
             (log/info "Failed getting profile [" editor "] to edit, not found")
-            (redirect my-url))
+            (redir my-url))
           (let [crit {:uid editor :username username :email email :avatar avatar
                       :title title :theme theme :is_private is_private}
                 result (dbu/update-profile! crit orig)]
             (audit :user-update {:old orig :new crit})
-            (-> (redirect my-url)
+            (-> (redir my-url)
                 (assoc :flash true))))))))
 
 
@@ -167,7 +173,7 @@
         cur-url (str (:uri request) "?" (:query-string request))]
   (log/info "add-page" (= :get (:request-method request)) (not (logged-in? request)) (empty? (:return (:session request))))
   (if (and (= :get (:request-method request)) (not (logged-in? request)) (empty? (:return (:session request))))
-    (-> (redirect cur-url) (assoc-in [:session :return] cur-url))
+    (-> (redir cur-url) (assoc-in [:session :return] cur-url))
     (render-page request :add {:form qp}))))
 
 (defn home-page [request]

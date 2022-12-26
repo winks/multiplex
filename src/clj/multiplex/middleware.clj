@@ -14,6 +14,7 @@
     [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
     [ring.middleware.flash :refer [wrap-flash]]
     [ring.middleware.session.cookie :refer [cookie-store]]
+    [ring.middleware.ssl :refer [wrap-ssl-redirect wrap-forwarded-scheme]]
     [ring.middleware.defaults :refer [site-defaults wrap-defaults]]))
 
 (def cookie-bytes (byte-array (map byte [62 5 83 101 25 58 115 55 5 23 89 89 46 110 29 13])))
@@ -61,6 +62,8 @@
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
+      wrap-forwarded-scheme
+      ;wrap-ssl-redirect
       wrap-auth
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true :max-age 86400}})

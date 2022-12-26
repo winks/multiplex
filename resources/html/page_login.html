@@ -6,9 +6,9 @@
 {% if glob.flash %}<div class="flash">{{ glob.flash }}</div>{% endif %}
 
 {% ifequal auth.loggedin "true" %}
-You are already logged in. <a href="/logout">Click to log out.</a>
+You are already logged in. <a href="{{ glob.user-url }}/logout">Click to log out.</a>
 {% else %}
-<form action="/login" id="form_login" method="post">
+<form action="{{ glob.user-url }}/login" id="form_login" method="post">
     {% csrf-field %}
     <p><label>Username:<br /> <input type="text" name="username" class="login-form" /></label></p>
     <p><label>Password:<br /> <input type="password" name="password" class="login-form" /></label></p>
