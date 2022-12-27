@@ -70,6 +70,16 @@
       (and (= :https scheme) (= 443 port)) (str (name scheme) "://" host)
       :else (str (name scheme) "://" host suffix))))
 
+(defn host-config [request]
+  (let [cfg (first (remove empty? [(config/env :multiplex) config-fallback]))
+        site-url (:site-url cfg)
+        hostname (:server-name request)]
+    {:hostname hostname
+     :base-url (make-url site-url cfg)
+     :user-url (make-url hostname cfg)
+     :server-port (:server-port request)
+     :scheme (:scheme request)}))
+
 (defn host-name
   "gets the host name part from an url"
   [url]

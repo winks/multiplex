@@ -30,7 +30,8 @@
 (parser/set-resource-path!  (io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
-
+(filters/add-filter! :make-url (fn [content] [:safe (util/make-url content (config/env :multiplex))]))
+(filters/add-filter! :date-nice (fn [content] [:safe (first (util/convert-time content))]))
 
 (defn phelper [type params]
   (let [p (util/int-or (:page params) 1)
@@ -50,6 +51,7 @@
         cfg           (first (remove empty? [(config/env :multiplex) util/config-fallback]))
         theme         (first (remove empty? [(:theme authr) (:site-theme cfg)]))
         assets-prefix (:assets-url cfg)
+        host-config   (util/host-config request)
         site-title    (if-let [title (:title authr)] title (:site-title cfg))
         page-header   (if-let [title (:title authr)] title (if-let [u (:username authr)] (str u "'s multiplex") (:site-title cfg)))]
     {:page-header page-header
@@ -58,8 +60,8 @@
      :favicon favicon
      :modus (name (or (:modus params) ""))
      :assets-prefix assets-prefix
-     :base-url (util/make-url (:site-url cfg) cfg)
-     :user-url (util/make-url (or (:hostname authr) (:site-url cfg)) cfg)
+     :base-url (:base-url host-config)
+     :user-url (:user-url host-config)
      :version-string (get-version *pom-config*)
      :flash (:flash request)}))
 
@@ -117,7 +119,10 @@
 
    returns a response map with the error page as the body
    and the status specified by the status key"
-  [error-details]
-  {:status  (:status error-details)
-   :headers {"Content-Type" "text/html; charset=utf-8"}
-   :body    (parser/render-file "page_error.html" error-details)})
+  ([error-details]
+   {:status  (:status error-details)
+    :headers {"Content-Type" "text/html; charset=utf-8"}
+    :body    (parser/render-file "page_error.html" error-details)})
+  ([error-details request]
+    (let [p2 (prepare-params request {})]
+      (error-page (into p2 error-details)))))

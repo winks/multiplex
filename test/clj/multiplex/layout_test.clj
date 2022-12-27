@@ -95,7 +95,7 @@
       (is (= "default-test" (:theme glob)))
       (is (= "0" (:favicon glob)))
       (is (= "" (:modus glob)))
-      (is (= "http://static.mpx1.f5n.de" (:assets-prefix glob)))
+      (is (= "http://static.mpxtest.f5n.de" (:assets-prefix glob)))
       (is (= nil (:flash glob)))
       (is (= "foo" (:version-string glob))))))
 
@@ -143,7 +143,7 @@
             :theme "my_theme"
             :favicon "42"
             :modus "foo"
-            :assets-prefix "http://static.mpx1.f5n.de"
+            :assets-prefix "http://static.mpxtest.f5n.de"
             :base-url "http://mpxtest.f5n.de:3030"
             :version-string "42.42-dev 0fedcba"
             :flash "FlashMessage"} glob))

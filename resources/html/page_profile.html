@@ -7,9 +7,9 @@
 {% if glob.flash  %}<div class="flash">Profile updated.</a>.</div>{% endif %}
 
 <ul>
-    <li>hostname: {{ profile.hostname }}</li>
+    <li>hostname: <a href="{{ profile.hostname|make-url }}">{{ profile.hostname }}</a></li>
     <li>apikey: {{ profile.apikey }}</li>
-    <li>created: {{ profile.created }}</li>
+    <li>created: {{ profile.created|date-nice }}</li>
     <li>avatar: {{ profile.avatar }} <br/><img src="{{ glob.assets-prefix }}{{ profile.avatar }}"/> </li>
 </ul>
 

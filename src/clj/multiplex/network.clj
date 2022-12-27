@@ -7,9 +7,11 @@
 (defn download-file
   "copies an image from an URL to a local file"
   [url filename]
-  (with-open [input (cjio/input-stream url)
-              output (cjio/output-stream filename)]
-    (cjio/copy input output)))
+  (let [parent (.getParent (java.io.File. filename))
+        md (.mkdirs (java.io.File. parent))]
+    (with-open [input (cjio/input-stream url)
+                output (cjio/output-stream filename)]
+      (cjio/copy input output))))
 
 (defn read-remote
   "read from remote url"

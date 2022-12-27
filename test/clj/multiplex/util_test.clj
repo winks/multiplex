@@ -128,7 +128,7 @@
 (deftest test-add-fields-1
   (let [input {:url "http://www.youtube.com/watch?v=asdf" :meta ""}
         result (add-fields input)]
-    (is (= "http://static.mpx1.f5n.de/dump-test" (:thumb-path result)))
+    (is (= "http://static.mpxtest.f5n.de/dump-test" (:thumb-path result)))
     (is (= nil (:thumbnail result)))
     (is (= {} (:meta result)))
     (is (= nil (:tags result))))
@@ -152,25 +152,25 @@
 (deftest test-fix-url-field-1
   (is (= {:url ""} (fix-url-field {})))
   (is (= {:url ""} (fix-url-field {:url ""})))
-  (is (= {:url "http://static.mpx1.f5n.de/dump-test/foo.png"} (fix-url-field {:url "/dump-test/foo.png"})))
+  (is (= {:url "http://static.mpxtest.f5n.de/dump-test/foo.png"} (fix-url-field {:url "/dump-test/foo.png"})))
   (is (= {:url "https://example.org/foo.png"} (fix-url-field {:url "https://example.org/foo.png"}))))
 
 (deftest test-set-author-1
   (let [input {}
         result (set-author input)]
     (is (= {:author {:uid nil :url "http://:3030"}} result)))
-  (let [input {:author 23 :uid 24 :hostname "asd1.mpx1.f5n.de"}
+  (let [input {:author 23 :uid 24 :hostname "asd1.mpxtest.f5n.de"}
         result (set-author input)]
-    (is (= {:author {:uid 23 :hostname "asd1.mpx1.f5n.de"
-                     :url "http://asd1.mpx1.f5n.de:3030"}} result)))
-  (let [input {:author 23 :hostname "asd1.mpx1.f5n.de"
+    (is (= {:author {:uid 23 :hostname "asd1.mpxtest.f5n.de"
+                     :url "http://asd1.mpxtest.f5n.de:3030"}} result)))
+  (let [input {:author 23 :hostname "asd1.mpxtest.f5n.de"
                :foo 42 :bar "asd"
                :title "xTitle" :avatar "a.png" :theme "t3" :is_private true}
         result (set-author input)]
     (is (= {:foo 42 :bar "asd"
-            :author {:uid 23 :hostname "asd1.mpx1.f5n.de"
+            :author {:uid 23 :hostname "asd1.mpxtest.f5n.de"
                      :title "xTitle" :avatar "a.png" :theme "t3" :is_private true
-                     :url "http://asd1.mpx1.f5n.de:3030"}} result))))
+                     :url "http://asd1.mpxtest.f5n.de:3030"}} result))))
 
 (deftest test-keywordize-1
   (is (= {} (keywordize {})))
