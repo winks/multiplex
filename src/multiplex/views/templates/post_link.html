@@ -1,9 +1,0 @@
-  <li class="fav">
-{% include "multiplex/views/templates/snippet_avatar.html" %}
-{% include "multiplex/views/templates/snippet_perma.html" %}
-{% ifequal post.site "imgur-gifv" %}
-    <blockquote class="imgur-embed-pub" lang="en" data-id="{{ post.code }}"><a href="https://imgur.com/{{ post.code }}">View post on imgur.com</a></blockquote><script async src="https://s.imgur.com/min/embed.js" charset="utf-8"></script>
-{% else %}
-    <p><a href="{{ post.url }}">{{ post.txt }}</a></p>
-{% endifequal %}
-  </li>
