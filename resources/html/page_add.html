@@ -1,0 +1,17 @@
+{% extends "page_minimal.html" %}
+{% block content %}
+
+<h3>Add Post</h3>
+{% ifequal auth.loggedin "true" %}
+  {% if glob.flash  %}<div class="flash">Added: <a href="{{ glob.user-url }}/post/{{ glob.flash }}">{{ glob.flash }}</a>.</div>{% endif %}
+<form action="{{ glob.user-url }}/add" id="form_post_create" method="post">
+    {% csrf-field %}
+    <p><label>URL:<br /> <input type="text" name="url" value="{{ form.url }}" /></label></p>
+    <p><label>Text:<br /> <textarea rows="5" cols="60" name="txt">{{ form.txt }}</textarea></label></p>
+    <p><label>Tags: (separate with comma)<br /><input type="text" name="tags" value="{{ form.tags }}" /></label></p>
+    <input type="submit" value="post" />
+</form>
+{% else %}
+<a href="{{ glob.user-url }}/login">Login</a> first.
+{% endifequal %}
+{% endblock %}

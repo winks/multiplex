@@ -1,0 +1,42 @@
+
+body {
+  background-color: #e3e3ff;
+  color: #333;
+  font-family: "Verdana", "Arial", "sans-serif";
+}
+#header {
+  background-color: #69f;
+  border-bottom: 1px dotted #330000;
+}
+.footer {
+  border-top: 1px dotted #003;
+}
+h1, h2, h3  {
+  font-family:      "Verdana", "Arial", "sans-serif";
+}
+a {
+  color: #00b;
+}
+a:link {
+  color:#00b;
+}
+a:hover {
+  color: #00f;
+}
+.perma {
+  font-size: small;
+}
+.user-header {
+  background-color: #69f;
+}
+.post-list>li {
+    clear: both;
+}
+.pagination {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+hr {
+    margin: 20px 0;
+}

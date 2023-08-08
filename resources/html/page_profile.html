@@ -1,0 +1,37 @@
+{% extends "page_base.html" %}
+{% block content %}
+
+{% ifequal auth.loggedin "true" %}
+<h1>Profile</h1>
+
+{% if glob.flash  %}<div class="flash">Profile updated.</a>.</div>{% endif %}
+
+<ul>
+    <li>hostname: <a href="{{ profile.hostname|make-url }}">{{ profile.hostname }}</a></li>
+    <li>apikey: {{ profile.apikey }}</li>
+    <li>created: {{ profile.created|date-nice }}</li>
+    <li>avatar: {{ profile.avatar }} <br/><img src="{{ glob.assets-prefix }}{{ profile.avatar }}"/> </li>
+</ul>
+
+<h2>Edit Profile</h2>
+<div id="form_profile_edit_container">
+    <form action="{{ glob.user-url }}/profile" id="form_profile_edit" method="post">
+        {% csrf-field %}
+        <p><label>Site Title:<br /> <input type="text" name="title" value="{{ profile.title }}" /></label></p>
+        <p><label>Site Theme:<br /> <input type="text" name="theme" value="{{ profile.theme }}" /></label></p>
+        <p><label>Set to Private?:<br /> <input type="checkbox" name="is_private" {% if profile.is_private %}value="on" checked{% endif %} /></label></p>
+        <p>&nbsp;</p>
+        <p><label>Username:<br /> <input type="text" name="username" value="{{ profile.username }}" /></label></p>
+        <p><label>E-Mail:<br /> <input type="text" name="email" value="{{ profile.email }}" /></label></p>
+        <p><label>Avatar:<br /> <input type="text" name="avatar" value="{{ profile.avatar }}" /></label></p>
+        <input type="submit" value="update" />
+    </form>
+</div>
+<p>&nbsp;</p>
+<p>Use this bookmark to post: <br/>
+    <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('{{ profile.url }}/add?url='+encodeURIComponent(q)+'&txt='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'{{ profile.title }}/add','toolbar=no,width=700,height=350'));">multiplex me</a><br />
+</p>
+{% else %}
+<a href="{{ glob.user-url }}/login">Login</a> first.
+{% endifequal %}
+{% endblock %}

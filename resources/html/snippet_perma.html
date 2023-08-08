@@ -1,0 +1,4 @@
+    <div class="perma"><a href="{{ post.author.url }}/post/{{ post.id }}" class="post-date">{{ post.updated }}</a>{% include "snippet_tags.html" %}
+{% ifequal auth.loggedin "true" %}
+{% ifequal auth.uid post.author.uid %} &middot; <a href="{{ post.author.url }}/post/{{ post.id }}/edit">[edit]</a>{% endifequal%}
+{% endifequal%}</div>

@@ -1,0 +1,7 @@
+    <div class="avatar">
+    {% if post.author.avatar %}
+          <a href="{{ post.author.url }}"><img src="{{ glob.assets-prefix }}{{ post.author.avatar }}" alt="{{ post.author.username }}'s avatar" width="32" height="32" /></a>
+    {% else %}
+          <img src="{{ glob.assets-prefix }}/media/img/map2/default-avatar.png" alt="default" />
+    {% endif %}
+    </div>

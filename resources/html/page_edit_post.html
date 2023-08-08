@@ -1,0 +1,30 @@
+{% extends "page_base.html" %}
+{% block content %}
+
+{% ifequal auth.loggedin "true" %}
+<h1>Edit: Post #{{ form.id }} &middot; <a href="{{ glob.user-url }}/post/{{ form.id }}">cancel</a></h1>
+
+<ul>
+    <li>Created: {{ form.created-ts }}</li>
+    <li>Updated: {{ form.updated-ts }}</li>
+    <li>Author: {{ form.author.username }}</li>
+    <li>Type: {{ form.itemtype }}</li>
+    <li>Meta: {{ form.meta }}</li>
+</ul>
+<div id="form_post_edit_container">
+    <form action="{{ glob.user-url }}/post/{{ form.id }}" id="form_post_edit" method="post">
+    {% csrf-field %}
+    <p><label>URL:<br /> <input type="text" name="url" value="{{ form.url }}" /></label></p>
+    <p><label>Text:<br /> <textarea rows="5" cols="60" name="txt">{{ form.txt }}</textarea></label></p>
+    <p><label>Tags: (separate with comma)<br /> <input type="text" name="tags" value="{{ form.tags }}" /></label></p>
+    <input type="submit" value="update" />
+</form>
+<form action="{{ glob.user-url }}/post/{{ form.id }}/del" id="form_post_delete" method="post" onsubmit="return window.confirm('Really delete post #{{ form.id }}?');" >
+    {% csrf-field %}
+    <input type="submit" class="delete-button" value="delete post {{ form.id }}" />
+</form>
+</div>
+{% else %}
+<a href="{{ glob.user-url }}/login">Login</a> first.
+{% endifequal %}
+{% endblock %}

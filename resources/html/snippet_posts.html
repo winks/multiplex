@@ -1,0 +1,34 @@
+<ul class="post-list">
+{% for post in posts %}
+
+{% ifequal post.itemtype "video" %}
+  {% include "post_video.html" %}
+{% else %}
+  {% ifequal post.itemtype "link" %}
+    {% include "post_link.html" %}
+  {% else %}
+    {% ifequal post.itemtype "image" %}
+      {% include "post_image.html" %}
+    {% else %}
+      {% ifequal post.itemtype "audio" %}
+        {% include "post_audio.html" %}
+      {% else %}
+        {% include "post_text.html" %}
+      {% endifequal %}
+    {% endifequal %}
+  {% endifequal %}
+{% endifequal %}
+
+{% endfor %}
+</ul>
+<div class="pagination">
+  {% if pagi.page-newer %}
+  <a href="?page={{ pagi.page-newer }}{% if pagi.type %}&type={{ pagi.type }}{% endif %}{% if pagi.limit %}&limit={{ pagi.limit }}{% endif %}">&laquo;&laquo;</a>
+  {% endif %}
+  {% ifequal pagi.page-count 1 %}{% else %}   {% for pg in pagi.pages %}
+   <a href="?page={{ pg             }}{% if pagi.type %}&type={{ pagi.type }}{% endif %}{% if pagi.limit %}&limit={{ pagi.limit }}{% endif %}">{% ifequal pg pagi.page %}<strong>{% endifequal %}{{ pg }}{% ifequal pg pagi.page %}</strong>{% endifequal %}</a>
+  {% endfor %}    {% endifequal %}
+  {% if pagi.page-older %}
+   <a href="?page={{ pagi.page-older }}{% if pagi.type %}&type={{ pagi.type }}{% endif %}{% if pagi.limit %}&limit={{ pagi.limit }}{% endif %}">&raquo;&raquo;</a>
+  {% endif %}
+</div>

@@ -1,0 +1,20 @@
+{% extends "page_base.html" %}
+{% block content %}
+
+<div class="container is-fluid">
+    <div class="has-text-centered">
+        <h1><span class="is-size-4 has-text-danger">Error: {{status}}</span></h1>
+        <hr>
+        {% if title %}
+        <h2 class="without-margin">{{title}}</h2>
+        {% endif %}
+        {% if message %}
+        <h4 class="text-danger">{{message}}</h4>
+        {% endif %}
+        <p>
+            <a href="/">Try this</a>.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

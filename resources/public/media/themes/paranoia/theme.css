@@ -1,0 +1,28 @@
+body {
+  background: url(/assets/paranoia/back-dark.png) white no-repeat fixed;
+  color: #666600;
+  font-size: 12px;
+  font-family: "Lucida Grande", "Verdana", "sans-serif";
+}
+#header {
+  background-color: #D6F674;
+  border-bottom: 1px solid #99cc00;
+}
+.footer {
+  border-top: 1px solid #99cc00;
+}
+a {
+  color: #669900;
+}
+a:link {
+  color:#669900;
+}
+a:hover {
+  color: #99cc00;
+}
+.user-header {
+  background-color: #D6F674;
+}
+hr {
+  margin: 20px 0;
+}

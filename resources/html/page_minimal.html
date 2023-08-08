@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ glob.site-title }}</title>
+    <meta charset="UTF-8"/>
+    <link href="{{ glob.assets-prefix }}/media/base.css" media="screen, print" rel="stylesheet" />
+    <link href="{{ glob.assets-prefix }}/media/themes/{{ glob.theme }}/theme.css" media="screen, print" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="body">
+      <div id="content">
+{% block content %}{% endblock %}
+      </div>
+    </div>
+  </body>
+</html>

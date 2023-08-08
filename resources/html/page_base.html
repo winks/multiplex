@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ glob.site-title }}</title>
+    <link href="{{ glob.assets-prefix }}/media/base.css" media="screen, print" rel="stylesheet" />
+    <link href="{{ glob.assets-prefix }}/media/themes/{{ glob.theme }}/theme.css" media="screen, print" rel="stylesheet" />
+    <link href="{{ glob.assets-prefix }}/content/favicon/{{ glob.favicon }}.png" rel="icon" type="image/png" />
+  </head>
+  <body>
+    <div id="header">wresting information from those dread machines</div>
+    <div id="body">
+      <div id="content">
+{% block content %}{% endblock %}
+      </div>
+    </div>
+    <div id="footer">
+      <span class="footer">
+      an <a href="{{ glob.base-url }}/about">art-core</a> project &middot;
+      {% if glob.version-string %} {{ glob.version-string }} &middot;{% endif %}
+      <a href="{{ glob.user-url }}">back to the start</a> &middot;
+      <!--<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0</a><br />-->
+      {% ifequal auth.loggedin "true" %}
+      <a href="{{ glob.user-url }}/profile">profile</a>&nbsp;&middot;&nbsp;
+      <a href="{{ glob.user-url }}/logout">logout ({{ auth.user }})</a>
+      {% else %}
+      <a href="{{ glob.user-url }}/login">login</a>
+      {% endifequal %}
+      </span>
+    </div>
+    {% block page-scripts %}{% endblock %}
+  </body>
+</html>
