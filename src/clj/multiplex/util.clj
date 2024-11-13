@@ -26,6 +26,30 @@
 ; format of searches
 (def search-regex #"^[a-z0-9_-]{3,}$")
 
+(defn string-or
+  ([s]
+    (string-or s ""))
+  ([s default]
+    (if (empty? s)
+      default
+      (cstr/trim s))))
+
+(defn int-or
+  "try to coerce to integer or return a safe default"
+  [s default]
+  (if (nil? s)
+    default
+  (try
+    (let [n (cond
+              (instance? java.lang.Integer s) (long s)
+              (instance? java.lang.Long s) s
+              (instance? java.lang.String s) (Long/parseLong s)
+              (instance? java.lang.Double s) (long s)
+              :else default)]
+      (if (pos? n) n default))
+    (catch Exception e
+      default))))
+
 (defn is-custom-host [hostname]
   (if (= (:site-url (config/env :multiplex)) hostname)
     false
@@ -62,8 +86,9 @@
         :else ext))))
 
 (defn make-url [host config]
-  (let [scheme (or (:site-scheme config) :http)
-        port (or (:site-port config) (if (= :https scheme) 443 80))
+  (let [cfs (:site-scheme config)
+        scheme (or (if (keyword? cfs) cfs (keyword (cstr/replace cfs ":" ""))) :http)
+        port (or (int-or (:site-port config) 0) (if (= :https scheme) 443 80))
         suffix (if (pos? port) (str ":" port) "")]
     (cond
       (and (= :http scheme) (= 80 port)) (str (name scheme) "://" host)
@@ -120,30 +145,6 @@
     (= "soundcloud" (:site m)) (str (:thumb-path m) (:thumb-id m) "." (:thumb-ext m))
     :else ""))
 
-(defn string-or
-  ([s]
-    (string-or s ""))
-  ([s default]
-    (if (empty? s)
-      default
-      (cstr/trim s))))
-
-(defn int-or
-  "try to coerce to integer or return a safe default"
-  [s default]
-  (if (nil? s)
-    default
-  (try
-    (let [n (cond
-              (instance? java.lang.Integer s) (long s)
-              (instance? java.lang.Long s) s
-              (instance? java.lang.String s) (Long/parseLong s)
-              (instance? java.lang.Double s) (long s)
-              :else default)]
-      (if (pos? n) n default))
-    (catch Exception e
-      default))))
-
 (defn add-fields [coll]
   (let [config (config/env :multiplex)
         prefix (:assets-url config)
@@ -185,7 +186,8 @@
   (let [request (or request {})
         fields  [:username :hostname :title :avatar :theme :is_private :uid]
         author  (select-keys coll fields)
-        author  (assoc author :uid (or (:author coll) (:uid coll)) :url (make-url (:hostname author) (config/env :multiplex)))]
+        url     (make-url (:hostname author) (config/env :multiplex))
+        author  (assoc author :uid (or (:author coll) (:uid coll)) :url url)]
     (assoc (apply (partial dissoc coll) fields) :author author)))
 
 (defn keywordize [m]
