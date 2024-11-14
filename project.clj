@@ -1,4 +1,4 @@
-(defproject multiplex "2.0.8"
+(defproject multiplex "2.0.9"
 
   :description "multiplex - a small tumblelog"
   :url "http://github.com/winks/multiplex"
@@ -16,7 +16,7 @@
                  [json-html "0.4.7"]
                  [luminus-migrations "0.7.5"]
                  [luminus-transit "0.1.6"]
-                 [luminus-undertow "0.1.18"]
+                 [org.clojars.wink/luminus-undertow "0.1.18-2"]
                  [luminus/ring-ttl-session "0.3.3"]
                  [markdown-clj "1.12.2"]
                  [metosin/muuntaja "0.6.10"]
