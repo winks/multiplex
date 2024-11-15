@@ -1,18 +1,18 @@
 extern crate getopts;
 extern crate postgres;
-extern crate chrono;
 
 use getopts::{Fail, Options};
-use postgres::{Connection, TlsMode};
+use postgres::{Client, NoTls};
 use postgres::types::ToSql;
 use std::env;
 use std::io;
 use std::process;
-use chrono::NaiveDateTime;
+use time::PrimitiveDateTime;
 
-const TBL_USERS: &'static str = "mpx_users";
-const TBL_POSTS: &'static str = "mpx_posts";
+const TBL_USERS: &str = "mpx_users";
+const TBL_POSTS: &str = "mpx_posts";
 
+#[allow(dead_code)]
 struct User {
     uid: i32,
     username: String,
@@ -20,8 +20,8 @@ struct User {
     password: String,
     apikey: String,
     signupcode: String,
-    created: NaiveDateTime,
-    updated: NaiveDateTime,
+    created: Option<PrimitiveDateTime>,
+    updated: Option<PrimitiveDateTime>,
     hostname: String,
     title: String,
     theme: String,
@@ -35,18 +35,13 @@ struct Post {
     txt: String,
     meta: String,
     tag: String,
-    created: NaiveDateTime,
-    updated: NaiveDateTime,
+    created: Option<PrimitiveDateTime>,
+    updated: Option<PrimitiveDateTime>,
 }
 
 fn parse_int(s: String) -> i32 {
     let n: Option<i32> = s.trim().parse().ok();
-    let num = match n {
-        Some(num) => num,
-        None => 0,
-    };
-
-    num
+    n.unwrap_or_default()
 }
 
 fn print_usage(program: &str, opts: Options) {
@@ -60,19 +55,18 @@ fn exit_with_err(e: Fail) {
     process::exit(1);
 }
 
-fn delete_post(id: i32, conn: &Connection) -> u64 {
+fn delete_post(id: i32, conn: &mut Client) -> u64 {
     let sql = format!("UPDATE {} SET deleted = 1 WHERE id = $1", TBL_POSTS);
-    let updates = conn.execute(&sql, &[&id]).unwrap();
-    return updates;
+    conn.execute(&sql, &[&id]).unwrap()
 }
 
-fn get_users(uid: i32, conn: &Connection) -> Vec<Option<User>> {
+fn get_users(uid: i32, conn: &mut Client) -> Vec<Option<User>> {
     let mut sql = format!("
     SELECT uid, username, email, password, apikey, signupcode,
            created, updated, hostname, title, theme
       FROM {}", TBL_USERS);
-    let p_all: &[&ToSql] = &[];
-    let p_single: &[&ToSql] = &[&uid];
+    let p_all: &[&(dyn ToSql + Sync)] = &[];
+    let p_single: &[&(dyn ToSql + Sync)] = &[&uid];
     let mut p = p_all;
     if uid > 0 {
         sql = format!("{} WHERE uid = $1 LIMIT 1", &sql);
@@ -83,7 +77,7 @@ fn get_users(uid: i32, conn: &Connection) -> Vec<Option<User>> {
 
     let mut users = vec![];
     let query = conn.prepare(&sql).unwrap();
-    for row in &query.query(p).unwrap() {
+    for row in &conn.query(&query, p).unwrap() {
         let user = Some(User {
             uid: row.get(0),
             username: row.get(1),
@@ -100,16 +94,16 @@ fn get_users(uid: i32, conn: &Connection) -> Vec<Option<User>> {
         users.push(user);
     };
 
-    return users;
+    users
 }
 
-fn get_posts(limit: i32, offset: i32, author: i32, conn: &Connection) -> Vec<Option<Post>> {
+fn get_posts(limit: i32, offset: i32, author: i32, conn: &mut Client) -> Vec<Option<Post>> {
     let mut sql = format!("
     SELECT id, author, itemtype, url, txt,
            meta, tag, created, updated
       FROM {}", TBL_POSTS);
-    let p_all: &[&ToSql] = &[];
-    let p_single: &[&ToSql] = &[&author];
+    let p_all: &[&(dyn ToSql + Sync)] = &[];
+    let p_single: &[&(dyn ToSql + Sync)] = &[&author];
     let mut p = p_all;
     if author > 0 {
         sql = format!("{} WHERE author = $1", &sql);
@@ -126,7 +120,7 @@ fn get_posts(limit: i32, offset: i32, author: i32, conn: &Connection) -> Vec<Opt
     println!("{}", sql);
     let query = conn.prepare(&sql).unwrap();
     let mut posts = vec![];
-    for row in &query.query(p).unwrap() {
+    for row in &conn.query(&query, p).unwrap() {
         let post = Some(Post {
             id: row.get(0),
             author: row.get(1),
@@ -141,11 +135,11 @@ fn get_posts(limit: i32, offset: i32, author: i32, conn: &Connection) -> Vec<Opt
         posts.push(post);
     };
 
-    return posts;
+    posts
 }
 
 fn show_post(post: &Post, author: User) {
-    println!("{}\t{}\t{}\t{}", post.id, post.itemtype, post.created, post.updated);
+    println!("{}\t{}\t{}\t{}", post.id, post.itemtype, post.created.unwrap(), post.updated.unwrap());
     println!("\tAuthor: ({}, {}, {})", author.uid, author.username, author.email);
     println!("\t{}", post.url);
     println!("\t{}", post.txt);
@@ -164,8 +158,8 @@ fn show_user(user: User) {
     println!("---------------------------------");
 }
 
-fn show_userlist(conn: &Connection) {
-    let users = get_users(0, &conn);
+fn show_userlist(conn: &mut Client) {
+    let users = get_users(0, conn);
     for user in users {
         show_user(user.unwrap());
     }
@@ -216,10 +210,10 @@ fn main() {
         Err(_) => "postgres://multiplex:multiplex@127.0.0.1".to_string(),
     };
 
-    let conn = Connection::connect(db_string, TlsMode::None).unwrap();
+    let mut client = Client::connect(&db_string, NoTls).unwrap();
 
     if opt_userlist {
-        show_userlist(&conn);
+        show_userlist(&mut client);
         return;
     }
 
@@ -230,17 +224,17 @@ fn main() {
 
         if "y" == buffer.trim().to_lowercase() {
             println!("yes");
-            let updates = delete_post(opt_delete, &conn);
+            let updates = delete_post(opt_delete, &mut client);
             println!("{} rows were updated", updates);
         }
         return;
     }
 
     if opt_entries {
-        let posts = get_posts(opt_limit, opt_offset, opt_author, &conn);
+        let posts = get_posts(opt_limit, opt_offset, opt_author, &mut client);
         for post in posts {
             let p = post.unwrap();
-            let users = get_users(p.author, &conn);
+            let users = get_users(p.author, &mut client);
             for user in users {
                 show_post(&p, user.unwrap());
             }

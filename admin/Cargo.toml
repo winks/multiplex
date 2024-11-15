@@ -1,9 +1,10 @@
 [package]
 name = "multiplex-admin"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Florian Anderiasch <fa@art-core.org>"]
+edition = "2018"
 
 [dependencies]
-getopts = "0.2"
-postgres = { version = "0.13", features = ["with-chrono"] }
-chrono = "0.2.25"
+getopts = "0.2.21"
+postgres = { version = "0.19.9", features = ["with-time-0_3"] }
+time = "0.3.36"
