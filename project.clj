@@ -1,4 +1,4 @@
-(defproject multiplex "2.0.9"
+(defproject multiplex "2.0.10"
 
   :description "multiplex - a small tumblelog"
   :url "http://github.com/winks/multiplex"
@@ -7,8 +7,8 @@
                  [buddy/buddy-core "1.12.0-430"]
                  [buddy/buddy-hashers "2.0.167"]
                  [buddy/buddy-sign "3.6.1-359"]
-                 [ch.qos.logback/logback-classic "1.5.12"]
-                 [clojure.java-time "1.4.2"]
+                 [ch.qos.logback/logback-classic "1.5.16"]
+                 [clojure.java-time "1.4.3"]
                  [conman "0.9.6"]
                  [cprop "0.1.20"]
                  [expound "0.9.0"]
@@ -18,24 +18,24 @@
                  [luminus-transit "0.1.6"]
                  [org.clojars.wink/luminus-undertow "0.1.18-2"]
                  [luminus/ring-ttl-session "0.3.3"]
-                 [markdown-clj "1.12.2"]
-                 [metosin/muuntaja "0.6.10"]
+                 [markdown-clj "1.12.3"]
+                 [metosin/muuntaja "0.6.11"]
                  [metosin/reitit "0.7.2"]
-                 [metosin/ring-http-response "0.9.4"]
-                 [mount "0.1.20"]
-                 [nrepl "1.3.0"]
+                 [metosin/ring-http-response "0.9.5"]
+                 [mount "0.1.21"]
+                 [nrepl "1.3.1"]
                  [org.clojure/clojure "1.11.4"]
-                 [org.clojure/data.json "2.5.0"]
+                 [org.clojure/data.json "2.5.1"]
                  [org.clojure/tools.cli "1.1.230"]
                  [org.clojure/tools.logging "1.3.0"]
                  [org.postgresql/postgresql "42.7.4"]
-                 [org.webjars.npm/bulma "1.0.2"]
+                 [org.webjars.npm/bulma "1.0.3"]
                  [org.webjars.npm/material-icons "1.13.2"]
                  [org.webjars/webjars-locator "0.52"]
                  [org.webjars/webjars-locator-jboss-vfs "0.1.0"]
                  [ring-webjars "0.3.0"]
                  [ring/ring-core "1.13.0"]
-                 [ring/ring-defaults "0.5.0"]
+                 [ring/ring-defaults "0.6.0"]
                  [ring/ring-ssl "0.4.0"]
                  [selmer "1.12.61"]]
 
@@ -47,8 +47,8 @@
   :target-path "target/%s/"
   :main ^:skip-aot multiplex.core
 
-  :plugins [[lein-kibit "0.1.8"]
-            [lein-cloverage "1.2.2"]]
+  :plugins [[lein-kibit "0.1.11"]
+            [lein-cloverage "1.2.4"]]
 
   :profiles
   {:uberjar {:omit-source true
